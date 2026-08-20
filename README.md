@@ -17,13 +17,13 @@ A web-based scientific forecast viewer for NOAA Forecast data. ForecastView disp
 
 ### Application View
 
-![ForecastView Application](docs/images/app-screenshot.png)
+![ForecastView Application](docs/images/screenshot.png)
 
 *Interactive map with GEFS-Aerosol Total AOD at 550nm, showing filled contours with turbo colormap, contour isolines, and the Liberty basemap.*
 
 ### Exported Image
 
-![Exported Image Example](docs/images/export-example.png)
+![Exported Image Example](docs/images/totAOD550_export.jpeg)
 
 *Exported PNG with embedded colorbar, metadata bar (variable, init time, forecast hour, valid time), NWS logo, and experimental data disclaimer.*
 
