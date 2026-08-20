@@ -156,7 +156,14 @@ function ExportButton() {
       ctx.fillRect(0, h - 40, w, 40)
       ctx.fillStyle = '#ffffff'
       ctx.font = 'bold 16px sans-serif'
-      const meta = `${variable ?? ''}  |  Init: ${date ?? ''} ${run ?? ''}Z  |  FHR: ${String(forecastHour).padStart(3, '0')}  |  ForecastView`
+      // Compute valid time from init + fhr
+      let validTimeStr = ''
+      if (date && run != null) {
+        const initDate = new Date(`${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}T${run.padStart(2,'0')}:00:00Z`)
+        const validDate = new Date(initDate.getTime() + forecastHour * 3600 * 1000)
+        validTimeStr = validDate.toISOString().replace('T', ' ').slice(0, 16) + 'Z'
+      }
+      const meta = `${variable ?? ''}  |  Init: ${date ?? ''} ${run ?? ''}Z  |  FHR: ${String(forecastHour).padStart(3, '0')}  |  Valid: ${validTimeStr}  |  ForecastView`
       ctx.fillText(meta, 12, h - 14)
 
       // Draw NWS logo in bottom-right corner
