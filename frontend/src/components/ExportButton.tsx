@@ -205,16 +205,113 @@ function ExportButton() {
     setExporting(true)
 
     try {
-      const params = new URLSearchParams({ product, date, run, variable })
-      if (level != null) params.set('level', String(level))
+      // Get forecast hours
+      const timesResp = await fetch(`/api/times?product=${product}&date=${date}&run=${run}`)
+      if (!timesResp.ok) { setExporting(false); return }
+      const timesData = await timesResp.json()
+      const fhrs: number[] = timesData.forecast_hours.map((e: { fhr: number }) => e.fhr)
+      if (fhrs.length === 0) { setExporting(false); return }
 
-      const resp = await fetch(`/api/export-gif?${params.toString()}`)
-      if (!resp.ok) {
-        console.error('GIF export failed:', resp.statusText)
-        return
+      const { encode } = await import('modern-gif')
+      const mapCanvas = map.getCanvas()
+      const w = mapCanvas.width
+      const h = mapCanvas.height
+      const originalFhr = forecastHour
+
+      // Load logo
+      const logo = new Image()
+      logo.crossOrigin = 'anonymous'
+      logo.src = '/nws-logo.png'
+      await new Promise<void>(r => { logo.onload = () => r(); logo.onerror = () => r(); if (logo.complete) r() })
+
+      const varInfo = variablesList?.find(v => v.name === variable)
+
+      // Capture each frame
+      const frames: { data: Uint8ClampedArray; delay: number }[] = []
+
+      for (const fhr of fhrs) {
+        // Update fill image source
+        const imgSrc = map.getSource('fill-image-source') as any
+        if (imgSrc && 'updateImage' in imgSrc) {
+          const p = new URLSearchParams({ product, date, run, variable, fhr: String(fhr) })
+          if (level != null) p.set('level', String(level))
+          imgSrc.updateImage({ url: `/api/fill-image?${p.toString()}` })
+        }
+
+        // Wait for image load + render
+        await new Promise(r => setTimeout(r, 500))
+        map.triggerRepaint()
+        await new Promise(r => requestAnimationFrame(r))
+        await new Promise(r => setTimeout(r, 150))
+
+        // Composite frame (same as PNG export)
+        const fc = document.createElement('canvas')
+        fc.width = w; fc.height = h
+        const ctx = fc.getContext('2d')!
+        ctx.drawImage(mapCanvas, 0, 0)
+
+        // Colorbar
+        if (varInfo?.rendering?.colors && varInfo.rendering.fillLevels) {
+          const { colors, fillLevels } = varInfo.rendering
+          const bh = Math.min(h * 0.6, 300)
+          drawColorbar(ctx, 16, Math.round((h - bh) / 2) + 20, 100, bh, colors, fillLevels, varInfo.fullName)
+        }
+
+        // Disclaimer
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
+        ctx.fillRect(0, h - 60, w, 20)
+        ctx.fillStyle = '#f5a623'
+        ctx.font = '10px sans-serif'
+        ctx.fillText('\u26a0 EXPERIMENTAL \u2014 Not for operational use.', 12, h - 46)
+
+        // Metadata bar with valid time
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+        ctx.fillRect(0, h - 40, w, 40)
+        ctx.fillStyle = '#ffffff'
+        ctx.font = 'bold 16px sans-serif'
+        const initDate = new Date(`${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}T${run.padStart(2,'0')}:00:00Z`)
+        const validDate = new Date(initDate.getTime() + fhr * 3600 * 1000)
+        const validStr = validDate.toISOString().replace('T', ' ').slice(0, 16) + 'Z'
+        ctx.fillText(`${variable}  |  Init: ${date} ${run}Z  |  FHR: ${String(fhr).padStart(3, '0')}  |  Valid: ${validStr}`, 12, h - 14)
+
+        // Logo
+        if (logo.complete && logo.naturalWidth > 0) {
+          ctx.drawImage(logo, w - 46, h - 38, 36, 36)
+        }
+
+        const imgData = ctx.getImageData(0, 0, w, h)
+        frames.push({ data: imgData.data, delay: 200 })
       }
 
-      const blob = await resp.blob()
+      // Restore original frame
+      const imgSrc = map.getSource('fill-image-source') as any
+      if (imgSrc && 'updateImage' in imgSrc) {
+        const p = new URLSearchParams({ product, date, run, variable, fhr: String(originalFhr) })
+        if (level != null) p.set('level', String(level))
+        imgSrc.updateImage({ url: `/api/fill-image?${p.toString()}` })
+      }
+
+      // Resize and encode GIF (max 800px wide for reasonable size)
+      const gifW = Math.min(w, 800)
+      const gifH = Math.round(gifW * h / w)
+
+      const resized = frames.map(f => {
+        const s = document.createElement('canvas'); s.width = w; s.height = h
+        const sc = s.getContext('2d')!
+        sc.putImageData(new ImageData(f.data, w, h), 0, 0)
+        const d = document.createElement('canvas'); d.width = gifW; d.height = gifH
+        const dc = d.getContext('2d')!
+        dc.drawImage(s, 0, 0, gifW, gifH)
+        return { data: dc.getImageData(0, 0, gifW, gifH).data, delay: f.delay }
+      })
+
+      const output = await encode({
+        width: gifW,
+        height: gifH,
+        frames: resized.map(f => ({ data: f.data, delay: f.delay })),
+      })
+
+      const blob = new Blob([output], { type: 'image/gif' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.download = `${variable}_${date}_animation.gif`
@@ -226,7 +323,7 @@ function ExportButton() {
     } finally {
       setExporting(false)
     }
-  }, [map, state])
+  }, [map, state, forecastHour, variablesList])
 
   return (
     <fieldset
