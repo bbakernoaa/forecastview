@@ -20,6 +20,101 @@ from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer
 
 
+def shift_grid_to_minus180(
+    field: np.ndarray,
+    lons: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, int]:
+    """Shift a 0-360 longitude grid to -180..180 before contouring.
+
+    Rolls the field and longitude array so that the grid starts at -180°,
+    eliminating the 0°/360° seam that causes contour polygon artifacts.
+
+    Parameters
+    ----------
+    field : np.ndarray
+        2D field array with shape (ny, nx).
+    lons : np.ndarray
+        1D longitude array (must be monotonically increasing, 0..360 range).
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray, int]
+        (shifted_field, shifted_lons, split_index) where split_index is
+        the number of columns rolled.
+    """
+    if lons.ndim != 1:
+        return field, lons, 0
+
+    # Only shift if lons are in 0-360 range
+    if lons[0] >= 0 and lons[-1] > 180:
+        split_idx = int(np.searchsorted(lons, 180.0))
+        shifted_lons = np.concatenate([lons[split_idx:] - 360.0, lons[:split_idx]])
+        shifted_field = np.roll(field, -split_idx, axis=1)
+        return shifted_field, shifted_lons, split_idx
+
+    return field, lons, 0
+
+
+def _transform_vertices(
+    verts: np.ndarray,
+    mapper: CoordinateMapper,
+    transformer: CoordinateTransformer,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Transform contour vertices from grid-index space to geographic coordinates.
+
+    Handles fractional grid indices properly via linear interpolation
+    for regular grids, preserving sub-grid contour vertex precision.
+    This avoids the integer-truncation artifacts that occur when
+    snapping fractional indices to the nearest grid point.
+
+    Parameters
+    ----------
+    verts : np.ndarray
+        Nx2 array of (col_index, row_index) in floating-point grid space
+        as produced by contourpy.
+    mapper : CoordinateMapper
+        Maps grid indices to native CRS coordinates. Used to access
+        the underlying coordinate arrays.
+    transformer : CoordinateTransformer
+        Transforms native CRS coordinates to geographic (lon, lat).
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        (lon, lat) arrays in geographic coordinates (EPSG:4326).
+    """
+    col_indices = verts[:, 0]
+    row_indices = verts[:, 1]
+
+    # Extract 1D coordinate vectors for interpolation.
+    # Works for both truly 1D coords and regular grids stored as 2D meshgrids.
+    coords = mapper._coordinates
+    if coords.lons.ndim == 1:
+        lons_1d = np.asarray(coords.lons, dtype=np.float64)
+        lats_1d = np.asarray(coords.lats, dtype=np.float64)
+    elif coords.lons.ndim == 2:
+        # Regular grid stored as 2D meshgrid — extract 1D vectors
+        lons_1d = np.asarray(coords.lons[0, :], dtype=np.float64)
+        lats_1d = np.asarray(coords.lats[:, 0], dtype=np.float64)
+    else:
+        # Fallback for unexpected cases
+        lons_1d = np.asarray(coords.lons.ravel()[:mapper.shape[1]], dtype=np.float64)
+        lats_1d = np.asarray(coords.lats.ravel()[:mapper.shape[0]], dtype=np.float64)
+
+    # Clip to valid index range
+    col_clipped = np.clip(col_indices, 0, len(lons_1d) - 1)
+    row_clipped = np.clip(row_indices, 0, len(lats_1d) - 1)
+
+    # Linear interpolation for fractional grid indices
+    x_native = np.interp(col_clipped, np.arange(len(lons_1d)), lons_1d)
+    y_native = np.interp(row_clipped, np.arange(len(lats_1d)), lats_1d)
+
+    # Transform native CRS → geographic (lon, lat)
+    lon, lat = transformer.native_to_geographic(x_native, y_native)
+
+    return np.asarray(lon), np.asarray(lat)
+
+
 def contours_to_geojson(
     result: ContourResult,
     mapper: CoordinateMapper,
@@ -72,26 +167,10 @@ def contours_to_geojson(
         multi_line_coords: list[list[list[float]]] = []
 
         for verts in contour_line.vertices:
-            # verts is Nx2 with columns [x=col_index, y=row_index]
-            col_indices = verts[:, 0]
-            row_indices = verts[:, 1]
-
-            # Step 1: grid indices → native CRS coordinates
-            # CoordinateMapper.grid_to_native(i=row, j=col) → (x_native, y_native)
-            x_native, y_native = mapper.grid_to_native(
-                row_indices.astype(int), col_indices.astype(int)
-            )
-
-            # Step 2: native CRS → geographic (lon, lat)
-            lon, lat = transformer.native_to_geographic(
-                np.asarray(x_native, dtype=np.float64),
-                np.asarray(y_native, dtype=np.float64),
-            )
+            # Transform fractional grid indices → geographic coordinates
+            lon_arr, lat_arr = _transform_vertices(verts, mapper, transformer)
 
             # Build coordinate list as [lon, lat] pairs (GeoJSON standard)
-            lon_arr = np.asarray(lon)
-            lat_arr = np.asarray(lat)
-
             line_coords: list[list[float]] = [
                 [float(lon_arr[k]), float(lat_arr[k])]
                 for k in range(len(lon_arr))
@@ -119,22 +198,21 @@ def contours_to_geojson(
     return {"type": "FeatureCollection", "features": features}
 
 
-def _split_rings_by_codes(
-    vertices: np.ndarray, codes: np.ndarray
+def _split_rings_by_offsets(
+    vertices: np.ndarray, offsets: np.ndarray
 ) -> list[np.ndarray]:
-    """Split a single polygon vertices array into individual rings using path codes.
+    """Split a polygon vertices array into individual rings using offset boundaries.
 
-    Path codes follow matplotlib conventions:
-    - 1 = MOVETO (start of a new ring)
-    - 2 = LINETO (continuation)
-    - 79 = CLOSEPOLY (close the ring)
+    Used with contourpy's FillType.OuterOffset output format, where
+    offsets mark the start/end of each ring within the vertices array.
 
     Parameters
     ----------
     vertices : np.ndarray
         Nx2 array of polygon vertex coordinates.
-    codes : np.ndarray
-        N-length array of path codes.
+    offsets : np.ndarray
+        Array of ring boundary offsets. Ring i spans
+        vertices[offsets[i]:offsets[i+1]].
 
     Returns
     -------
@@ -142,16 +220,10 @@ def _split_rings_by_codes(
         List of Mx2 arrays, each representing one closed ring.
     """
     rings: list[np.ndarray] = []
-    # Find ring starts (MOVETO = 1)
-    moveto_indices = np.where(codes == 1)[0]
 
-    for idx, start in enumerate(moveto_indices):
-        # Ring ends at next MOVETO or end of array
-        if idx + 1 < len(moveto_indices):
-            end = moveto_indices[idx + 1]
-        else:
-            end = len(codes)
-
+    for i in range(len(offsets) - 1):
+        start = int(offsets[i])
+        end = int(offsets[i + 1])
         ring_verts = vertices[start:end]
         if len(ring_verts) >= 3:
             rings.append(ring_verts)
@@ -212,34 +284,34 @@ def filled_contours_to_geojson(
         # Collect all transformed polygon rings for this band
         all_polygon_rings: list[list[list[list[float]]]] = []
 
-        for verts, codes in zip(fill_band.polygons, fill_band.codes):
-            # Split into individual rings using path codes
-            rings = _split_rings_by_codes(verts, codes)
+        for verts, offsets in zip(fill_band.polygons, fill_band.codes):
+            # Split into individual rings using offset boundaries
+            rings = _split_rings_by_offsets(verts, offsets)
             if not rings:
                 continue
 
             # Transform each ring
             polygon_rings: list[list[list[float]]] = []
             for ring in rings:
-                # ring is Nx2 with columns [x=col_index, y=row_index]
-                col_indices = ring[:, 0]
-                row_indices = ring[:, 1]
+                # Transform fractional grid indices → geographic coordinates
+                lon_arr, lat_arr = _transform_vertices(ring, mapper, transformer)
 
-                # Step 1: grid indices → native CRS coordinates
-                x_native, y_native = mapper.grid_to_native(
-                    row_indices.astype(int), col_indices.astype(int)
-                )
+                # Filter out artifact polygons:
+                # 1. Rings spanning > 100° longitude (grid seam wrap-arounds)
+                # 2. Rings with extreme aspect ratios (horizontal bands)
+                lon_range = float(np.max(lon_arr) - np.min(lon_arr))
+                lat_range = float(np.max(lat_arr) - np.min(lat_arr))
 
-                # Step 2: native CRS → geographic (lon, lat)
-                lon, lat = transformer.native_to_geographic(
-                    np.asarray(x_native, dtype=np.float64),
-                    np.asarray(y_native, dtype=np.float64),
-                )
+                if lon_range > 100.0:
+                    continue
+
+                # Skip degenerate thin horizontal bands (aspect ratio > 50:1)
+                if lat_range > 0 and lon_range / max(lat_range, 0.01) > 50:
+                    continue
+                if lat_range < 0.3 and lon_range > 10:
+                    continue
 
                 # Build coordinate list as [lon, lat] pairs
-                lon_arr = np.asarray(lon)
-                lat_arr = np.asarray(lat)
-
                 ring_coords: list[list[float]] = [
                     [float(lon_arr[k]), float(lat_arr[k])]
                     for k in range(len(lon_arr))

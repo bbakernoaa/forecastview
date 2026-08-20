@@ -1,33 +1,18 @@
 import type { VariableInfo } from '../api/types'
 
 interface LegendProps {
-  /** The currently selected variable's metadata, or null if none selected */
   variable: VariableInfo | null
 }
 
 /**
- * Discrete blue→red color palette matching the FilledContourLayer.
- * Each color corresponds to one fill band between adjacent fill levels.
+ * Fallback palette if the API doesn't provide colors.
  */
-const DISCRETE_PALETTE = [
-  '#313695',
-  '#4575b4',
-  '#74add1',
-  '#abd9e9',
-  '#e0f3f8',
-  '#ffffbf',
-  '#fee090',
-  '#fdae61',
-  '#f46d43',
-  '#d73027',
-  '#a50026',
-  '#67001f',
+const FALLBACK_PALETTE = [
+  '#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8',
+  '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027',
+  '#a50026', '#67001f',
 ]
 
-/**
- * Formats a numeric value for display in the legend, keeping it compact.
- * Uses up to 4 significant digits to avoid overly wide labels.
- */
 function formatValue(value: number): string {
   if (value === 0) return '0'
   const abs = Math.abs(value)
@@ -37,30 +22,20 @@ function formatValue(value: number): string {
   return value.toExponential(1)
 }
 
-/**
- * Legend component displaying the color ramp and value labels for the
- * currently selected variable. Renders in the left panel.
- *
- * Shows:
- * - Variable name and units at the top
- * - A vertical color bar with discrete bands matching the fill layer palette
- * - Value labels at each fill level boundary
- * - Contour interval at the bottom
- *
- * Returns null when no variable is selected.
- */
 function Legend({ variable }: LegendProps) {
   if (!variable) return null
 
   const rendering = variable.rendering
   if (!rendering) return null
 
-  const { fillLevels, contourInterval } = rendering
+  const { fillLevels, contourInterval, colors } = rendering
   if (!fillLevels || fillLevels.length < 2) return null
 
-  // Number of bands = number of fill levels - 1
-  // (each band spans from fillLevels[i] to fillLevels[i+1])
+  // Number of color bands = number of fill levels - 1
   const numBands = fillLevels.length - 1
+
+  // Use API-provided colors or fallback
+  const palette = colors && colors.length > 0 ? colors : FALLBACK_PALETTE
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -76,26 +51,13 @@ function Legend({ variable }: LegendProps) {
         >
           {variable.fullName}
         </div>
-        <div
-          style={{
-            fontSize: '0.72rem',
-            color: '#999',
-            marginTop: '2px',
-          }}
-        >
+        <div style={{ fontSize: '0.72rem', color: '#999', marginTop: '2px' }}>
           ({variable.units})
         </div>
       </div>
 
       {/* Color ramp with value labels */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '4px',
-          alignItems: 'stretch',
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '4px', alignItems: 'stretch' }}>
         {/* Color bar */}
         <div
           style={{
@@ -109,15 +71,15 @@ function Legend({ variable }: LegendProps) {
           }}
         >
           {Array.from({ length: numBands }, (_, i) => {
-            // Reverse order so highest values are at the top
+            // Reverse so highest values at top
             const bandIdx = numBands - 1 - i
-            const colorIdx = bandIdx % DISCRETE_PALETTE.length
+            const color = palette[bandIdx % palette.length]
             return (
               <div
                 key={bandIdx}
                 style={{
                   flex: 1,
-                  backgroundColor: DISCRETE_PALETTE[colorIdx],
+                  backgroundColor: color,
                   minHeight: '16px',
                 }}
               />
@@ -125,7 +87,7 @@ function Legend({ variable }: LegendProps) {
           })}
         </div>
 
-        {/* Value labels aligned to band boundaries */}
+        {/* Value labels */}
         <div
           style={{
             display: 'flex',
@@ -133,19 +95,10 @@ function Legend({ variable }: LegendProps) {
             justifyContent: 'space-between',
             fontSize: '0.68rem',
             color: '#bbb',
-            paddingTop: '0px',
-            paddingBottom: '0px',
           }}
         >
-          {/* Labels from top (highest) to bottom (lowest) */}
           {[...fillLevels].reverse().map((value, i) => (
-            <span
-              key={i}
-              style={{
-                lineHeight: 1,
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <span key={i} style={{ lineHeight: 1, whiteSpace: 'nowrap' }}>
               {formatValue(value)}
             </span>
           ))}

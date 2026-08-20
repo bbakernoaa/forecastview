@@ -22,7 +22,7 @@ from typing import Any
 from backend.app.api.dependencies import get_field_selector
 from backend.app.config.loader import get_domain_config_safe
 from backend.app.contours.generator import generate_filled_contours
-from backend.app.contours.geojson import filled_contours_to_geojson
+from backend.app.contours.geojson import filled_contours_to_geojson, shift_grid_to_minus180
 from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer
 
@@ -162,6 +162,24 @@ async def get_filled(
             status_code=404,
             detail=f"Could not get coordinates/projection: {exc}",
         )
+
+    # --- Step 2.5: Shift grid from 0-360 to -180..180 to avoid seam artifacts ---
+    import numpy as _np
+    from backend.app.data.field_selector import GridCoordinates
+    # Extract 1D lon array (use first row if 2D)
+    _lons_1d = coordinates.lons[0, :] if coordinates.lons.ndim == 2 else coordinates.lons
+    _lats_1d = coordinates.lats[:, 0] if coordinates.lats.ndim == 2 else coordinates.lats
+    shifted_field, shifted_lons, _ = shift_grid_to_minus180(field, _lons_1d)
+    if not _np.array_equal(shifted_lons, _lons_1d):
+        # Rebuild 2D coords from shifted 1D arrays
+        _lons_2d, _lats_2d = _np.meshgrid(shifted_lons, _lats_1d)
+        shifted_coords = GridCoordinates(
+            lats=_lats_2d,
+            lons=_lons_2d,
+            shape=coordinates.shape,
+        )
+        field = shifted_field
+        coordinates = shifted_coords
 
     # --- Step 3: Generate filled contours ---
     t_contour_start = time.perf_counter()

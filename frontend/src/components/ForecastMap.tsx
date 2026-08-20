@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Map as MaplibreMap } from 'maplibre-gl'
 import type { MapStyleKey } from '../config/mapStyles'
 import {
@@ -18,6 +18,7 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MaplibreMap | null>(null)
   const initializedRef = useRef(false)
+  const styleKeyRef = useRef(styleKey)
 
   useEffect(() => {
     if (!containerRef.current || initializedRef.current) return
@@ -47,9 +48,45 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
     }
   }, [])
 
+  // Handle style changes by destroying and recreating the map
   useEffect(() => {
-    if (!mapRef.current) return
-    mapRef.current.setStyle(MAP_STYLES[styleKey])
+    // Skip the initial render (handled above)
+    if (styleKeyRef.current === styleKey) return
+    styleKeyRef.current = styleKey
+
+    if (!containerRef.current || !mapRef.current) return
+
+    const oldMap = mapRef.current
+
+    // Get current view state before destroying
+    const center = oldMap.getCenter()
+    const zoom = oldMap.getZoom()
+    const bearing = oldMap.getBearing()
+    const pitch = oldMap.getPitch()
+
+    // Signal layers to clean up
+    onMapReady?.(null)
+    oldMap.remove()
+    mapRef.current = null
+
+    // Create a new map with the new style
+    const newMap = new MaplibreMap({
+      container: containerRef.current,
+      style: MAP_STYLES[styleKey],
+      center,
+      zoom,
+      bearing,
+      pitch,
+      minZoom: MIN_ZOOM,
+      maxZoom: MAX_ZOOM,
+    })
+
+    mapRef.current = newMap
+    ;(window as unknown as Record<string, unknown>).__map = newMap
+
+    newMap.on('load', () => {
+      onMapReady?.(newMap)
+    })
   }, [styleKey])
 
   return (

@@ -3,39 +3,22 @@ import type { Map as MaplibreMap } from 'maplibre-gl'
 import { useContours } from '../hooks/useContours'
 
 interface IsolineLayerProps {
-  /** MapLibre map instance to add layers to */
   map: MaplibreMap | null
-  /** Product identifier */
   product: string
-  /** Selected date in YYYYMMDD format */
   date: string | null
-  /** Selected initialization run (e.g. "00") */
   run: string | null
-  /** Selected variable name */
   variable: string | null
-  /** Vertical level (null for surface-only fields) */
   level: number | null
-  /** Forecast hour */
   fhr: number | null
-  /** Contour interval override (null = backend default) */
   interval?: number | null
-  /** Whether the isoline layers are visible */
   visible?: boolean
 }
 
 const SOURCE_ID = 'isoline-source'
 const MINOR_LAYER_ID = 'isoline-minor-layer'
 const MAJOR_LAYER_ID = 'isoline-major-layer'
+const LABEL_LAYER_ID = 'contour-label-layer'
 
-/**
- * Renders contour isolines on the MapLibre map with distinct
- * styling for major and minor contours.
- *
- * Major contours: 2px opaque lines
- * Minor contours: 1px semi-transparent lines
- *
- * Uses the useContours hook to fetch GeoJSON data from /api/contours.
- */
 function IsolineLayer({
   map,
   product,
@@ -48,6 +31,8 @@ function IsolineLayer({
   visible = true,
 }: IsolineLayerProps) {
   const addedRef = useRef(false)
+  const visibleRef = useRef(visible)
+  visibleRef.current = visible
 
   const { status, data } = useContours({
     product,
@@ -59,12 +44,10 @@ function IsolineLayer({
     interval,
   })
 
-  // Add or update layers when data arrives
   useEffect(() => {
     if (!map) return
 
     if (status !== 'success' || !data) {
-      // Clean up if no data
       if (addedRef.current) {
         removeLayers(map)
         addedRef.current = false
@@ -72,7 +55,7 @@ function IsolineLayer({
       return
     }
 
-    addOrUpdateLayers(map, data)
+    addOrUpdateLayers(map, data, visibleRef.current)
     addedRef.current = true
 
     return () => {
@@ -83,7 +66,6 @@ function IsolineLayer({
     }
   }, [map, status, data])
 
-  // Handle visibility toggle
   useEffect(() => {
     if (!map || !addedRef.current) return
 
@@ -101,36 +83,36 @@ function IsolineLayer({
     }
   }, [map, visible])
 
-  // This component renders nothing itself — it only manipulates the map
   return null
 }
 
 function addOrUpdateLayers(
   map: MaplibreMap,
   collection: { type: string; features: GeoJSON.Feature[] },
+  visible: boolean,
 ): void {
   const geojsonData: GeoJSON.FeatureCollection = {
     type: 'FeatureCollection',
     features: collection.features as GeoJSON.Feature[],
   }
 
+  const visibility = visible ? 'visible' : 'none'
+
   if (map.getSource(SOURCE_ID)) {
-    // Update existing source data
     const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource
     source.setData(geojsonData)
   } else {
-    // Add new source
     map.addSource(SOURCE_ID, {
       type: 'geojson',
       data: geojsonData,
     })
 
-    // Minor contours: thin, semi-transparent
     map.addLayer({
       id: MINOR_LAYER_ID,
       type: 'line',
       source: SOURCE_ID,
       filter: ['==', ['get', 'major'], false],
+      layout: { visibility },
       paint: {
         'line-color': '#333333',
         'line-width': 1,
@@ -138,12 +120,12 @@ function addOrUpdateLayers(
       },
     })
 
-    // Major contours: thicker, fully opaque
     map.addLayer({
       id: MAJOR_LAYER_ID,
       type: 'line',
       source: SOURCE_ID,
       filter: ['==', ['get', 'major'], true],
+      layout: { visibility },
       paint: {
         'line-color': '#333333',
         'line-width': 2,
@@ -155,6 +137,9 @@ function addOrUpdateLayers(
 
 function removeLayers(map: MaplibreMap): void {
   try {
+    if (map.getLayer(LABEL_LAYER_ID)) {
+      map.removeLayer(LABEL_LAYER_ID)
+    }
     if (map.getLayer(MAJOR_LAYER_ID)) {
       map.removeLayer(MAJOR_LAYER_ID)
     }

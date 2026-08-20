@@ -12,6 +12,7 @@ export interface VariableRenderingInfo {
   colormap: string;
   contourInterval: number;
   fillLevels: number[];
+  colors?: string[];
 }
 
 export interface VariableInfo {
@@ -81,6 +82,7 @@ export interface FilledMetadata {
   level: number | null;
   fhr: number;
   fillLevels: number[];
+  colors?: string[];
   fieldMin: number;
   fieldMax: number;
   numBands: number;

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useViewer } from '../context/ViewerContext'
 import { useTimes } from '../hooks/useMetadata'
 import { useAnimation, PLAYBACK_SPEEDS } from '../hooks/useAnimation'
@@ -55,7 +55,7 @@ function formatSpeed(speed: PlaybackSpeed): string {
  * by useAnimation's stale-navigation guard.
  */
 function PlaybackControls() {
-  const { state, dispatch } = useViewer()
+  const { state, dispatch, setPlaying } = useViewer()
   const { product, date, run, forecastHour } = state
 
   const { data: timesData } = useTimes(product, date, run)
@@ -70,6 +70,9 @@ function PlaybackControls() {
     currentFhr: forecastHour,
     dispatch,
   })
+
+  // Sync local playing state to context for prefetch hook
+  useEffect(() => { setPlaying(playing) }, [playing, setPlaying])
 
   const currentIndex = useMemo(() => {
     const idx = forecastHours.indexOf(forecastHour)

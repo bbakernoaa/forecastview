@@ -432,9 +432,7 @@ class FieldSelector:
 
         # Compute initialization time
         try:
-            init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(
-                tzinfo=timezone.utc
-            )
+            init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H")
         except ValueError:
             logger.warning(
                 "field_selector.get_forecast_hours.invalid_date_run",
@@ -840,9 +838,7 @@ class FieldSelector:
         # Select by forecast hour / valid_time if provided
         if fhr is not None and "valid_time" in da.dims:
             try:
-                init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(
-                    tzinfo=timezone.utc
-                )
+                init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H")
                 target_time = init_time + timedelta(hours=fhr)
                 da = da.sel(valid_time=target_time, method="nearest")
             except Exception as exc:

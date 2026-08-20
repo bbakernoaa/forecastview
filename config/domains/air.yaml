@@ -3,7 +3,7 @@
 # GEFS Aerosol Component (GEFS-Aerosols) forecast product.
 
 product:
-  name: "Air Composition"
+  name: "GEFS-Aerosol"
   id: "air"
 
 categories:
@@ -23,9 +23,9 @@ variables:
     units: "Numeric"
     category: "Optical Depth"
     rendering:
-      colormap: "rainbow"
+      colormap: "afmhot_r"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   duAOD550:
     shortName: "duAOD550"
@@ -35,7 +35,7 @@ variables:
     rendering:
       colormap: "YlOrBr"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   ssAOD550:
     shortName: "ssAOD550"
@@ -45,7 +45,7 @@ variables:
     rendering:
       colormap: "Blues"
       contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   omAOD550:
     shortName: "omAOD550"
@@ -55,7 +55,7 @@ variables:
     rendering:
       colormap: "Greens"
       contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   bcAOD550:
     shortName: "bcAOD550"
@@ -65,7 +65,7 @@ variables:
     rendering:
       colormap: "Greys"
       contourInterval: 0.01
-      fillLevels: [0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD340:
     shortName: "totAOD340"
@@ -75,7 +75,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD440:
     shortName: "totAOD440"
@@ -85,7 +85,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD645:
     shortName: "totAOD645"
@@ -95,7 +95,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD870:
     shortName: "totAOD870"
@@ -105,7 +105,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD1640:
     shortName: "totAOD1640"
@@ -115,7 +115,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   totAOD11100:
     shortName: "totAOD11100"
@@ -125,7 +125,7 @@ variables:
     rendering:
       colormap: "rainbow"
       contourInterval: 0.02
-      fillLevels: [0, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0]
+      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   # ===================================================================
   # Scattering Optical Depth

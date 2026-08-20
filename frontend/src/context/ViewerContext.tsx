@@ -15,21 +15,13 @@ import type { RenderingMode } from '../components/RenderingSelector'
 // --------------------------------------------------------------------------
 
 export interface ViewerState {
-  /** Active product identifier */
   product: string
-  /** Selected date in YYYYMMDD format, or null if none selected */
   date: string | null
-  /** Selected initialization run (e.g. "00", "06"), or null */
   run: string | null
-  /** Selected variable name, or null */
   variable: string | null
-  /** Selected vertical level value, or null */
   level: number | null
-  /** Current forecast hour */
   forecastHour: number
-  /** Active rendering mode */
   renderingMode: RenderingMode
-  /** User-overridden contour interval (null = use variable default) */
   contourInterval: number | null
 }
 
@@ -68,16 +60,12 @@ export function viewerReducer(state: ViewerState, action: ViewerAction): ViewerS
         ...state,
         date: action.payload,
         run: null,
-        variable: null,
-        level: null,
         forecastHour: 0,
       }
     case 'SET_RUN':
       return {
         ...state,
         run: action.payload,
-        variable: null,
-        level: null,
         forecastHour: 0,
       }
     case 'SET_VARIABLE':
@@ -119,10 +107,12 @@ export function viewerReducer(state: ViewerState, action: ViewerAction): ViewerS
 export interface ViewerContextValue {
   state: ViewerState
   dispatch: Dispatch<ViewerAction>
-  /** MapLibre map instance (managed separately from reducer) */
   map: MaplibreMap | null
-  /** Set the MapLibre map instance */
   setMap: (map: MaplibreMap | null) => void
+  /** Whether animation playback is active */
+  playing: boolean
+  /** Set animation playing state (called by PlaybackControls) */
+  setPlaying: (playing: boolean) => void
 }
 
 const ViewerContext = createContext<ViewerContextValue | null>(null)
@@ -144,7 +134,6 @@ const INITIAL_STATE: ViewerState = {
 
 interface ViewerProviderProps {
   children: ReactNode
-  /** Override the initial state (useful for testing) */
   initialState?: Partial<ViewerState>
 }
 
@@ -154,17 +143,16 @@ export function ViewerProvider({ children, initialState }: ViewerProviderProps) 
     ...initialState,
   })
 
-  // Map instance is kept as separate state — it's a ref-like value
-  // that doesn't belong in the reducer (not serializable, not part of app logic)
   const [map, setMapRaw] = useState<MaplibreMap | null>(null)
+  const [playing, setPlaying] = useState(false)
 
   const setMap = useCallback((m: MaplibreMap | null) => {
     setMapRaw(m)
   }, [])
 
   const value = useMemo<ViewerContextValue>(
-    () => ({ state, dispatch, map, setMap }),
-    [state, dispatch, map, setMap],
+    () => ({ state, dispatch, map, setMap, playing, setPlaying }),
+    [state, dispatch, map, setMap, playing],
   )
 
   return (

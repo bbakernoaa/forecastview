@@ -1,21 +1,16 @@
 import type { MapStyleKey } from '../config/mapStyles'
 
 interface MapStyleSelectorProps {
-  /** Currently active map style */
   styleKey: MapStyleKey
-  /** Callback when the user selects a different style */
   onChange: (style: MapStyleKey) => void
 }
 
 const STYLE_OPTIONS: { key: MapStyleKey; label: string }[] = [
+  { key: 'liberty', label: 'Liberty' },
   { key: 'dark', label: 'Dark' },
   { key: 'light', label: 'Light' },
 ]
 
-/**
- * Toggle control for switching between dark and light map styles.
- * Renders accessible buttons with aria-pressed state.
- */
 function MapStyleSelector({ styleKey, onChange }: MapStyleSelectorProps) {
   return (
     <fieldset

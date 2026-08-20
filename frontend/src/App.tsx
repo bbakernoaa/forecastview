@@ -1,15 +1,16 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import ProductSelector from './components/ProductSelector'
 import ForecastMap from './components/ForecastMap'
 import BoundsLayer from './components/BoundsLayer'
 import PreviewLayer from './components/PreviewLayer'
-import FilledContourLayer from './components/FilledContourLayer'
+import FillImageLayer from './components/FillImageLayer'
 import IsolineLayer from './components/IsolineLayer'
 import ContourLabelLayer from './components/ContourLabelLayer'
 import MapStyleSelector from './components/MapStyleSelector'
 import RenderingSelector from './components/RenderingSelector'
 import type { RenderingMode } from './components/RenderingSelector'
 import ContourIntervalSelector from './components/ContourIntervalSelector'
+import OpacitySlider from './components/OpacitySlider'
 import ConnectionStatus from './components/ConnectionStatus'
 import NotificationArea from './components/NotificationArea'
 import DateSelector from './components/DateSelector'
@@ -38,8 +39,9 @@ function isValidMapStyleKey(value: unknown): value is MapStyleKey {
 }
 
 function AppContent() {
-  const { state, dispatch, map, setMap } = useViewer()
+  const { state, dispatch, map, setMap, playing } = useViewer()
   const { product, date, run, variable, level, forecastHour, renderingMode, contourInterval } = state
+  const [fillOpacity, setFillOpacity] = useState(0.7)
 
   // Sync viewer state ↔ URL query parameters
   useUrlState(state, dispatch)
@@ -70,6 +72,7 @@ function AppContent() {
     variable,
     level,
     interval: contourInterval,
+    playing,
   })
 
   // Derive the full VariableInfo object for the selected variable name
@@ -148,6 +151,7 @@ function AppContent() {
           interval={contourInterval}
           onChange={handleContourIntervalChange}
         />
+        <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
         <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
         <ConnectionStatus />
       </Toolbar>
@@ -174,7 +178,7 @@ function AppContent() {
             variable={variable}
           />
           */ }
-          <FilledContourLayer
+          <FillImageLayer
             map={map}
             product={product}
             date={date}
@@ -183,6 +187,7 @@ function AppContent() {
             level={level}
             fhr={forecastHour}
             visible={renderingMode === 'filled' || renderingMode === 'filled+contours'}
+            opacity={fillOpacity}
           />
           <IsolineLayer
             map={map}

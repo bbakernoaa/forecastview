@@ -153,9 +153,15 @@ class CoordinateMapper:
         lats = self._coordinates.lats
         lons = self._coordinates.lons
 
+        # Handle longitude wrapping: if the grid uses 0-360 but input is -180..180
+        x_arr = np.asarray(x, dtype=np.float64)
+        if self._lon0 >= 0 and float(lons[-1]) > 180:
+            # Grid is 0-360, wrap negative longitudes
+            x_arr = np.where(x_arr < 0, x_arr + 360, x_arr)
+
         # Compute fractional indices
         i_frac = (np.asarray(y) - self._lat0) / self._dlat
-        j_frac = (np.asarray(x) - self._lon0) / self._dlon
+        j_frac = (x_arr - self._lon0) / self._dlon
 
         # Round to nearest and clip to valid range
         i = np.clip(np.round(i_frac).astype(int), 0, len(lats) - 1)
@@ -180,10 +186,16 @@ class CoordinateMapper:
         results_j = np.empty(x_arr.shape, dtype=int)
 
         for idx in range(x_arr.size):
-            # Squared distance on the coordinate grid
-            dist_sq = (lats - y_arr.flat[idx]) ** 2 + (
-                lons - x_arr.flat[idx]
-            ) ** 2
+            query_x = x_arr.flat[idx]
+            query_y = y_arr.flat[idx]
+
+            # Handle longitude wrapping: compute the shortest angular distance
+            # This handles both 0-360 and -180..180 grids correctly
+            lon_diff = lons - query_x
+            # Wrap to [-180, 180] for shortest-path distance
+            lon_diff = (lon_diff + 180) % 360 - 180
+
+            dist_sq = (lats - query_y) ** 2 + lon_diff ** 2
             min_idx = np.argmin(dist_sq)
             i_val, j_val = np.unravel_index(min_idx, lats.shape)
             results_i.flat[idx] = i_val

@@ -13,6 +13,7 @@ from typing import Any
 import structlog
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
+from matplotlib import colormaps as mpl_colormaps
 
 from backend.app.api.dependencies import get_field_selector
 
@@ -65,6 +66,10 @@ class VariableRenderingInfo(BaseModel):
     contourInterval: float = Field(0.1, description="Default contour interval")
     fillLevels: list[float] = Field(
         default_factory=list, description="Fill level boundaries"
+    )
+    colors: list[str] = Field(
+        default_factory=list,
+        description="Hex colors for each fill band (computed from colormap)",
     )
 
 
@@ -130,6 +135,36 @@ class TimesResponse(BaseModel):
 # --------------------------------------------------------------------------
 # Static catalog data
 # --------------------------------------------------------------------------
+
+
+def _compute_band_colors(colormap_name: str, n_levels: int) -> list[str]:
+    """Compute hex colors for fill bands from a matplotlib colormap.
+
+    Returns n_levels colors (one per band between adjacent levels,
+    plus the below-first-level band). This matches the fill image
+    which colors bands 1..n_levels from the colormap.
+
+    The legend shows n_levels-1 visible bands (between adjacent levels).
+    colors[0] corresponds to the fill_levels[0]..fill_levels[1] band.
+    """
+    n_bands = n_levels  # total colored bands in the fill image
+    if n_bands <= 0:
+        return []
+
+    try:
+        cmap = mpl_colormaps[colormap_name]
+    except (KeyError, ValueError):
+        cmap = mpl_colormaps["turbo"]
+
+    colors = []
+    for i in range(n_bands):
+        t = i / max(n_bands - 1, 1)
+        r, g, b, _ = cmap(t)
+        hex_color = f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+        colors.append(hex_color)
+
+    return colors
+
 
 _CATALOG: list[CatalogEntry] = [
     CatalogEntry(product="air", description="Air Composition"),
@@ -238,10 +273,14 @@ async def get_variables(
     for v in raw_variables:
         rendering = None
         if "rendering" in v:
+            fill_levels = v["rendering"]["fillLevels"]
+            colormap_name = v["rendering"]["colormap"]
+            colors = _compute_band_colors(colormap_name, len(fill_levels))
             rendering = VariableRenderingInfo(
-                colormap=v["rendering"]["colormap"],
+                colormap=colormap_name,
                 contourInterval=v["rendering"]["contourInterval"],
-                fillLevels=v["rendering"]["fillLevels"],
+                fillLevels=fill_levels,
+                colors=colors,
             )
         variables.append(
             VariableInfo(

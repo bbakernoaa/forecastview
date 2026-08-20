@@ -446,7 +446,8 @@ def generate_filled_contours(
         x=x,
         y=y,
         z=field,
-        fill_type=FillType.OuterCode,
+        fill_type=FillType.ChunkCombinedOffsetOffset,
+        chunk_size=0,  # No chunking - use full grid
     )
 
     # Generate filled polygons for each band between consecutive levels
@@ -456,26 +457,48 @@ def generate_filled_contours(
         lower = float(levels[i])
         upper = float(levels[i + 1])
 
-        # contourpy filled returns (vertices_list, codes_list) for OuterCode
+        # contourpy filled returns (points_list, offsets_list, outer_offsets_list)
+        # for ChunkCombinedOffsetOffset. Each list element is one chunk.
         result = gen.filled(lower, upper)
-        vertices_list = result[0]  # list of Nx2 arrays (polygon rings)
-        codes_list = result[1]  # list of code arrays
+        points_list = result[0]
+        offsets_list = result[1]
+        outer_offsets_list = result[2]
 
-        # Filter out empty or degenerate polygons
+        # Process each chunk: split into individual polygons using outer_offsets
         valid_polygons: list[np.ndarray] = []
-        valid_codes: list[np.ndarray] = []
+        valid_offsets: list[np.ndarray] = []
 
-        for verts, codes in zip(vertices_list, codes_list):
-            if verts is not None and len(verts) >= 3:
-                valid_polygons.append(verts)
-                valid_codes.append(codes)
+        for points, offsets, outer_offsets in zip(
+            points_list, offsets_list, outer_offsets_list
+        ):
+            if points is None or len(points) < 3:
+                continue
+
+            # Each polygon spans outer_offsets[i] to outer_offsets[i+1] in the offsets array
+            for poly_idx in range(len(outer_offsets) - 1):
+                ring_start = int(outer_offsets[poly_idx])
+                ring_end = int(outer_offsets[poly_idx + 1])
+
+                # Get the ring offsets for this polygon
+                poly_ring_offsets = offsets[ring_start:ring_end + 1]
+
+                # Get the vertices for this polygon
+                vert_start = int(poly_ring_offsets[0])
+                vert_end = int(poly_ring_offsets[-1])
+                poly_verts = points[vert_start:vert_end]
+
+                if len(poly_verts) >= 3:
+                    # Adjust offsets to be relative to poly_verts start
+                    relative_offsets = poly_ring_offsets - vert_start
+                    valid_polygons.append(poly_verts)
+                    valid_offsets.append(relative_offsets)
 
         filled_polygons.append(
             FilledContourPolygon(
                 level_low=lower,
                 level_high=upper,
                 polygons=valid_polygons,
-                codes=valid_codes,
+                codes=valid_offsets,
             )
         )
 
