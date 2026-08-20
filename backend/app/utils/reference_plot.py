@@ -316,9 +316,7 @@ def _parse_proj4(proj4_string: str) -> dict[str, str]:
     return params
 
 
-def _ensure_2d(
-    lons: np.ndarray, lats: np.ndarray
-) -> tuple[np.ndarray, np.ndarray]:
+def _ensure_2d(lons: np.ndarray, lats: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Expand 1D coordinate arrays to 2D meshgrid if needed."""
     if lons.ndim == 1 and lats.ndim == 1:
         lons_2d, lats_2d = np.meshgrid(lons, lats)
@@ -326,9 +324,7 @@ def _ensure_2d(
     return lons, lats
 
 
-def _compute_extent(
-    lons: np.ndarray, lats: np.ndarray, pad: float = 1.0
-) -> list[float]:
+def _compute_extent(lons: np.ndarray, lats: np.ndarray, pad: float = 1.0) -> list[float]:
     """Compute map extent [west, east, south, north] with padding."""
     lon_min = float(np.nanmin(lons))
     lon_max = float(np.nanmax(lons))
@@ -343,9 +339,7 @@ def _compute_extent(
     ]
 
 
-def _compute_levels(
-    field: np.ndarray, interval: float | None
-) -> int | np.ndarray:
+def _compute_levels(field: np.ndarray, interval: float | None) -> int | np.ndarray:
     """Compute contour levels from an interval, or fall back to auto."""
     if interval is None:
         return 15
@@ -372,9 +366,7 @@ def _add_geographic_features(ax: Any) -> None:
     """Add standard cartopy geographic features to an axes."""
     ax.add_feature(cfeature.COASTLINE, linewidth=0.8, edgecolor="black")
     ax.add_feature(cfeature.BORDERS, linewidth=0.5, edgecolor="gray")
-    ax.add_feature(
-        cfeature.STATES, linewidth=0.3, edgecolor="gray", linestyle="--"
-    )
+    ax.add_feature(cfeature.STATES, linewidth=0.3, edgecolor="gray", linestyle="--")
     ax.gridlines(draw_labels=True, linewidth=0.3, alpha=0.5)
 
 

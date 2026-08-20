@@ -51,9 +51,7 @@ class TestVerifyRealField:
         # Discover an available date/run or skip the whole class
         result = _try_discover_date_and_run(self.store)
         if result is None:
-            pytest.skip(
-                "S3 bucket noaa-gefs-pds is unreachable or has no available data"
-            )
+            pytest.skip("S3 bucket noaa-gefs-pds is unreachable or has no available data")
         self.date, self.run = result
 
     def test_field_shape_is_reasonable(self):
@@ -85,9 +83,7 @@ class TestVerifyRealField:
         stats = summarize_field(field, variable_name="totAOD550")
         min_val = stats["min"]
 
-        assert min_val >= 0, (
-            f"AOD should be non-negative, but min value is {min_val}"
-        )
+        assert min_val >= 0, f"AOD should be non-negative, but min value is {min_val}"
 
     def test_aod_values_within_reasonable_range(self):
         """AOD max value is within a reasonable upper bound (< 10)."""
@@ -121,12 +117,8 @@ class TestVerifyRealField:
         lat_max = float(np.nanmax(coords.lats))
 
         # Allow some tolerance for grid cell centers not reaching exact poles
-        assert lat_min <= -85, (
-            f"Expected lat_min <= -85, got {lat_min}"
-        )
-        assert lat_max >= 85, (
-            f"Expected lat_max >= 85, got {lat_max}"
-        )
+        assert lat_min <= -85, f"Expected lat_min <= -85, got {lat_min}"
+        assert lat_max >= 85, f"Expected lat_max >= 85, got {lat_max}"
 
     def test_coordinate_longitude_range(self):
         """Longitude coordinates span approximately 0 to 360 (GRIB2 convention)."""
@@ -140,16 +132,12 @@ class TestVerifyRealField:
         lon_max = float(np.nanmax(coords.lons))
 
         # GRIB2 convention: 0-360
-        assert lon_min >= -1, (
-            f"Expected lon_min >= -1 (0-360 convention), got {lon_min}"
-        )
-        assert lon_max <= 361, (
-            f"Expected lon_max <= 361 (0-360 convention), got {lon_max}"
-        )
+        assert lon_min >= -1, f"Expected lon_min >= -1 (0-360 convention), got {lon_min}"
+        assert lon_max <= 361, f"Expected lon_max <= 361 (0-360 convention), got {lon_max}"
         # Should span most of the globe
-        assert (lon_max - lon_min) > 350, (
-            f"Expected longitude span > 350 degrees, got {lon_max - lon_min}"
-        )
+        assert (
+            lon_max - lon_min
+        ) > 350, f"Expected longitude span > 350 degrees, got {lon_max - lon_min}"
 
     def test_projection_info(self):
         """Projection metadata is available and grid type is regular."""

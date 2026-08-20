@@ -8,15 +8,16 @@ curvilinear grids where full 2D coordinate arrays are required.
 
 from __future__ import annotations
 
-from typing import Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from backend.app.data.field_selector import GridCoordinates, GridProjection
+if TYPE_CHECKING:
+    from backend.app.data.field_selector import GridCoordinates, GridProjection
 
 # Type alias for scalar or array inputs
-IndexLike = Union[int, np.ndarray]
-CoordLike = Union[float, np.ndarray]
+IndexLike = int | np.ndarray
+CoordLike = float | np.ndarray
 
 
 class CoordinateMapper:
@@ -52,9 +53,7 @@ class CoordinateMapper:
         self._shape = coordinates.shape
 
         # Determine if the grid is regular (1D coords) or curvilinear (2D)
-        self._is_regular = (
-            coordinates.lats.ndim == 1 and coordinates.lons.ndim == 1
-        )
+        self._is_regular = coordinates.lats.ndim == 1 and coordinates.lons.ndim == 1
 
         # Pre-compute grid spacing for regular grids (used in inverse mapping)
         if self._is_regular:
@@ -195,7 +194,7 @@ class CoordinateMapper:
             # Wrap to [-180, 180] for shortest-path distance
             lon_diff = (lon_diff + 180) % 360 - 180
 
-            dist_sq = (lats - query_y) ** 2 + lon_diff ** 2
+            dist_sq = (lats - query_y) ** 2 + lon_diff**2
             min_idx = np.argmin(dist_sq)
             i_val, j_val = np.unravel_index(min_idx, lats.shape)
             results_i.flat[idx] = i_val

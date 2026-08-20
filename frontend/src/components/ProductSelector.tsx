@@ -19,7 +19,7 @@ interface ProductOption {
 }
 
 const PRODUCT_OPTIONS: ProductOption[] = [
-  { key: 'air', label: 'Air Composition', disabled: false },
+  { key: 'air', label: 'GEFS-Aerosol', disabled: false },
   { key: 'met', label: 'Meteorology', disabled: true },
 ]
 

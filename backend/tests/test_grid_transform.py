@@ -16,7 +16,6 @@ from backend.app.data.field_selector import GridCoordinates, GridProjection
 from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer
 
-
 # ---------------------------------------------------------------------------
 # Fixtures mimicking GEFS-Aerosols grid (regular_ll, 0.25°, global, 0–360 lon)
 # ---------------------------------------------------------------------------
@@ -94,18 +93,18 @@ class TestLongitudeNormalization:
         """Specific 0-360 longitudes should map to expected -180-180 values."""
         # Single points across the 0-360 range
         test_cases = [
-            (0.0, 0.0),       # 0 → 0
-            (90.0, 90.0),     # 90 → 90
-            (180.0, 180.0),   # 180 → 180 (boundary)
+            (0.0, 0.0),  # 0 → 0
+            (90.0, 90.0),  # 90 → 90
+            (180.0, 180.0),  # 180 → 180 (boundary)
             (181.0, -179.0),  # 181 → -179
-            (270.0, -90.0),   # 270 → -90
-            (359.0, -1.0),    # 359 → -1
+            (270.0, -90.0),  # 270 → -90
+            (359.0, -1.0),  # 359 → -1
         ]
         for lon_native, lon_expected in test_cases:
             lon_geo, _ = gefs_transformer.native_to_geographic(lon_native, 0.0)
-            assert lon_geo == pytest.approx(lon_expected), (
-                f"Expected {lon_native}° → {lon_expected}°, got {lon_geo}°"
-            )
+            assert lon_geo == pytest.approx(
+                lon_expected
+            ), f"Expected {lon_native}° → {lon_expected}°, got {lon_geo}°"
 
     def test_no_longitudes_in_forbidden_range(self, gefs_mapper, gefs_transformer):
         """No longitude in the transformed grid should exceed 180 or be below -180."""

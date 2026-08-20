@@ -7,12 +7,12 @@ variable/level/forecast-hour combinations available in the dataset.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import structlog
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import ORJSONResponse
-from typing import Any
 
 from backend.app.api.dependencies import get_field_selector
 from backend.app.config.loader import get_domain_config_safe
@@ -136,9 +136,7 @@ async def get_point(
 
     # --- Step 4: Compute valid time ---
     try:
-        init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(
-            tzinfo=timezone.utc
-        )
+        init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(tzinfo=UTC)
         valid_time = init_time + timedelta(hours=fhr)
         valid_time_str = valid_time.isoformat()
     except ValueError:

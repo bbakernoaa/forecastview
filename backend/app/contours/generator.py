@@ -130,9 +130,7 @@ def _determine_major_levels(
         # Levels that are near-multiples of major_interval
         remainder = np.abs(np.remainder(levels, major_interval))
         tolerance = major_interval * 1e-9
-        is_major = (remainder < tolerance) | (
-            np.abs(remainder - major_interval) < tolerance
-        )
+        is_major = (remainder < tolerance) | (np.abs(remainder - major_interval) < tolerance)
         return levels[is_major]
     else:
         # Default: every 5th level is major
@@ -188,9 +186,7 @@ def generate_isolines(
       y is row index. This maps to (j, i) in the grid coordinate system.
     """
     if field.ndim != 2:
-        raise ValueError(
-            f"Expected 2D field, got shape {field.shape}"
-        )
+        raise ValueError(f"Expected 2D field, got shape {field.shape}")
 
     ny, nx = field.shape
 
@@ -434,9 +430,7 @@ def generate_filled_contours(
         levels = np.linspace(field_min, field_max, 11)
 
     if len(levels) < 2:
-        raise ValueError(
-            f"Need at least 2 fill levels to define a band, got {len(levels)}"
-        )
+        raise ValueError(f"Need at least 2 fill levels to define a band, got {len(levels)}")
 
     # Create contourpy generator with FillType.OuterCode
     x = np.arange(nx, dtype=np.float64)
@@ -469,7 +463,7 @@ def generate_filled_contours(
         valid_offsets: list[np.ndarray] = []
 
         for points, offsets, outer_offsets in zip(
-            points_list, offsets_list, outer_offsets_list
+            points_list, offsets_list, outer_offsets_list, strict=False
         ):
             if points is None or len(points) < 3:
                 continue
@@ -480,7 +474,7 @@ def generate_filled_contours(
                 ring_end = int(outer_offsets[poly_idx + 1])
 
                 # Get the ring offsets for this polygon
-                poly_ring_offsets = offsets[ring_start:ring_end + 1]
+                poly_ring_offsets = offsets[ring_start : ring_end + 1]
 
                 # Get the vertices for this polygon
                 vert_start = int(poly_ring_offsets[0])

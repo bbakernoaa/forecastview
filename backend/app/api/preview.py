@@ -7,11 +7,12 @@ map (e.g., confirming Saharan dust appears over Africa).
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import structlog
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import Any
 
 from backend.app.api.dependencies import get_field_selector
 from backend.app.projections.coordinates import CoordinateMapper
@@ -164,16 +165,18 @@ async def get_preview(
                 continue
             lon = float(lons_ds[i, j])
             lat = float(lats_ds[i, j])
-            features.append({
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [lon, lat],
-                },
-                "properties": {
-                    "value": val,
-                },
-            })
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [lon, lat],
+                    },
+                    "properties": {
+                        "value": val,
+                    },
+                }
+            )
 
     result = PreviewFeatureCollection(
         features=features,

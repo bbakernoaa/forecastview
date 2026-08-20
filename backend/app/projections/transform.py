@@ -10,15 +10,16 @@ and target CRS are identical, and normalizes longitudes from GRIB2's
 
 from __future__ import annotations
 
-from typing import Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 from pyproj import CRS, Transformer
 
-from backend.app.data.field_selector import GridProjection
+if TYPE_CHECKING:
+    from backend.app.data.field_selector import GridProjection
 
 # Type alias for scalar or array coordinate inputs
-CoordLike = Union[float, np.ndarray]
+CoordLike = float | np.ndarray
 
 
 def _normalize_longitude(lon: CoordLike) -> CoordLike:
@@ -95,7 +96,7 @@ class CoordinateTransformer:
         cls,
         projection: GridProjection,
         target_crs: str = "EPSG:4326",
-    ) -> "CoordinateTransformer":
+    ) -> CoordinateTransformer:
         """Create a CoordinateTransformer from a GridProjection instance.
 
         Convenience constructor that extracts the CRS string from the
@@ -131,9 +132,7 @@ class CoordinateTransformer:
         """The target pyproj CRS object."""
         return self._target_crs
 
-    def native_to_geographic(
-        self, x: CoordLike, y: CoordLike
-    ) -> tuple[CoordLike, CoordLike]:
+    def native_to_geographic(self, x: CoordLike, y: CoordLike) -> tuple[CoordLike, CoordLike]:
         """Transform native CRS coordinates to geographic (lon, lat).
 
         For regular lat-lon grids where source CRS is already EPSG:4326,
@@ -180,9 +179,7 @@ class CoordinateTransformer:
 
         return lon, lat
 
-    def geographic_to_native(
-        self, lon: CoordLike, lat: CoordLike
-    ) -> tuple[CoordLike, CoordLike]:
+    def geographic_to_native(self, lon: CoordLike, lat: CoordLike) -> tuple[CoordLike, CoordLike]:
         """Transform geographic (lon, lat) coordinates to native CRS.
 
         Inverse of native_to_geographic. For regular lat-lon grids, this
@@ -216,9 +213,7 @@ class CoordinateTransformer:
         lat_arr = np.asarray(lat, dtype=np.float64)
 
         # Inverse: geographic (target) → native (source)
-        x, y = self._transformer.transform(
-            lon_arr, lat_arr, direction="INVERSE"
-        )
+        x, y = self._transformer.transform(lon_arr, lat_arr, direction="INVERSE")
 
         # Return scalars if inputs were scalar
         if np.ndim(lon) == 0 and np.ndim(lat) == 0:

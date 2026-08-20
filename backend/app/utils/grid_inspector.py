@@ -7,11 +7,12 @@ projection metadata from FieldSelector outputs.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from backend.app.data.field_selector import GridCoordinates, GridProjection
+if TYPE_CHECKING:
+    from backend.app.data.field_selector import GridCoordinates, GridProjection
 
 
 def check_orientation(lats: np.ndarray) -> str:

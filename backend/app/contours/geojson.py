@@ -12,12 +12,15 @@ The transformation pipeline is:
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import orjson
 
-from backend.app.contours.generator import ContourResult, FilledContourResult
-from backend.app.projections.coordinates import CoordinateMapper
-from backend.app.projections.transform import CoordinateTransformer
+if TYPE_CHECKING:
+    from backend.app.contours.generator import ContourResult, FilledContourResult
+    from backend.app.projections.coordinates import CoordinateMapper
+    from backend.app.projections.transform import CoordinateTransformer
 
 
 def shift_grid_to_minus180(
@@ -98,8 +101,8 @@ def _transform_vertices(
         lats_1d = np.asarray(coords.lats[:, 0], dtype=np.float64)
     else:
         # Fallback for unexpected cases
-        lons_1d = np.asarray(coords.lons.ravel()[:mapper.shape[1]], dtype=np.float64)
-        lats_1d = np.asarray(coords.lats.ravel()[:mapper.shape[0]], dtype=np.float64)
+        lons_1d = np.asarray(coords.lons.ravel()[: mapper.shape[1]], dtype=np.float64)
+        lats_1d = np.asarray(coords.lats.ravel()[: mapper.shape[0]], dtype=np.float64)
 
     # Clip to valid index range
     col_clipped = np.clip(col_indices, 0, len(lons_1d) - 1)
@@ -172,8 +175,7 @@ def contours_to_geojson(
 
             # Build coordinate list as [lon, lat] pairs (GeoJSON standard)
             line_coords: list[list[float]] = [
-                [float(lon_arr[k]), float(lat_arr[k])]
-                for k in range(len(lon_arr))
+                [float(lon_arr[k]), float(lat_arr[k])] for k in range(len(lon_arr))
             ]
 
             if len(line_coords) >= 2:
@@ -198,9 +200,7 @@ def contours_to_geojson(
     return {"type": "FeatureCollection", "features": features}
 
 
-def _split_rings_by_offsets(
-    vertices: np.ndarray, offsets: np.ndarray
-) -> list[np.ndarray]:
+def _split_rings_by_offsets(vertices: np.ndarray, offsets: np.ndarray) -> list[np.ndarray]:
     """Split a polygon vertices array into individual rings using offset boundaries.
 
     Used with contourpy's FillType.OuterOffset output format, where
@@ -284,7 +284,7 @@ def filled_contours_to_geojson(
         # Collect all transformed polygon rings for this band
         all_polygon_rings: list[list[list[list[float]]]] = []
 
-        for verts, offsets in zip(fill_band.polygons, fill_band.codes):
+        for verts, offsets in zip(fill_band.polygons, fill_band.codes, strict=False):
             # Split into individual rings using offset boundaries
             rings = _split_rings_by_offsets(verts, offsets)
             if not rings:
@@ -313,8 +313,7 @@ def filled_contours_to_geojson(
 
                 # Build coordinate list as [lon, lat] pairs
                 ring_coords: list[list[float]] = [
-                    [float(lon_arr[k]), float(lat_arr[k])]
-                    for k in range(len(lon_arr))
+                    [float(lon_arr[k]), float(lat_arr[k])] for k in range(len(lon_arr))
                 ]
 
                 # Ensure ring is closed (GeoJSON requirement)

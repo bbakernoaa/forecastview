@@ -3,10 +3,11 @@ import Legend from '../Legend'
 import type { VariableInfo } from '../../api/types'
 
 interface LeftPanelProps {
-  /** The currently selected variable info for the legend */
   variable?: VariableInfo | null
   children?: ReactNode
 }
+
+const DISCLAIMER_TEXT = 'EXPERIMENTAL — Not for operational use. Data shown is from experimental GEFS-Aerosol model guidance and has not been officially validated.'
 
 function LeftPanel({ variable = null, children }: LeftPanelProps) {
   return (
@@ -26,6 +27,19 @@ function LeftPanel({ variable = null, children }: LeftPanelProps) {
     >
       <Legend variable={variable} />
       {children}
+      {/* Experimental disclaimer */}
+      <div
+        style={{
+          marginTop: 'auto',
+          paddingTop: '12px',
+          borderTop: '1px solid #333',
+          fontSize: '0.65rem',
+          color: '#f5a623',
+          lineHeight: 1.4,
+        }}
+      >
+        ⚠️ {DISCLAIMER_TEXT}
+      </div>
     </div>
   )
 }

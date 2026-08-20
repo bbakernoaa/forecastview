@@ -27,9 +27,6 @@ import sys
 import time
 from pathlib import Path
 
-import numpy as np
-
-
 # Expected spatial features for duAOD550 orientation validation
 EXPECTED_FEATURES = """
 Expected Spatial Features (duAOD550 — Dust AOD at 550nm):
@@ -116,7 +113,7 @@ def main() -> int:
     print(f"      Using: date={date}, run={run}")
 
     # --- Step 3: Select the validation field ---
-    print(f"\n[3/5] Selecting validation field...")
+    print("\n[3/5] Selecting validation field...")
     variable = VALIDATION_VARIABLE
     variable_label = VALIDATION_VARIABLE_LABEL
 
@@ -155,7 +152,7 @@ def main() -> int:
     print_field_stats(field, variable_name=variable, units="Numeric (dimensionless)")
 
     # --- Step 4: Extract coordinates and generate reference plot ---
-    print(f"\n[4/5] Generating reference plot...")
+    print("\n[4/5] Generating reference plot...")
     t0 = time.perf_counter()
 
     try:
@@ -185,7 +182,7 @@ def main() -> int:
             coords.lats,
             coords.lons,
             title=f"Orientation Validation: {variable_label}\n"
-                  f"Date: {date}, Run: {run}Z, FHR: 000",
+            f"Date: {date}, Run: {run}Z, FHR: 000",
             units="AOD (dimensionless)",
             crs_string=crs_string,
             cmap="YlOrRd",
@@ -202,13 +199,13 @@ def main() -> int:
     print(f"      Plot generated in {elapsed:.2f}s")
 
     # --- Step 5: Print validation summary ---
-    print(f"\n[5/5] Orientation Validation Summary")
+    print("\n[5/5] Orientation Validation Summary")
     print("=" * 70)
     print()
     print(f"  Variable selected:  {variable}")
     print(f"  Full name:          {variable_label}")
     print(f"  Date / Run:         {date} / {run}Z")
-    print(f"  Forecast hour:      000 (analysis)")
+    print("  Forecast hour:      000 (analysis)")
     print(f"  Field shape:        {field.shape}")
     print()
     print("  Rationale for field choice:")
@@ -220,7 +217,7 @@ def main() -> int:
     print(EXPECTED_FEATURES)
 
     # Quick orientation check from the data
-    stats = summarize_field(field, variable_name=variable)
+    summarize_field(field, variable_name=variable)
     grid_info = get_grid_info(coords, projection)
 
     print("  Grid Orientation Check:")

@@ -12,18 +12,21 @@ sourced from the domain configuration YAML per variable.
 from __future__ import annotations
 
 import time
+from typing import Any
 
 import numpy as np
 import structlog
 from cachetools import LRUCache
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import ORJSONResponse
-from typing import Any
 
 from backend.app.api.dependencies import get_field_selector
 from backend.app.config.loader import get_domain_config_safe
 from backend.app.contours.generator import generate_isolines
-from backend.app.contours.geojson import contours_to_geojson, serialize_geojson_bytes, shift_grid_to_minus180
+from backend.app.contours.geojson import (
+    contours_to_geojson,
+    shift_grid_to_minus180,
+)
 from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer
 
@@ -68,12 +71,8 @@ async def get_contours(
     level: float | None = Query(
         None, description="Vertical level value (for multi-level variables)"
     ),
-    interval: float | None = Query(
-        None, description="Contour interval override"
-    ),
-    majorInterval: float | None = Query(
-        None, description="Major contour interval override"
-    ),
+    interval: float | None = Query(None, description="Contour interval override"),
+    majorInterval: float | None = Query(None, description="Major contour interval override"),
 ) -> ORJSONResponse:
     """Return GeoJSON contour isolines for a forecast field.
 
@@ -188,7 +187,9 @@ async def get_contours(
 
     # --- Step 2.5: Shift grid from 0-360 to -180..180 to avoid seam artifacts ---
     import numpy as _np
+
     from backend.app.data.field_selector import GridCoordinates
+
     # Extract 1D lon array (use first row if 2D)
     _lons_1d = coordinates.lons[0, :] if coordinates.lons.ndim == 2 else coordinates.lons
     _lats_1d = coordinates.lats[:, 0] if coordinates.lats.ndim == 2 else coordinates.lats

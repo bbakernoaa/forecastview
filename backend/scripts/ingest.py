@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import time
 from pathlib import Path
@@ -30,8 +29,7 @@ logger = structlog.get_logger(__name__)
 # Default S3 configuration
 _DEFAULT_BUCKET = "noaa-gefs-pds"
 _DEFAULT_PATH_PATTERN = (
-    "gefs.{date}/{cycle}/chem/pgrb2ap25/"
-    "gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
+    "gefs.{date}/{cycle}/chem/pgrb2ap25/" "gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
 )
 _DEFAULT_STORAGE_OPTIONS: dict = {"anon": True}
 _DEFAULT_MAX_WORKERS = 16
@@ -58,7 +56,7 @@ def discover_available_dates(
         for entry in entries:
             name = entry.rsplit("/", 1)[-1]
             if name.startswith(prefix) and len(name) == len(prefix) + 8:
-                dates.append(name[len(prefix):])
+                dates.append(name[len(prefix) :])
         dates.sort()
         return dates
     except Exception as exc:
@@ -277,7 +275,7 @@ def main() -> None:
         forecast_hours = [int(h.strip()) for h in args.forecast_hours.split(",")]
 
     print(f"\n{'='*60}")
-    print(f"  GEFS-Aerosols Manifest Ingest")
+    print("  GEFS-Aerosols Manifest Ingest")
     print(f"{'='*60}")
     print(f"  Days:           {args.days}")
     print(f"  Cycle:          {args.cycle}")
@@ -301,7 +299,7 @@ def main() -> None:
     print(f"  Latest: {dates[-1]}, Earliest: {dates[0]}")
 
     # Select most recent N days
-    selected_dates = dates[-args.days:]
+    selected_dates = dates[-args.days :]
     print(f"\n[2/3] Ingesting {len(selected_dates)} most recent date(s)...")
     print(f"  Dates: {selected_dates}")
 
@@ -329,7 +327,7 @@ def main() -> None:
 
     # Summary
     print(f"\n{'='*60}")
-    print(f"  [3/3] Ingest Complete")
+    print("  [3/3] Ingest Complete")
     print(f"{'='*60}")
     print(f"  Succeeded: {successes}/{len(selected_dates)}")
     print(f"  Failed:    {failures}/{len(selected_dates)}")

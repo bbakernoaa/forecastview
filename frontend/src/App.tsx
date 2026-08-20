@@ -12,6 +12,7 @@ import type { RenderingMode } from './components/RenderingSelector'
 import ContourIntervalSelector from './components/ContourIntervalSelector'
 import OpacitySlider from './components/OpacitySlider'
 import ConnectionStatus from './components/ConnectionStatus'
+import ExportButton from './components/ExportButton'
 import NotificationArea from './components/NotificationArea'
 import DateSelector from './components/DateSelector'
 import RunSelector from './components/RunSelector'
@@ -153,6 +154,7 @@ function AppContent() {
         />
         <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
         <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
+        <ExportButton />
         <ConnectionStatus />
       </Toolbar>
       <TimeDisplayBar />

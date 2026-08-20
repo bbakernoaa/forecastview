@@ -91,7 +91,7 @@ def summarize_field(
     # Percentiles
     pct_keys = [1, 5, 25, 50, 75, 95, 99]
     pct_values = np.nanpercentile(data, pct_keys)
-    summary["percentiles"] = {str(p): float(v) for p, v in zip(pct_keys, pct_values)}
+    summary["percentiles"] = {str(p): float(v) for p, v in zip(pct_keys, pct_values, strict=False)}
 
     # Unique values (cap computation for large arrays)
     _UNIQUE_CAP = 10000
@@ -151,7 +151,9 @@ def print_field_stats(
     rows, cols = stats["shape"]
     print(f"  Shape:          {rows} rows x {cols} cols ({stats['total_count']} points)")
     print(f"  Data type:      {stats['dtype']}")
-    print(f"  NaN/masked:     {stats['nan_count']} / {stats['total_count']} ({_pct(stats['nan_count'], stats['total_count'])})")
+    print(
+        f"  NaN/masked:     {stats['nan_count']} / {stats['total_count']} ({_pct(stats['nan_count'], stats['total_count'])})"
+    )
     print(f"  Valid values:   {stats['valid_count']}")
 
     if stats["valid_count"] == 0:

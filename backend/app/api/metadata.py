@@ -7,13 +7,12 @@ selector components.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field
 from matplotlib import colormaps as mpl_colormaps
+from pydantic import BaseModel, Field
 
 from backend.app.api.dependencies import get_field_selector
 
@@ -44,9 +43,7 @@ class DatesResponse(BaseModel):
     """Response for GET /api/dates."""
 
     product: str
-    dates: list[str] = Field(
-        ..., description="Available dates in YYYYMMDD format"
-    )
+    dates: list[str] = Field(..., description="Available dates in YYYYMMDD format")
 
 
 class RunsResponse(BaseModel):
@@ -54,9 +51,7 @@ class RunsResponse(BaseModel):
 
     product: str
     date: str
-    runs: list[str] = Field(
-        ..., description="Available initialization cycles (e.g. '00', '06')"
-    )
+    runs: list[str] = Field(..., description="Available initialization cycles (e.g. '00', '06')")
 
 
 class VariableRenderingInfo(BaseModel):
@@ -64,9 +59,7 @@ class VariableRenderingInfo(BaseModel):
 
     colormap: str = Field("rainbow", description="Colormap name")
     contourInterval: float = Field(0.1, description="Default contour interval")
-    fillLevels: list[float] = Field(
-        default_factory=list, description="Fill level boundaries"
-    )
+    fillLevels: list[float] = Field(default_factory=list, description="Fill level boundaries")
     colors: list[str] = Field(
         default_factory=list,
         description="Hex colors for each fill band (computed from colormap)",
@@ -98,9 +91,7 @@ class VariablesResponse(BaseModel):
 class LevelInfo(BaseModel):
     """Metadata for a single vertical level."""
 
-    surfaceType: int | None = Field(
-        None, description="GRIB2 typeOfFirstFixedSurface"
-    )
+    surfaceType: int | None = Field(None, description="GRIB2 typeOfFirstFixedSurface")
     value: float = Field(..., description="Numeric level value")
     label: str = Field(..., description="Human-readable level description")
 
@@ -167,7 +158,7 @@ def _compute_band_colors(colormap_name: str, n_levels: int) -> list[str]:
 
 
 _CATALOG: list[CatalogEntry] = [
-    CatalogEntry(product="air", description="Air Composition"),
+    CatalogEntry(product="air", description="GEFS-Aerosol"),
 ]
 
 _VALID_PRODUCTS = {entry.product for entry in _CATALOG}
@@ -293,9 +284,7 @@ async def get_variables(
             )
         )
 
-    return VariablesResponse(
-        product=product, date=date, run=run, variables=variables
-    )
+    return VariablesResponse(product=product, date=date, run=run, variables=variables)
 
 
 @router.get("/levels", response_model=LevelsResponse)
@@ -329,9 +318,7 @@ async def get_levels(
         for lv in raw_levels
     ]
 
-    return LevelsResponse(
-        product=product, date=date, run=run, variable=variable, levels=levels
-    )
+    return LevelsResponse(product=product, date=date, run=run, variable=variable, levels=levels)
 
 
 @router.get("/times", response_model=TimesResponse)
@@ -351,9 +338,7 @@ async def get_times(
 
     # Compute initialization time
     try:
-        init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(
-            tzinfo=timezone.utc
-        )
+        init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(tzinfo=UTC)
     except ValueError:
         raise HTTPException(
             status_code=422,
@@ -361,8 +346,7 @@ async def get_times(
         )
 
     forecast_hours = [
-        ForecastHourEntry(fhr=entry["fhr"], valid_time=entry["valid_time"])
-        for entry in raw_hours
+        ForecastHourEntry(fhr=entry["fhr"], valid_time=entry["valid_time"]) for entry in raw_hours
     ]
 
     return TimesResponse(

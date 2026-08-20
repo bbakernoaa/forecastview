@@ -14,7 +14,6 @@ from backend.app.data.field_selector import GridCoordinates, GridProjection
 from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer, _normalize_longitude
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -249,9 +248,7 @@ class TestTransformGrid:
 
         lons_out, lats_out = t.transform_grid(lons, lats)
 
-        expected_lons = np.array(
-            [[-160.0, -110.0, -60.0], [-160.0, -110.0, -60.0]]
-        )
+        expected_lons = np.array([[-160.0, -110.0, -60.0], [-160.0, -110.0, -60.0]])
         np.testing.assert_allclose(lons_out, expected_lons)
         np.testing.assert_allclose(lats_out, lats)
 

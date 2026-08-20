@@ -7,10 +7,11 @@ before implementing full contour rendering.
 
 from __future__ import annotations
 
+from typing import Any
+
 import structlog
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import Any
 
 from backend.app.api.dependencies import get_field_selector
 from backend.app.projections.coordinates import CoordinateMapper
@@ -30,12 +31,8 @@ class BoundsFeature(BaseModel):
     """GeoJSON Feature representing the field bounding polygon."""
 
     type: str = Field(default="Feature")
-    geometry: dict[str, Any] = Field(
-        ..., description="GeoJSON Polygon geometry"
-    )
-    properties: dict[str, Any] = Field(
-        ..., description="Grid metadata (grid_type, shape)"
-    )
+    geometry: dict[str, Any] = Field(..., description="GeoJSON Polygon geometry")
+    properties: dict[str, Any] = Field(..., description="Grid metadata (grid_type, shape)")
 
 
 # --------------------------------------------------------------------------

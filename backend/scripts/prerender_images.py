@@ -192,9 +192,7 @@ def main():
     parser.add_argument("--workers", type=int, default=4, help="Parallel workers")
     parser.add_argument("--width", type=int, default=2048, help="Image width")
     parser.add_argument("--height", type=int, default=2048, help="Image height")
-    parser.add_argument(
-        "--product", type=str, default="air", help="Product (default: air)"
-    )
+    parser.add_argument("--product", type=str, default="air", help="Product (default: air)")
 
     args = parser.parse_args()
 
@@ -239,11 +237,7 @@ def main():
 
     # Output directory
     output_dir = args.output_dir or str(
-        Path(__file__).resolve().parent.parent.parent
-        / "data"
-        / "rendered"
-        / date
-        / run
+        Path(__file__).resolve().parent.parent.parent / "data" / "rendered" / date / run
     )
 
     print("=" * 60)
@@ -269,18 +263,20 @@ def main():
         colormap_name = var_config.rendering.colormap or "turbo"
 
         for fhr in fhrs:
-            jobs.append((
-                store_path,
-                date,
-                run,
-                variable,
-                fhr,
-                fill_levels,
-                colormap_name,
-                output_dir,
-                args.width,
-                args.height,
-            ))
+            jobs.append(
+                (
+                    store_path,
+                    date,
+                    run,
+                    variable,
+                    fhr,
+                    fill_levels,
+                    colormap_name,
+                    output_dir,
+                    args.width,
+                    args.height,
+                )
+            )
 
     t_start = time.perf_counter()
     completed = 0

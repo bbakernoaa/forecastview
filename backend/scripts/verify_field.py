@@ -19,8 +19,6 @@ from __future__ import annotations
 import sys
 import time
 
-import numpy as np
-
 
 def main() -> int:
     """Run the field verification pipeline."""
@@ -64,7 +62,7 @@ def main() -> int:
     print(f"       Using: date={date}, run={run}")
 
     # --- Step 3: Open dataset and select field ---
-    print(f"\n[3/6] Selecting field: totAOD550 (fhr=0)...")
+    print("\n[3/6] Selecting field: totAOD550 (fhr=0)...")
     t0 = time.perf_counter()
     try:
         field = selector.select(

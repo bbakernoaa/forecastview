@@ -9,13 +9,16 @@ arbitrary grid projections.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 import structlog
 
-from backend.app.data.field_selector import GridCoordinates, GridProjection
 from backend.app.projections.coordinates import CoordinateMapper
 from backend.app.projections.transform import CoordinateTransformer
+
+if TYPE_CHECKING:
+    from backend.app.data.field_selector import GridCoordinates, GridProjection
 
 logger = structlog.get_logger(__name__)
 

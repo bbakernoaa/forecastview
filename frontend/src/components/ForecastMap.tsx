@@ -25,6 +25,7 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
     initializedRef.current = true
 
     const map = new MaplibreMap({
+      preserveDrawingBuffer: true,
       container: containerRef.current,
       style: MAP_STYLES[styleKey],
       center: DEFAULT_CENTER,
@@ -71,6 +72,7 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
 
     // Create a new map with the new style
     const newMap = new MaplibreMap({
+      preserveDrawingBuffer: true,
       container: containerRef.current,
       style: MAP_STYLES[styleKey],
       center,

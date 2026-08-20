@@ -22,7 +22,6 @@ from httpx import ASGITransport, AsyncClient
 from backend.app.data.field_selector import GridCoordinates, GridProjection
 from backend.app.main import app
 
-
 # --------------------------------------------------------------------------
 # Synthetic GEFS-Aerosols fixtures
 # --------------------------------------------------------------------------
@@ -237,4 +236,4 @@ class TestBoundsEndpoint:
         assert ring[1] == [lon_max, lat_min]  # SE
         assert ring[2] == [lon_max, lat_max]  # NE
         assert ring[3] == [lon_min, lat_max]  # NW
-        assert ring[4] == ring[0]             # closed
+        assert ring[4] == ring[0]  # closed

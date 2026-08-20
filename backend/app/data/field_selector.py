@@ -8,15 +8,17 @@ and for selecting individual 2D fields as numpy arrays.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Any
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import structlog
 import xarray as xr
 
-from backend.app.config.loader import DomainConfig, get_domain_config_safe
-from backend.app.data.kerchunk_store import KerchunkStore
+from backend.app.config.loader import get_domain_config_safe
+
+if TYPE_CHECKING:
+    from backend.app.data.kerchunk_store import KerchunkStore
 
 logger = structlog.get_logger(__name__)
 
@@ -196,9 +198,7 @@ class FieldSelector:
         logger.debug("field_selector.get_runs", date=date)
         return self._store.discover_runs(date)
 
-    def get_variables(
-        self, date: str, run: str, product: str = "air"
-    ) -> list[dict[str, Any]]:
+    def get_variables(self, date: str, run: str, product: str = "air") -> list[dict[str, Any]]:
         """Discover variables available in the dataset for a given date/run.
 
         Opens the dataset and inspects data variable attributes to build
@@ -249,9 +249,7 @@ class FieldSelector:
             name_str = str(var_name)
 
             # Check if domain config has metadata for this variable
-            var_config = (
-                domain_config.get_variable(name_str) if domain_config else None
-            )
+            var_config = domain_config.get_variable(name_str) if domain_config else None
 
             if var_config is not None:
                 # Use domain config metadata (preferred)
@@ -281,9 +279,7 @@ class FieldSelector:
 
         # Sort by category order from config, then shortName
         if domain_config and domain_config.categories:
-            cat_order = {
-                cat: idx for idx, cat in enumerate(domain_config.categories)
-            }
+            cat_order = {cat: idx for idx, cat in enumerate(domain_config.categories)}
             default_order = len(cat_order)
             variables.sort(
                 key=lambda v: (
@@ -304,9 +300,7 @@ class FieldSelector:
         )
         return variables
 
-    def get_levels(
-        self, date: str, run: str, variable: str
-    ) -> list[dict[str, Any]]:
+    def get_levels(self, date: str, run: str, variable: str) -> list[dict[str, Any]]:
         """Discover available vertical levels for a given variable.
 
         Inspects the variable's typeOfFirstFixedSurface and
@@ -369,7 +363,8 @@ class FieldSelector:
 
         # Check for a vertical dimension (common names)
         vertical_dims = [
-            d for d in var.dims
+            d
+            for d in var.dims
             if d not in ("y", "x", "valid_time", "time", "latitude", "longitude")
         ]
 
@@ -378,25 +373,31 @@ class FieldSelector:
             vert_dim = vertical_dims[0]
             if vert_dim in ds.coords:
                 for val in ds.coords[vert_dim].values:
-                    levels.append({
-                        "surfaceType": surface_type,
-                        "value": float(val),
-                        "label": f"{vert_dim}={val}",
-                    })
+                    levels.append(
+                        {
+                            "surfaceType": surface_type,
+                            "value": float(val),
+                            "label": f"{vert_dim}={val}",
+                        }
+                    )
             else:
                 # Dimension exists but no coordinate values
-                levels.append({
+                levels.append(
+                    {
+                        "surfaceType": surface_type,
+                        "value": float(surface_value) if surface_value is not None else 0.0,
+                        "label": _surface_type_label(surface_type, surface_value),
+                    }
+                )
+        else:
+            # Single-level variable
+            levels.append(
+                {
                     "surfaceType": surface_type,
                     "value": float(surface_value) if surface_value is not None else 0.0,
                     "label": _surface_type_label(surface_type, surface_value),
-                })
-        else:
-            # Single-level variable
-            levels.append({
-                "surfaceType": surface_type,
-                "value": float(surface_value) if surface_value is not None else 0.0,
-                "label": _surface_type_label(surface_type, surface_value),
-            })
+                }
+            )
 
         logger.info(
             "field_selector.get_levels.done",
@@ -407,9 +408,7 @@ class FieldSelector:
         )
         return levels
 
-    def get_forecast_hours(
-        self, date: str, run: str
-    ) -> list[dict[str, Any]]:
+    def get_forecast_hours(self, date: str, run: str) -> list[dict[str, Any]]:
         """Discover available forecast hours and compute valid times.
 
         Parameters
@@ -444,10 +443,12 @@ class FieldSelector:
         result: list[dict[str, Any]] = []
         for fhr in hours:
             valid_time = init_time + timedelta(hours=fhr)
-            result.append({
-                "fhr": fhr,
-                "valid_time": valid_time.isoformat(),
-            })
+            result.append(
+                {
+                    "fhr": fhr,
+                    "valid_time": valid_time.isoformat(),
+                }
+            )
 
         logger.info(
             "field_selector.get_forecast_hours.done",
@@ -494,10 +495,7 @@ class FieldSelector:
         ds = self._store.open_dataset(date, run)
 
         if not ds.data_vars:
-            raise ValueError(
-                f"No data variables found in dataset for "
-                f"date={date}, run={run}."
-            )
+            raise ValueError(f"No data variables found in dataset for " f"date={date}, run={run}.")
 
         # Use the first data variable's attributes for projection info
         first_var_name = next(iter(ds.data_vars))
@@ -511,9 +509,7 @@ class FieldSelector:
         merged_attrs: dict[str, Any] = {**ds_attrs, **attrs}
 
         # Extract grid type
-        grid_type = str(
-            merged_attrs.get("gridType", "regular_ll")
-        )
+        grid_type = str(merged_attrs.get("gridType", "regular_ll"))
 
         # Extract CRS parameters based on grid type
         crs_params: dict[str, Any] = {}
@@ -854,8 +850,7 @@ class FieldSelector:
 
         # Select by vertical level if provided
         vertical_dims = [
-            d for d in da.dims
-            if d not in ("y", "x", "valid_time", "time", "latitude", "longitude")
+            d for d in da.dims if d not in ("y", "x", "valid_time", "time", "latitude", "longitude")
         ]
 
         if vertical_dims:
@@ -893,9 +888,7 @@ class FieldSelector:
 # ------------------------------------------------------------------
 
 
-def _surface_type_label(
-    surface_type: Any, surface_value: Any
-) -> str:
+def _surface_type_label(surface_type: Any, surface_value: Any) -> str:
     """Generate a human-readable label for a GRIB2 surface type."""
     # Common GRIB2 typeOfFirstFixedSurface codes
     _SURFACE_LABELS: dict[int, str] = {

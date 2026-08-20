@@ -13,8 +13,8 @@ The lowest fill band is transparent so the basemap shows through.
 from __future__ import annotations
 
 import time
-from pathlib import Path
 from io import BytesIO
+from pathlib import Path
 
 import numpy as np
 import structlog
@@ -22,11 +22,10 @@ from cachetools import LRUCache
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import Response
 from matplotlib import colormaps
-from matplotlib.colors import BoundaryNorm, ListedColormap, Normalize
 from PIL import Image
-from rasterio.transform import from_bounds
-from rasterio.warp import reproject, Resampling
 from rasterio.crs import CRS
+from rasterio.transform import from_bounds
+from rasterio.warp import Resampling, reproject
 
 from backend.app.api.dependencies import get_field_selector
 from backend.app.config.loader import get_domain_config_safe
@@ -59,9 +58,18 @@ MERCATOR_YMAX = 20037508.3427892
 # --------------------------------------------------------------------------
 
 FALLBACK_PALETTE = [
-    "#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8",
-    "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027",
-    "#a50026", "#67001f",
+    "#313695",
+    "#4575b4",
+    "#74add1",
+    "#abd9e9",
+    "#e0f3f8",
+    "#ffffbf",
+    "#fee090",
+    "#fdae61",
+    "#f46d43",
+    "#d73027",
+    "#a50026",
+    "#67001f",
 ]
 
 # --------------------------------------------------------------------------
@@ -165,8 +173,8 @@ async def get_fill_image(
     valid_mask = (lats_1d >= -WEB_MERCATOR_MAX_LAT) & (lats_1d <= WEB_MERCATOR_MAX_LAT)
     valid_rows = np.where(valid_mask)[0]
     row_start, row_end = valid_rows[0], valid_rows[-1]
-    field = field[row_start:row_end + 1, :]
-    lats_cropped = lats_1d[row_start:row_end + 1]
+    field = field[row_start : row_end + 1, :]
+    lats_cropped = lats_1d[row_start : row_end + 1]
 
     src_height, src_width = field.shape
 
@@ -176,14 +184,22 @@ async def get_fill_image(
     src_lat_max = float(lats_cropped[0])
 
     src_transform = from_bounds(
-        src_lon_min, src_lat_min, src_lon_max, src_lat_max,
-        src_width, src_height,
+        src_lon_min,
+        src_lat_min,
+        src_lon_max,
+        src_lat_max,
+        src_width,
+        src_height,
     )
 
     # --- Step 5: Reproject field to Web Mercator ---
     dst_transform = from_bounds(
-        MERCATOR_XMIN, MERCATOR_YMIN, MERCATOR_XMAX, MERCATOR_YMAX,
-        MERCATOR_WIDTH, MERCATOR_HEIGHT,
+        MERCATOR_XMIN,
+        MERCATOR_YMIN,
+        MERCATOR_XMAX,
+        MERCATOR_YMAX,
+        MERCATOR_WIDTH,
+        MERCATOR_HEIGHT,
     )
 
     dst_field = np.zeros((MERCATOR_HEIGHT, MERCATOR_WIDTH), dtype=np.float32)
@@ -227,7 +243,6 @@ async def get_fill_image(
         t = i / max(n_visible_bands - 1, 1)
         r, g, b, a = cmap(t)
         rgba_colors[i + 1] = (int(r * 255), int(g * 255), int(b * 255), 255)
-
 
     # Classify field values into bands
     band_indices = np.digitize(dst_field, fill_levels)

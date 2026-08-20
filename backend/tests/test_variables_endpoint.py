@@ -23,7 +23,6 @@ from backend.app.config.loader import (
 )
 from backend.app.main import app
 
-
 # --------------------------------------------------------------------------
 # Unit tests for config loader
 # --------------------------------------------------------------------------
@@ -82,15 +81,11 @@ class TestConfigLoader:
         for name, var in config.variables.items():
             assert var.rendering is not None, f"Variable {name} missing rendering"
             assert var.rendering.colormap, f"Variable {name} missing colormap"
-            assert var.rendering.contourInterval > 0, (
-                f"Variable {name} has invalid contourInterval"
-            )
-            assert isinstance(var.rendering.fillLevels, list), (
-                f"Variable {name} fillLevels is not a list"
-            )
-            assert len(var.rendering.fillLevels) > 0, (
-                f"Variable {name} has empty fillLevels"
-            )
+            assert var.rendering.contourInterval > 0, f"Variable {name} has invalid contourInterval"
+            assert isinstance(
+                var.rendering.fillLevels, list
+            ), f"Variable {name} fillLevels is not a list"
+            assert len(var.rendering.fillLevels) > 0, f"Variable {name} has empty fillLevels"
 
     def test_variables_grouped_by_category(self):
         """get_variables_by_category returns vars grouped under correct categories."""
@@ -121,9 +116,7 @@ class TestConfigLoader:
         assert var.category == "Optical Depth"
         assert var.rendering.colormap == "rainbow"
         assert var.rendering.contourInterval == 0.1
-        assert var.rendering.fillLevels == [
-            0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0
-        ]
+        assert var.rendering.fillLevels == [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
 
     def test_nonexistent_product_raises(self):
         """Loading a nonexistent product raises FileNotFoundError."""
@@ -132,7 +125,9 @@ class TestConfigLoader:
 
     def test_safe_loader_returns_none_for_missing(self):
         """get_domain_config_safe returns None for missing products."""
-        get_domain_config_safe.cache_clear() if hasattr(get_domain_config_safe, "cache_clear") else None
+        get_domain_config_safe.cache_clear() if hasattr(
+            get_domain_config_safe, "cache_clear"
+        ) else None
         result = get_domain_config_safe("nonexistent_product_xyz")
         assert result is None
 
@@ -151,18 +146,20 @@ def _make_mock_variables(product: str = "air") -> list[dict[str, Any]]:
     variables: list[dict[str, Any]] = []
 
     for name, var_config in config.variables.items():
-        variables.append({
-            "name": name,
-            "shortName": var_config.shortName,
-            "fullName": var_config.fullName,
-            "units": var_config.units,
-            "category": var_config.category,
-            "rendering": {
-                "colormap": var_config.rendering.colormap,
-                "contourInterval": var_config.rendering.contourInterval,
-                "fillLevels": var_config.rendering.fillLevels,
-            },
-        })
+        variables.append(
+            {
+                "name": name,
+                "shortName": var_config.shortName,
+                "fullName": var_config.fullName,
+                "units": var_config.units,
+                "category": var_config.category,
+                "rendering": {
+                    "colormap": var_config.rendering.colormap,
+                    "contourInterval": var_config.rendering.contourInterval,
+                    "fillLevels": var_config.rendering.fillLevels,
+                },
+            }
+        )
 
     # Sort by category order, then shortName (mimicking FieldSelector behavior)
     if config.categories:

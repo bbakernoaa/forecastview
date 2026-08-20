@@ -29,9 +29,7 @@ class RenderingConfig(BaseModel):
     """Rendering hints for a variable (colormaps, contour levels)."""
 
     colormap: str = Field("rainbow", description="Matplotlib colormap name")
-    contourInterval: float = Field(
-        0.1, description="Default contour line interval"
-    )
+    contourInterval: float = Field(0.1, description="Default contour line interval")
     fillLevels: list[float] = Field(
         default_factory=list,
         description="Discrete fill level boundaries",
@@ -142,7 +140,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(f"Domain config not found: {path}")
 
-    with open(path, "r") as f:
+    with open(path) as f:
         data = yaml.safe_load(f)
 
     if not isinstance(data, dict):

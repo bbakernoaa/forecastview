@@ -11,6 +11,7 @@ Directory layout:
 from __future__ import annotations
 
 import os
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
@@ -85,9 +86,7 @@ class ManifestStore:
         )
 
         # LRU cache keyed by (date, run) → xr.Dataset
-        self._dataset_cache: LRUCache[tuple[str, str], xr.Dataset] = LRUCache(
-            maxsize=cache_sz
-        )
+        self._dataset_cache: LRUCache[tuple[str, str], xr.Dataset] = LRUCache(maxsize=cache_sz)
 
         # Scan the manifest directory on init
         self._available: dict[str, list[str]] = {}  # date -> [runs]
@@ -205,21 +204,18 @@ class ManifestStore:
 
         # Try to extract forecast hours from the valid_time dimension
         if "valid_time" in ds.dims and "valid_time" in ds.coords:
+            from datetime import datetime
+
             import numpy as np
-            from datetime import datetime, timezone
 
             try:
-                init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(
-                    tzinfo=timezone.utc
-                )
+                init_time = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(tzinfo=UTC)
                 valid_times = ds.coords["valid_time"].values
                 hours: list[int] = []
                 for vt in valid_times:
                     # Convert numpy datetime64 to python datetime
-                    ts = (vt - np.datetime64("1970-01-01T00:00:00")) / np.timedelta64(
-                        1, "s"
-                    )
-                    dt = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+                    ts = (vt - np.datetime64("1970-01-01T00:00:00")) / np.timedelta64(1, "s")
+                    dt = datetime.fromtimestamp(float(ts), tz=UTC)
                     fhr = int((dt - init_time).total_seconds() / 3600)
                     hours.append(fhr)
                 hours.sort()
