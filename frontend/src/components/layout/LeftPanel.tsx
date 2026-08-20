@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Legend from '../Legend'
+import QuickViews from '../QuickViews'
 import type { VariableInfo } from '../../api/types'
 
 interface LeftPanelProps {
@@ -23,9 +24,11 @@ function LeftPanel({ variable = null, children }: LeftPanelProps) {
         padding: '12px',
         color: '#ccc',
         fontSize: '0.85rem',
+        gap: '12px',
       }}
     >
       <Legend variable={variable} />
+      <QuickViews />
       {children}
       {/* Experimental disclaimer */}
       <div
