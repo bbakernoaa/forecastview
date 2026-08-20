@@ -1,0 +1,3085 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "Create `frontend/` directory with Vite + React + TypeScript scaffold": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197818784
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197838228
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198070610
+      }
+    ],
+    "Install dependencies: react, react-dom, maplibre-gl, typescript": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197818847
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198076524
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198117263
+      }
+    ],
+    "Configure Vite with proxy to backend API (dev server)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197818912
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198122964
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198157316
+      }
+    ],
+    "Create basic `App.tsx` entry point": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197818977
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198160482
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198222001
+      }
+    ],
+    "Verify `npm run dev` starts successfully": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819031
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198224894
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198266771
+      }
+    ],
+    "Create `backend/app/` directory structure per design": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819093
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198273381
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198329067
+      }
+    ],
+    "Create `backend/app/main.py` with FastAPI app instance": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819145
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198332459
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198378689
+      }
+    ],
+    "Add CORS middleware for frontend dev server": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819191
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198381843
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198441817
+      }
+    ],
+    "Implement `GET /api/health` returning `{ \"status\": \"ok\" }`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819230
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198444953
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198494174
+      }
+    ],
+    "Create `backend/run.py` or uvicorn config for local dev": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819278
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198497308
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198555154
+      }
+    ],
+    "Verify `uvicorn` starts and health endpoint responds": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819325
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198558188
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198627988
+      }
+    ],
+    "Add MapLibre GL JS to frontend": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819373
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198645570
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198691722
+      }
+    ],
+    "Create `ForecastMap` component wrapping MapLibre instance": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819426
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198695624
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198808117
+      }
+    ],
+    "Load a free basemap style (e.g., MapTiler or self-hosted style)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819477
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198811201
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198876530
+      }
+    ],
+    "Configure initial center and zoom for CONUS": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819522
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198879506
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198936340
+      }
+    ],
+    "Verify map renders with geographic features (coastlines, borders)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819573
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787198940103
+      }
+    ],
+    "Create or source a Dark Forecast style optimized for colorful overlays": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819612
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199040506
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199086766
+      }
+    ],
+    "Create or source a Light Forecast style for printing/screenshots": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819660
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199089808
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199135073
+      }
+    ],
+    "Add `MapStyleSelector` component to toggle between styles": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819708
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199138388
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199231951
+      }
+    ],
+    "Persist style choice in viewer state": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819755
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199234952
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199303592
+      }
+    ],
+    "Implement top toolbar container": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819795
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199307524
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199367205
+      }
+    ],
+    "Implement time display bar (placeholder content)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819845
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199370084
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199433425
+      }
+    ],
+    "Implement left panel (legend placeholder)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819899
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199437865
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199546469
+      }
+    ],
+    "Implement center map area (ForecastMap)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197819977
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199549618
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199599841
+      }
+    ],
+    "Implement right panel (inspector placeholder)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820024
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199602845
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199665349
+      }
+    ],
+    "Implement bottom timeline bar (placeholder)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820074
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199668283
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199731485
+      }
+    ],
+    "Verify layout matches design wireframe at 1920×1080": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820125
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199734948
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199798659
+      }
+    ],
+    "Create `frontend/src/api/client.ts` with base fetch wrapper": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820173
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199802776
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199867869
+      }
+    ],
+    "Call `/api/health` on app mount and display status": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820213
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199871018
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199963334
+      }
+    ],
+    "Verify end-to-end communication through Vite proxy": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820272
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787199967270
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787200056962
+      }
+    ],
+    "Create `backend/app/data/kerchunk_store.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820314
+      },
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787200064409
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201751268
+      }
+    ],
+    "Implement dataset discovery: find available Kerchunk references": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820362
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201756090
+      }
+    ],
+    "Implement `open_dataset(date, run)` → xarray.Dataset (lazy)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820408
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201760115
+      }
+    ],
+    "Add LRU cache for open dataset handles": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820462
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201763798
+      }
+    ],
+    "Add structured logging for dataset open timing": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820514
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201767984
+      }
+    ],
+    "Create `backend/app/data/field_selector.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820582
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201776518
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201954233
+      }
+    ],
+    "Implement date discovery from available Kerchunk references": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820682
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201958081
+      }
+    ],
+    "Implement run discovery for a given date": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820760
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201962936
+      }
+    ],
+    "Implement variable discovery from dataset dimensions/variables": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820812
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201967050
+      }
+    ],
+    "Implement level discovery for a given variable": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820860
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201971019
+      }
+    ],
+    "Implement forecast-hour discovery and valid-time calculation": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820908
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201974851
+      }
+    ],
+    "Implement `GET /api/catalog` — available products": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197820957
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787201979944
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202224185
+      }
+    ],
+    "Implement `GET /api/dates?product=air` — available dates": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821008
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202228233
+      }
+    ],
+    "Implement `GET /api/runs?product=air&date=...` — available runs": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821059
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202233359
+      }
+    ],
+    "Implement `GET /api/variables?product=air&date=...&run=...` — grouped variables": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821112
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202237398
+      }
+    ],
+    "Implement `GET /api/levels?...&variable=...` — available levels": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821160
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202241384
+      }
+    ],
+    "Implement `GET /api/times?...` — forecast hours and valid times": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821208
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202245384
+      }
+    ],
+    "Add request validation via Pydantic models": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821256
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202249593
+      }
+    ],
+    "Create `config/domains/air.yaml` with variable definitions": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821294
+      },
+      {
+        "executionId": "a6c21aa7-5818-441c-9d93-02fe737050eb",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787202259666
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202708828
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202752578
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202756308
+      }
+    ],
+    "Implement config loader in `backend/app/config/`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821378
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202708923
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202759299
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202763477
+      }
+    ],
+    "Wire variable metadata (categories, labels, units, rendering) into API responses": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821428
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202708980
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202766527
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202771764
+      }
+    ],
+    "Verify `/api/variables` returns grouped, labeled variables from config": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821489
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709044
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202774434
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202911714
+      }
+    ],
+    "Create `useMetadata` hook to fetch dates/runs/variables/levels/times": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821530
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709112
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202926650
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203044708
+      }
+    ],
+    "Implement `DateSelector` component populated from API": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821597
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709164
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203050589
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203131476
+      }
+    ],
+    "Implement `RunSelector` component (dependent on date)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821657
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709225
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203137761
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203187109
+      }
+    ],
+    "Implement `VariableSelector` component with category grouping": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821706
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709312
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203190093
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203248765
+      }
+    ],
+    "Implement `LevelSelector` component (conditional visibility)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821760
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709364
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203251840
+      }
+    ],
+    "Wire selectors to ViewerState context": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821805
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709429
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203313841
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203371726
+      }
+    ],
+    "Implement `field_selector.select(date, run, variable, level, fhr)` → numpy array": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821845
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709496
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203379642
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203384444
+      }
+    ],
+    "Extract coordinate arrays (lat, lon) from dataset": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821895
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709561
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203387605
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203509718
+      }
+    ],
+    "Extract projection/CRS metadata from GRIB2 attributes": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821946
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709629
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203512674
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203673573
+      }
+    ],
+    "Log field shape, min, max, mean on extraction": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197821995
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709696
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203676458
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203681257
+      }
+    ],
+    "Create `backend/app/utils/field_stats.py` — print field diagnostics": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822064
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709784
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203688954
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203797624
+      }
+    ],
+    "Create `backend/app/utils/reference_plot.py` — matplotlib/cartopy plot": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822114
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709844
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203800874
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203957042
+      }
+    ],
+    "Create `backend/app/utils/grid_inspector.py` — coordinate extent/projection info": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822179
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709899
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787203961473
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204068345
+      }
+    ],
+    "Verify one real field: correct shape, reasonable min/max, expected coordinate range": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822230
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202709956
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204071774
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204267138
+      }
+    ],
+    "Create `backend/app/projections/coordinates.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822280
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710017
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204274703
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204401997
+      }
+    ],
+    "Implement grid-index → native CRS coordinate mapping": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822332
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710138
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204405873
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204409220
+      }
+    ],
+    "Create `backend/app/projections/transform.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822379
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710204
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204412986
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204556707
+      }
+    ],
+    "Implement native CRS → geographic (lon/lat) transform via pyproj": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822430
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710272
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204560775
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204564170
+      }
+    ],
+    "Verify coordinate transforms against known reference points": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822480
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710336
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204567357
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204714387
+      }
+    ],
+    "Transform a known field's coordinate grid to lon/lat": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822546
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710399
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204722073
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204903273
+      }
+    ],
+    "Render as a simple GeoJSON bounding polygon on MapLibre": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822610
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710460
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787204906582
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205247322
+      }
+    ],
+    "Verify geographic extent aligns with expected region": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822662
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710532
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205251396
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205362313
+      }
+    ],
+    "Check latitude orientation (N→S vs S→N) and longitude convention": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822759
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710591
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205366101
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205371804
+      }
+    ],
+    "Select a field with known spatial features (e.g., high values over a specific region)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822808
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710686
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205380578
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205550444
+      }
+    ],
+    "Render a coarse representation on the map": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822856
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710742
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205554958
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205742879
+      }
+    ],
+    "Compare against reference matplotlib plot": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822907
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710792
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205748502
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205753761
+      }
+    ],
+    "Confirm no mirroring, rotation, or offset errors": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197822956
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710863
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205757210
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205762677
+      }
+    ],
+    "Document validated scanning order and grid orientation": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823011
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710914
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205765993
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205770360
+      }
+    ],
+    "Create `backend/app/contours/generator.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823063
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202710980
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787205778509
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206026374
+      }
+    ],
+    "Implement isoline generation using contourpy on the native grid": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823128
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711044
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206031285
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206034969
+      }
+    ],
+    "Support configurable contour interval and major interval": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823179
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711100
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206039248
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206043884
+      }
+    ],
+    "Return contour vertices with associated values": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823230
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711167
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206047640
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206051624
+      }
+    ],
+    "Create `backend/app/contours/geojson.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823280
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711262
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206056187
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206168100
+      }
+    ],
+    "Transform contour vertices from native grid → geographic coordinates": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823330
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711325
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206172312
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206175829
+      }
+    ],
+    "Serialize as GeoJSON FeatureCollection with `value` and `major` properties": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823389
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711397
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206179473
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206183118
+      }
+    ],
+    "Optimize serialization with orjson": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823434
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711465
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206186650
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206191556
+      }
+    ],
+    "Implement `GET /api/contours` with query parameters": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823479
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711561
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206195280
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206367430
+      }
+    ],
+    "Wire to contour generator and GeoJSON serializer": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823529
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711630
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206371051
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206375068
+      }
+    ],
+    "Add contour geometry cache (keyed on date/run/var/level/fhr/interval)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823579
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711696
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206378866
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206383100
+      }
+    ],
+    "Add timing instrumentation": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823630
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711765
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206386740
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206390284
+      }
+    ],
+    "Add HTTP cache headers": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823679
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711855
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206394059
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206398000
+      }
+    ],
+    "Create `useContours` hook to fetch GeoJSON from `/api/contours`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823729
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711930
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206406246
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206488716
+      }
+    ],
+    "Create `IsolineLayer` component using MapLibre line layer": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823779
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202711997
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206493255
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206590353
+      }
+    ],
+    "Style major contours differently from minor contours": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823829
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712063
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206599902
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206603834
+      }
+    ],
+    "Verify contour placement matches reference plot": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823879
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712127
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206607371
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206612372
+      }
+    ],
+    "Create `ContourLabelLayer` component using MapLibre symbol layer": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197823963
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712182
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206620816
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206719749
+      }
+    ],
+    "Place labels along contour lines with value text": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824013
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712246
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206724286
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206727878
+      }
+    ],
+    "Prioritize major contour labels": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824063
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712312
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206731324
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206735145
+      }
+    ],
+    "Adjust label density based on zoom level": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824113
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712363
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206738389
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206741834
+      }
+    ],
+    "Ensure readability over shaded backgrounds (halo/background)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824164
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712470
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206746564
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206750149
+      }
+    ],
+    "Extend `generator.py` to produce filled contour polygons via contourpy": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824213
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712528
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206758688
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206971286
+      }
+    ],
+    "Use configured fill levels from domain config": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824265
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712581
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206977022
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206980464
+      }
+    ],
+    "Return polygons with value-range properties": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824324
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712645
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206983872
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206987643
+      }
+    ],
+    "Implement `GET /api/filled` endpoint": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824377
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712711
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787206991682
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207124650
+      }
+    ],
+    "Return GeoJSON FeatureCollection of fill polygons with level ranges": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824427
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712776
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207128905
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207133671
+      }
+    ],
+    "Add caching and instrumentation": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824480
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712841
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207137627
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207141181
+      }
+    ],
+    "Create `FilledContourLayer` component using MapLibre fill layer": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824533
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712900
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207150284
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207290190
+      }
+    ],
+    "Apply color ramp from domain config / variable rendering settings": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824609
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202712964
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207294603
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207299309
+      }
+    ],
+    "Support discrete color ranges (not continuous gradient)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824660
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713067
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207303188
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207306833
+      }
+    ],
+    "Ensure correct layer ordering (filled below isolines)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824711
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713125
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207311513
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787207315228
+      }
+    ],
+    "Implement `RenderingSelector` component with three modes": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824763
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713183
+      }
+    ],
+    "Toggle visibility of IsolineLayer and FilledContourLayer based on mode": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824813
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713241
+      }
+    ],
+    "Default air-composition fields to \"Filled + Contours\"": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824863
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713298
+      }
+    ],
+    "Wire to ViewerState": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824913
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713359
+      }
+    ],
+    "Implement `Legend` component showing color ramp + value labels": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197824963
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713455
+      }
+    ],
+    "Display variable name, units, fill ranges, contour interval": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825014
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713531
+      }
+    ],
+    "Update immediately on variable change": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825114
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713714
+      }
+    ],
+    "Position in left panel, always visible on desktop": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825163
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713826
+      }
+    ],
+    "Create `ViewerContext` with full state interface": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825213
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713884
+      }
+    ],
+    "Implement reducer actions: setDate, setRun, setVariable, setLevel, setForecastHour, setRendering, setMap": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825264
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713941
+      }
+    ],
+    "Cascading updates: date change → refetch runs → reset run; run change → refetch variables, etc.": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825317
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202713998
+      }
+    ],
+    "Implement `TimeDisplay` component": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825374
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714058
+      }
+    ],
+    "Show initialization time (date + run)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825428
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714113
+      }
+    ],
+    "Show current forecast hour": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825481
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714178
+      }
+    ],
+    "Compute and show valid time": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825530
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714241
+      }
+    ],
+    "Update on any selection change": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825580
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714308
+      }
+    ],
+    "Implement `ForecastSlider` with available forecast hours": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825640
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714365
+      }
+    ],
+    "Implement `PlaybackControls` (First, Previous, Play/Pause, Next, Last buttons)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825692
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714424
+      }
+    ],
+    "Only enable selectable forecast hours": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825744
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714479
+      }
+    ],
+    "Wire to ViewerState forecastHour": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825793
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714532
+      }
+    ],
+    "Implement `ProductSelector` component": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825845
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714591
+      }
+    ],
+    "Show \"Air Composition\" as available product": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825896
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714643
+      }
+    ],
+    "Placeholder for future \"Meteorology\" (disabled or hidden)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197825958
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714710
+      }
+    ],
+    "Implement animation engine (frame buffer, interval timer, sequence tagging)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826010
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714764
+      }
+    ],
+    "Prefetch neighboring frames (fhr ± N)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826063
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714825
+      }
+    ],
+    "Stale-request protection: ignore out-of-order responses": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826124
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714881
+      }
+    ],
+    "Play/pause toggling": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826178
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714944
+      }
+    ],
+    "Configurable playback speed": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826301
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202714997
+      }
+    ],
+    "Keep current map visible until next frame is ready": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826392
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715065
+      }
+    ],
+    "Swap layers atomically to avoid flicker": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826448
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715125
+      }
+    ],
+    "Cancel in-flight requests on pause or manual navigation": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826509
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715181
+      }
+    ],
+    "Handle missing frames gracefully (skip, don't stall)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826562
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715278
+      }
+    ],
+    "Create `backend/app/point_query/nearest.py`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826642
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715348
+      }
+    ],
+    "Implement nearest-gridpoint lookup given (lat, lon) and field coordinates": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826699
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715408
+      }
+    ],
+    "Extract value at nearest grid point": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826763
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715464
+      }
+    ],
+    "Implement `GET /api/point` endpoint with full response": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826827
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715527
+      }
+    ],
+    "Create `MapInspector` component in right panel": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826880
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715581
+      }
+    ],
+    "Add click handler on map to capture lat/lon": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826941
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715641
+      }
+    ],
+    "Call `/api/point` with current viewer state + clicked coordinates": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197826997
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715694
+      }
+    ],
+    "Display: lat, lon, variable, value, units, level, valid time": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827047
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715758
+      }
+    ],
+    "Show point marker on map at clicked location": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827097
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715816
+      }
+    ],
+    "Create `useUrlState` hook": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827147
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715877
+      }
+    ],
+    "On mount: parse URL query params → initialize ViewerState": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827207
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715931
+      }
+    ],
+    "On state change: update URL params via `replaceState`": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827264
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202715991
+      }
+    ],
+    "Encode: product, date, run, variable, level, fhr, render mode": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827314
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716050
+      }
+    ],
+    "Do not encode transient state (map viewport, inspector)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827365
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716107
+      }
+    ],
+    "On load with URL params: validate against available data": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827432
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716164
+      }
+    ],
+    "If referenced data no longer available: fall back to defaults, show notice": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827511
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716259
+      }
+    ],
+    "Verify sharing a URL produces the same view in another browser": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827563
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716326
+      }
+    ],
+    "Implement `LayerPanel` component": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827613
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716383
+      }
+    ],
+    "Toggle: state boundaries, county boundaries, cities, roads, terrain": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827662
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716444
+      }
+    ],
+    "Wire toggles to map layer visibility": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827714
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716512
+      }
+    ],
+    "Persist in ViewerState": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827763
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716577
+      }
+    ],
+    "Implement `ContourIntervalSelector` component": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827814
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716631
+      }
+    ],
+    "Allow user to override default contour interval for current variable": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827863
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716694
+      }
+    ],
+    "Trigger contour refetch on change": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827913
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716757
+      }
+    ],
+    "Refine toolbar spacing and alignment": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197827964
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716814
+      }
+    ],
+    "Ensure legend is readable at all supported resolutions": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828013
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716864
+      }
+    ],
+    "Verify layout at 1440×900, 1920×1080, 2560×1440": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828063
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716924
+      }
+    ],
+    "Dark theme consistency across all panels": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828114
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202716981
+      }
+    ],
+    "Ensure forecast contours have DESI-like visual quality": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828163
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717045
+      }
+    ],
+    "Add non-blocking notification area for API errors": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828247
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717097
+      }
+    ],
+    "Show \"data unavailable\" state in selectors when data is missing": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828317
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717149
+      }
+    ],
+    "Show connection status indicator": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828397
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717212
+      }
+    ],
+    "Never silently blank the map": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828465
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717276
+      }
+    ],
+    "Instrument and record: field-read latency, contour generation time, serialization time": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828534
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717348
+      }
+    ],
+    "Measure frontend render time for contour GeoJSON": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828645
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717430
+      }
+    ],
+    "Measure animation smoothness (frame intervals)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828795
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717494
+      }
+    ],
+    "Document baseline against performance targets (NFR-1 through NFR-6)": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828899
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717548
+      }
+    ],
+    "If GeoJSON too large: implement geometry simplification or switch to MVT": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197828981
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717608
+      }
+    ],
+    "If contour generation slow: add/tune contour cache": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829042
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717675
+      }
+    ],
+    "If field reads slow: optimize Kerchunk reference caching": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829115
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717729
+      }
+    ],
+    "If animation janky: increase prefetch buffer, optimize layer swaps": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829199
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717791
+      }
+    ],
+    "Add HTTP cache headers for immutable forecast data": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829282
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717859
+      }
+    ],
+    "Implement request cancellation for superseded requests": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829365
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717932
+      }
+    ],
+    "Implement `usePrefetch` hook for neighboring forecast hours": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829448
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202717995
+      }
+    ],
+    "Cache fetched GeoJSON in memory for quick frame switching": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829512
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202718064
+      }
+    ],
+    "Evict distant frames from cache to manage memory": [
+      {
+        "executionId": "c00e30f9-0611-46e9-9f94-821c3bf71f73",
+        "chatSessionId": "sess_9679ccd9-d1ac-455e-886a-89797345f04f",
+        "timestamp": 1787197829582
+      },
+      {
+        "executionId": "2c797641-32ad-4d7f-8a1f-1e79e23eee13",
+        "chatSessionId": "sess_b4a12953-0089-4d05-8806-15dd6722ed3a",
+        "timestamp": 1787202718131
+      }
+    ]
+  }
+}

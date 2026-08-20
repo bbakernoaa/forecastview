@@ -1,0 +1,70 @@
+name: forecastview
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  # Python
+  - python=3.12
+
+  # --- Backend: Data Access & Scientific ---
+  - grib2io
+  - esmpy
+  - cf-xarray
+  - xarray
+  - kerchunk
+  - icechunk
+  - zarr
+  - fsspec
+  - s3fs
+  - numpy
+  - scipy
+  - pandas
+  - dask
+  - h5py
+  - netcdf4
+
+  # --- Backend: Geospatial & Projections ---
+  - pyproj
+  - cartopy
+  - shapely
+  - rasterio
+  - affine
+
+  # --- Backend: Contour Generation ---
+  - matplotlib
+  - contourpy
+
+  # --- Backend: Web Framework ---
+  - fastapi
+  - uvicorn
+  - pydantic
+  - httpx
+  - orjson
+
+  # --- Backend: Utilities ---
+  - structlog
+  - python-dotenv
+  - cachetools
+  - aiofiles
+
+  # --- Frontend Tooling ---
+  - nodejs=22
+
+  # --- Testing ---
+  - pytest
+  - pytest-asyncio
+  - pytest-cov
+  - httpx
+
+  # --- Development Tools ---
+  - ruff
+  - mypy
+  - ipython
+  - jupyter
+
+  # --- pip-only packages ---
+  - pip
+  - pip:
+      - geojsoncontour
+      - xregrid @ git+https://github.com/NOAA-EMC/xregrid.git

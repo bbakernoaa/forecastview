@@ -1,0 +1,290 @@
+# Air Composition Domain Configuration
+# Defines variable metadata, categories, and rendering hints for the
+# GEFS Aerosol Component (GEFS-Aerosols) forecast product.
+
+product:
+  name: "Air Composition"
+  id: "air"
+
+categories:
+  - "Optical Depth"
+  - "Scattering Optical Depth"
+  - "Single Scattering Albedo"
+  - "Asymmetry"
+  - "Column Mass Density"
+
+variables:
+  # ===================================================================
+  # Optical Depth
+  # ===================================================================
+  totAOD550:
+    shortName: "totAOD550"
+    fullName: "Total Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  duAOD550:
+    shortName: "duAOD550"
+    fullName: "Dust Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "YlOrBr"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  ssAOD550:
+    shortName: "ssAOD550"
+    fullName: "Sea Salt Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "Blues"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+
+  omAOD550:
+    shortName: "omAOD550"
+    fullName: "Organic Matter Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "Greens"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+
+  bcAOD550:
+    shortName: "bcAOD550"
+    fullName: "Black Carbon Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "Greys"
+      contourInterval: 0.01
+      fillLevels: [0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0]
+
+  totAOD340:
+    shortName: "totAOD340"
+    fullName: "Total Aerosol Optical Depth at 340nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  totAOD440:
+    shortName: "totAOD440"
+    fullName: "Total Aerosol Optical Depth at 440nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  totAOD645:
+    shortName: "totAOD645"
+    fullName: "Total Aerosol Optical Depth at 645nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  totAOD870:
+    shortName: "totAOD870"
+    fullName: "Total Aerosol Optical Depth at 870nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  totAOD1640:
+    shortName: "totAOD1640"
+    fullName: "Total Aerosol Optical Depth at 1640nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+
+  totAOD11100:
+    shortName: "totAOD11100"
+    fullName: "Total Aerosol Optical Depth at 11100nm"
+    units: "Numeric"
+    category: "Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.02
+      fillLevels: [0, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0]
+
+  # ===================================================================
+  # Scattering Optical Depth
+  # ===================================================================
+  totScatAOD550:
+    shortName: "totScatAOD550"
+    fullName: "Total Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "rainbow"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  duScatAOD550:
+    shortName: "duScatAOD550"
+    fullName: "Dust Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "YlOrBr"
+      contourInterval: 0.1
+      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+
+  ssScatAOD550:
+    shortName: "ssScatAOD550"
+    fullName: "Sea Salt Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "Blues"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+
+  so4ScatAOD550:
+    shortName: "so4ScatAOD550"
+    fullName: "Sulfate Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "Reds"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+
+  omScatAOD550:
+    shortName: "omScatAOD550"
+    fullName: "Organic Matter Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "Greens"
+      contourInterval: 0.05
+      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+
+  bcScatAOD550:
+    shortName: "bcScatAOD550"
+    fullName: "Black Carbon Scattering Aerosol Optical Depth at 550nm"
+    units: "Numeric"
+    category: "Scattering Optical Depth"
+    rendering:
+      colormap: "Greys"
+      contourInterval: 0.005
+      fillLevels: [0, 0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]
+
+  # ===================================================================
+  # Single Scattering Albedo
+  # ===================================================================
+  totSSA340:
+    shortName: "totSSA340"
+    fullName: "Total Single Scattering Albedo at 340nm"
+    units: "Numeric"
+    category: "Single Scattering Albedo"
+    rendering:
+      colormap: "RdYlGn"
+      contourInterval: 0.02
+      fillLevels: [0.80, 0.84, 0.88, 0.90, 0.92, 0.94, 0.96, 0.98, 0.99, 1.00]
+
+  # ===================================================================
+  # Asymmetry
+  # ===================================================================
+  totAsy340:
+    shortName: "totAsy340"
+    fullName: "Total Asymmetry Parameter at 340nm"
+    units: "Numeric"
+    category: "Asymmetry"
+    rendering:
+      colormap: "coolwarm"
+      contourInterval: 0.05
+      fillLevels: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+
+  # ===================================================================
+  # Column Mass Density
+  # ===================================================================
+  tot_pm10_colmd:
+    shortName: "tot_pm10_colmd"
+    fullName: "Total PM10 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "hot_r"
+      contourInterval: 0.0001
+      fillLevels: [0, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05]
+
+  tot_pm25_colmd:
+    shortName: "tot_pm25_colmd"
+    fullName: "Total PM2.5 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "hot_r"
+      contourInterval: 0.0001
+      fillLevels: [0, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05]
+
+  du_pm25_colmd:
+    shortName: "du_pm25_colmd"
+    fullName: "Dust PM2.5 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "YlOrBr"
+      contourInterval: 0.0001
+      fillLevels: [0, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05]
+
+  ss_pm25_colmd:
+    shortName: "ss_pm25_colmd"
+    fullName: "Sea Salt PM2.5 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "Blues"
+      contourInterval: 0.00005
+      fillLevels: [0, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02]
+
+  bc_pm236_colmd:
+    shortName: "bc_pm236_colmd"
+    fullName: "Black Carbon PM2.36 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "Greys"
+      contourInterval: 0.000005
+      fillLevels: [0, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002]
+
+  om_pm424_colmd:
+    shortName: "om_pm424_colmd"
+    fullName: "Organic Matter PM4.24 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "Greens"
+      contourInterval: 0.00005
+      fillLevels: [0, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02]
+
+  so4_pm25_colmd:
+    shortName: "so4_pm25_colmd"
+    fullName: "Sulfate PM2.5 Column Mass Density"
+    units: "kg m-2"
+    category: "Column Mass Density"
+    rendering:
+      colormap: "Reds"
+      contourInterval: 0.00005
+      fillLevels: [0, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02]
