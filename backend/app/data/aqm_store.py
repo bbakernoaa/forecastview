@@ -30,7 +30,7 @@ class AQMStore:
         self.store_path = Path(store_path) if store_path else _DEFAULT_STORE_PATH
         self.domain = domain
         self._product_dir = self.store_path / f"aqm_{domain}"
-        self._fs = s3fs.S3FileSystem(anon=True)
+        self._s3fs: s3fs.S3FileSystem | None = None
         self._data_cache: LRUCache = LRUCache(maxsize=16)
         self._latlons_cache: dict[str, tuple[np.ndarray, np.ndarray]] | None = None
 
@@ -43,6 +43,27 @@ class AQMStore:
             domain=domain,
             dates=len(self._available),
         )
+
+    @property
+    def fs(self) -> s3fs.S3FileSystem:
+        if self._s3fs is None:
+            self._s3fs = s3fs.S3FileSystem(anon=True)
+        return self._s3fs
+
+    def _read_file_bytes(self, var_info: dict[str, Any]) -> bytes:
+        """Read GRIB2 file bytes from local disk or S3."""
+        local_path = var_info.get("local_path")
+        s3_key = var_info.get("s3_key", "")
+
+        if local_path and Path(local_path).is_file():
+            with open(local_path, "rb") as f:
+                return f.read()
+        elif s3_key and Path(s3_key).is_file():
+            with open(s3_key, "rb") as f:
+                return f.read()
+        else:
+            with self.fs.open(s3_key, "rb") as f:
+                return f.read()
 
     def _scan(self) -> None:
         """Scan manifest directory for available dates/runs."""
@@ -116,14 +137,12 @@ class AQMStore:
         if not var_info:
             raise ValueError(f"Variable '{variable}' not found in {date}/{run}")
 
-        s3_key = var_info["s3_key"]
         target_fhr = fhr if fhr is not None else 1
 
         t0 = time.perf_counter()
 
-        # Download GRIB2 from S3 and extract the target forecast hour
-        with self._fs.open(s3_key, "rb") as f:
-            data = f.read()
+        # Download GRIB2 from S3 or read from local disk
+        data = self._read_file_bytes(var_info)
 
         with tempfile.NamedTemporaryFile(suffix=".grib2") as tmp:
             tmp.write(data)
@@ -197,10 +216,7 @@ class AQMStore:
             raise ValueError("No variables in manifest")
 
         first_var = next(iter(variables.values()))
-        s3_key = first_var["s3_key"]
-
-        with self._fs.open(s3_key, "rb") as f:
-            data = f.read()
+        data = self._read_file_bytes(first_var)
 
         with tempfile.NamedTemporaryFile(suffix=".grib2") as tmp:
             tmp.write(data)

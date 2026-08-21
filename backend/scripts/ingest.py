@@ -95,6 +95,7 @@ def ingest_date(
     path_pattern: str = _DEFAULT_PATH_PATTERN,
     forecast_hours: list[int] | None = None,
     max_workers: int = _DEFAULT_MAX_WORKERS,
+    local_path_pattern: str | None = None,
 ) -> bool:
     """Build and save a Kerchunk manifest for a single date/cycle.
 
@@ -114,6 +115,8 @@ def ingest_date(
         Forecast hours to include.
     max_workers : int
         Thread-pool size for concurrent scanning.
+    local_path_pattern : str or None
+        Optional local file path pattern with {date}, {cycle}, {fhr} placeholders.
 
     Returns
     -------
@@ -122,10 +125,35 @@ def ingest_date(
     """
     from grib2io.kerchunk import ReferenceGenerator
 
-    urls = build_urls(date, cycle, bucket, path_pattern, forecast_hours)
+    urls = build_urls(
+        date=date,
+        cycle=cycle,
+        bucket=bucket,
+        path_pattern=path_pattern,
+        forecast_hours=forecast_hours,
+        local_path_pattern=local_path_pattern,
+    )
     if not urls:
         logger.warning("ingest_date.no_urls", date=date, cycle=cycle)
         return False
+
+    if local_path_pattern:
+        existing_urls = [u for u in urls if Path(u).is_file()]
+        if not existing_urls:
+            logger.warning(
+                "ingest_date.no_local_files_found",
+                date=date,
+                cycle=cycle,
+                searched=len(urls),
+            )
+            return False
+        if len(existing_urls) < len(urls):
+            logger.info(
+                "ingest_date.filtered_missing_local_files",
+                found=len(existing_urls),
+                expected=len(urls),
+            )
+        urls = existing_urls
 
     # Create output directory
     manifest_dir = store_path / date / cycle
@@ -141,11 +169,13 @@ def ingest_date(
 
     t_start = time.perf_counter()
 
+    storage_opts = None if local_path_pattern else _DEFAULT_STORAGE_OPTIONS
+
     try:
         gen = ReferenceGenerator(
             urls,
             filters={"typeOfFirstFixedSurface": 10},
-            storage_options=_DEFAULT_STORAGE_OPTIONS,
+            storage_options=storage_opts,
             max_workers=max_workers,
         )
         manifest = gen.generate()
@@ -190,11 +220,15 @@ def ingest_date(
     try:
         import xarray as xr
 
+        remote_opts: dict = {"asynchronous": True}
+        if not local_path_pattern:
+            remote_opts.update(_DEFAULT_STORAGE_OPTIONS)
+
         ref_fs = fsspec.filesystem(
             "reference",
             fo=str(manifest_path),
             asynchronous=True,
-            remote_options={**_DEFAULT_STORAGE_OPTIONS, "asynchronous": True},
+            remote_options=remote_opts,
         )
         ds = xr.open_dataset(
             ref_fs.get_mapper(""),
@@ -314,13 +348,18 @@ def main() -> None:
         # Extract base directory before {date} placeholder
         base = local_path.split("{date}")[0] if "{date}" in local_path else local_path
         parent = Path(base).resolve()
-        if not parent.is_dir():
+        if not parent.is_dir() and parent.parent.is_dir():
             parent = parent.parent
         dates = []
-        for entry in sorted(parent.iterdir()):
-            match = re.search(r"(\d{8})", entry.name)
-            if match and entry.is_dir():
-                dates.append(match.group(1))
+        if parent.is_dir():
+            for entry in sorted(parent.iterdir()):
+                match = re.search(r"(\d{8})", entry.name)
+                if match and entry.is_dir():
+                    dates.append(match.group(1))
+            if not dates:
+                match = re.search(r"(\d{8})", parent.name)
+                if match:
+                    dates.append(match.group(1))
         dates.sort()
     else:
         print("[1/3] Discovering available dates from S3...")
@@ -353,6 +392,7 @@ def main() -> None:
             bucket=args.bucket,
             forecast_hours=forecast_hours,
             max_workers=args.max_workers,
+            local_path_pattern=local_path,
         )
         if success:
             successes += 1

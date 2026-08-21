@@ -181,42 +181,50 @@ from typing import Optional
 
 # --- Metadata models ---
 
+
 class CatalogEntry(BaseModel):
-    product: str                    # e.g. "air"
+    product: str  # e.g. "air"
     description: str
 
+
 class AvailableDate(BaseModel):
-    date: str                       # ISO date "2026-08-19"
-    runs: list[str]                 # ["00", "06", "12", "18"]
+    date: str  # ISO date "2026-08-19"
+    runs: list[str]  # ["00", "06", "12", "18"]
+
 
 class VariableInfo(BaseModel):
-    id: str                         # e.g. "PM25"
-    label: str                      # e.g. "PM2.5"
-    category: str                   # e.g. "Particulate Matter"
-    units: str                      # e.g. "ug m-3"
-    levels: list[str]               # e.g. ["surface"] or ["1000", "925", "850", ...]
+    id: str  # e.g. "PM25"
+    label: str  # e.g. "PM2.5"
+    category: str  # e.g. "Particulate Matter"
+    units: str  # e.g. "ug m-3"
+    levels: list[str]  # e.g. ["surface"] or ["1000", "925", "850", ...]
     rendering: "RenderingConfig"
 
+
 class RenderingConfig(BaseModel):
-    default_mode: str               # "both" | "contours" | "filled"
+    default_mode: str  # "both" | "contours" | "filled"
     contour_interval: float
     major_contour_interval: float
     labels: bool
-    color_scale: str                # reference to color scale name
-    fill_levels: list[float]        # bin boundaries for filled contours
-    decimals: int                   # display precision
+    color_scale: str  # reference to color scale name
+    fill_levels: list[float]  # bin boundaries for filled contours
+    decimals: int  # display precision
+
 
 class ForecastTimeInfo(BaseModel):
-    forecast_hours: list[int]       # [0, 1, 2, ..., 48]
+    forecast_hours: list[int]  # [0, 1, 2, ..., 48]
     init_time: datetime
     valid_times: dict[int, datetime]  # fhr -> valid time
 
+
 # --- API response models ---
+
 
 class ContourResponse(BaseModel):
     type: str = "FeatureCollection"
-    features: list[dict]            # GeoJSON features
+    features: list[dict]  # GeoJSON features
     metadata: "ContourMetadata"
+
 
 class ContourMetadata(BaseModel):
     variable: str
@@ -230,6 +238,7 @@ class ContourMetadata(BaseModel):
     min_value: float
     max_value: float
 
+
 class PointQueryResponse(BaseModel):
     latitude: float
     longitude: float
@@ -240,25 +249,31 @@ class PointQueryResponse(BaseModel):
     forecast_hour: int
     valid_time: str
 
+
 class FilledFieldResponse(BaseModel):
     """For whole-field overlay: base64 PNG + bounds."""
-    image: str                      # base64-encoded PNG
-    bounds: list[list[float]]       # [[south, west], [north, east]]
+
+    image: str  # base64-encoded PNG
+    bounds: list[list[float]]  # [[south, west], [north, east]]
     metadata: ContourMetadata
+
 
 class HealthResponse(BaseModel):
     status: str
     version: str
     datasets_loaded: int
 
+
 # --- Internal field model ---
+
 
 class NativeField:
     """Internal representation of a field on its native grid."""
-    data: "numpy.ndarray"           # 2D field values
-    lats: "numpy.ndarray"           # 2D or 1D latitude array
-    lons: "numpy.ndarray"           # 2D or 1D longitude array
-    crs: str                        # native CRS (proj4 or EPSG)
+
+    data: "numpy.ndarray"  # 2D field values
+    lats: "numpy.ndarray"  # 2D or 1D latitude array
+    lons: "numpy.ndarray"  # 2D or 1D longitude array
+    crs: str  # native CRS (proj4 or EPSG)
     variable: str
     units: str
     level: str
@@ -569,8 +584,8 @@ This feature is well-suited for property-based testing. The backend contains pur
 # Example: Property 3 — Valid time computation
 # Feature: forecast-viewer, Property 3: Valid time computation
 @given(
-    init_time=st.datetimes(min_value=datetime(2020,1,1), max_value=datetime(2030,12,31)),
-    forecast_hour=st.integers(min_value=0, max_value=384)
+    init_time=st.datetimes(min_value=datetime(2020, 1, 1), max_value=datetime(2030, 12, 31)),
+    forecast_hour=st.integers(min_value=0, max_value=384),
 )
 def test_valid_time_always_equals_init_plus_fhr(init_time, forecast_hour):
     result = compute_valid_time(init_time, forecast_hour)

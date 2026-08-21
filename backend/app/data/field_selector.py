@@ -814,7 +814,7 @@ class FieldSelector:
             date=date,
             run=run,
             variable=variable,
-            level=level,
+            vert_level=level,
             fhr=fhr,
         )
 

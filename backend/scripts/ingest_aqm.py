@@ -44,6 +44,17 @@ def discover_dates(fs: s3fs.S3FileSystem, domain: str, limit: int = 5) -> list[s
     return dates[-limit:]
 
 
+def discover_dates_local(base_path: Path, limit: int = 5) -> list[str]:
+    """Discover available dates from a local directory."""
+    dates = []
+    if base_path.is_dir():
+        for d in base_path.iterdir():
+            if d.is_dir() and len(d.name) == 8 and d.name.isdigit():
+                dates.append(d.name)
+    dates.sort()
+    return dates[-limit:]
+
+
 def discover_runs(fs: s3fs.S3FileSystem, domain: str, date: str) -> list[str]:
     """Discover available runs for a date."""
     prefix = f"{_BUCKET}/AQMv7/{domain}/{date}/"
@@ -56,11 +67,30 @@ def discover_runs(fs: s3fs.S3FileSystem, domain: str, date: str) -> list[str]:
     return sorted(runs)
 
 
+def discover_runs_local(base_path: Path, date: str) -> list[str]:
+    """Discover available runs for a date locally."""
+    date_dir = base_path / date
+    runs = []
+    if date_dir.is_dir():
+        for r in date_dir.iterdir():
+            if r.is_dir() and len(r.name) == 2 and r.name.isdigit():
+                runs.append(r.name)
+    return sorted(runs)
+
+
 def list_grib_files(fs: s3fs.S3FileSystem, domain: str, date: str, run: str) -> list[str]:
     """List GRIB2 files for a date/run."""
     prefix = f"{_BUCKET}/AQMv7/{domain}/{date}/{run}/"
     files = fs.ls(prefix)
     return [f for f in files if f.endswith(".grib2")]
+
+
+def list_grib_files_local(base_path: Path, date: str, run: str) -> list[Path]:
+    """List GRIB2 files for a date/run locally."""
+    run_dir = base_path / date / run
+    if not run_dir.is_dir():
+        return []
+    return [f for f in sorted(run_dir.iterdir()) if f.name.endswith(".grib2") and f.is_file()]
 
 
 def parse_variable_from_filename(filename: str) -> str:
@@ -121,47 +151,129 @@ def build_manifest(
     return True
 
 
+def build_manifest_local(
+    domain: str,
+    date: str,
+    run: str,
+    files: list[Path],
+    store_path: Path,
+) -> bool:
+    """Build a manifest for one date/run from local GRIB2 files."""
+    if not files:
+        print(f"  No GRIB2 files found for {date}/{run}")
+        return False
+
+    manifest = {
+        "product": _PRODUCT_ID,
+        "domain": domain,
+        "date": date,
+        "run": run,
+        "bucket": "local",
+        "variables": {},
+    }
+
+    for filepath in files:
+        filename = filepath.name
+        var_name = parse_variable_from_filename(filename)
+        abs_path = str(filepath.resolve())
+        manifest["variables"][var_name] = {
+            "s3_key": abs_path,
+            "local_path": abs_path,
+            "filename": filename,
+        }
+
+    # Save manifest
+    out_dir = store_path / f"{_PRODUCT_ID}_{domain}" / date / run
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = out_dir / "manifest.json"
+
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2)
+
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description="Ingest AQMv7 data")
     parser.add_argument("--days", type=int, default=3, help="Number of recent days to ingest")
     parser.add_argument("--domain", type=str, default=_DEFAULT_DOMAIN, choices=_DOMAINS)
+    parser.add_argument(
+        "--local-path",
+        type=str,
+        default=None,
+        help="Path to local AQM GRIB2 directory (offline mode)",
+    )
     args = parser.parse_args()
 
     store_path = Path(__file__).resolve().parent.parent.parent / "data" / "manifests"
-    fs = s3fs.S3FileSystem(anon=True)
 
     print("=" * 60)
     print("  AQMv7 Manifest Ingest")
     print("=" * 60)
-    print(f"  Domain:    {args.domain}")
-    print(f"  Days:      {args.days}")
-    print(f"  Store:     {store_path}")
+    print(f"  Domain:     {args.domain}")
+    print(f"  Days:       {args.days}")
+    print(f"  Store:      {store_path}")
+    if args.local_path:
+        print(f"  Local path: {args.local_path}")
     print("=" * 60)
 
     t_start = time.time()
 
-    # Discover dates
-    dates = discover_dates(fs, args.domain, limit=args.days)
-    print(f"\n  Found {len(dates)} dates: {dates}")
+    if args.local_path:
+        local_dir = Path(args.local_path).resolve()
+        if (local_dir / args.domain).is_dir():
+            base_dir = local_dir / args.domain
+        elif (local_dir / "AQMv7" / args.domain).is_dir():
+            base_dir = local_dir / "AQMv7" / args.domain
+        else:
+            base_dir = local_dir
 
-    succeeded = 0
-    failed = 0
+        dates = discover_dates_local(base_dir, limit=args.days)
+        print(f"\n  Found {len(dates)} local dates: {dates}")
 
-    for date in dates:
-        runs = discover_runs(fs, args.domain, date)
-        for run in runs:
-            print(f"\n  [{date}/{run}] Ingesting...")
-            try:
-                ok = build_manifest(fs, args.domain, date, run, store_path)
-                if ok:
-                    files = list_grib_files(fs, args.domain, date, run)
-                    print(f"    ✓ {len(files)} variables")
-                    succeeded += 1
-                else:
+        succeeded = 0
+        failed = 0
+
+        for date in dates:
+            runs = discover_runs_local(base_dir, date)
+            for run in runs:
+                print(f"\n  [{date}/{run}] Ingesting local...")
+                try:
+                    files = list_grib_files_local(base_dir, date, run)
+                    ok = build_manifest_local(args.domain, date, run, files, store_path)
+                    if ok:
+                        print(f"    ✓ {len(files)} variables")
+                        succeeded += 1
+                    else:
+                        failed += 1
+                except Exception as exc:
+                    print(f"    ✗ Error: {exc}")
                     failed += 1
-            except Exception as exc:
-                print(f"    ✗ Error: {exc}")
-                failed += 1
+    else:
+        fs = s3fs.S3FileSystem(anon=True)
+
+        # Discover dates
+        dates = discover_dates(fs, args.domain, limit=args.days)
+        print(f"\n  Found {len(dates)} dates: {dates}")
+
+        succeeded = 0
+        failed = 0
+
+        for date in dates:
+            runs = discover_runs(fs, args.domain, date)
+            for run in runs:
+                print(f"\n  [{date}/{run}] Ingesting...")
+                try:
+                    ok = build_manifest(fs, args.domain, date, run, store_path)
+                    if ok:
+                        files = list_grib_files(fs, args.domain, date, run)
+                        print(f"    ✓ {len(files)} variables")
+                        succeeded += 1
+                    else:
+                        failed += 1
+                except Exception as exc:
+                    print(f"    ✗ Error: {exc}")
+                    failed += 1
 
     t_total = time.time() - t_start
     print("\n" + "=" * 60)

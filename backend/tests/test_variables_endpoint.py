@@ -44,7 +44,7 @@ class TestConfigLoader:
     def test_air_product_metadata(self):
         """Air config has correct product name and ID."""
         config = get_domain_config("air")
-        assert config.product.name == "Air Composition"
+        assert config.product.name == "GEFS-Aerosol"
         assert config.product.id == "air"
 
     def test_air_config_has_expected_categories(self):
@@ -113,9 +113,23 @@ class TestConfigLoader:
         assert var.fullName == "Total Aerosol Optical Depth at 550nm"
         assert var.units == "Numeric"
         assert var.category == "Optical Depth"
-        assert var.rendering.colormap == "rainbow"
+        assert var.rendering.colormap == "afmhot_r"
         assert var.rendering.contourInterval == 0.1
-        assert var.rendering.fillLevels == [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+        assert var.rendering.fillLevels == [
+            0.05,
+            0.1,
+            0.2,
+            0.3,
+            0.5,
+            0.6,
+            0.7,
+            0.8,
+            0.9,
+            1.0,
+            1.25,
+            1.5,
+            2.0,
+        ]
 
     def test_nonexistent_product_raises(self):
         """Loading a nonexistent product raises FileNotFoundError."""
@@ -186,7 +200,7 @@ class TestVariablesEndpoint:
         mock_selector.get_variables.return_value = mock_variables
 
         with patch(
-            "backend.app.api.metadata.get_field_selector",
+            "backend.app.data.product_registry.get_field_selector",
             return_value=mock_selector,
         ):
             transport = ASGITransport(app=app)
@@ -211,7 +225,7 @@ class TestVariablesEndpoint:
         mock_selector.get_variables.return_value = mock_variables
 
         with patch(
-            "backend.app.api.metadata.get_field_selector",
+            "backend.app.data.product_registry.get_field_selector",
             return_value=mock_selector,
         ):
             transport = ASGITransport(app=app)
@@ -239,7 +253,7 @@ class TestVariablesEndpoint:
         mock_selector.get_variables.return_value = mock_variables
 
         with patch(
-            "backend.app.api.metadata.get_field_selector",
+            "backend.app.data.product_registry.get_field_selector",
             return_value=mock_selector,
         ):
             transport = ASGITransport(app=app)
@@ -277,7 +291,7 @@ class TestVariablesEndpoint:
         mock_selector.get_variables.return_value = mock_variables
 
         with patch(
-            "backend.app.api.metadata.get_field_selector",
+            "backend.app.data.product_registry.get_field_selector",
             return_value=mock_selector,
         ):
             transport = ASGITransport(app=app)

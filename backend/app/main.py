@@ -57,26 +57,39 @@ app.include_router(preview_router)
 
 def _background_ingest():
     """Run ingest scripts in background on startup."""
+    import contextlib
+    import os
     import sys
 
     python = sys.executable
     base = _Path(__file__).resolve().parent.parent
 
-    import contextlib
+    gefs_local = os.environ.get("FORECASTVIEW_GEFS_LOCAL_PATH") or os.environ.get(
+        "FORECASTVIEW_LOCAL_PATH"
+    )
+    aqm_local = os.environ.get("FORECASTVIEW_AQM_LOCAL_PATH")
+
+    gefs_cmd = [python, str(base / "scripts" / "ingest.py"), "--days", "1"]
+    if gefs_local:
+        gefs_cmd.extend(["--local-path", gefs_local])
 
     # Ingest latest GEFS
     with contextlib.suppress(Exception):
         subprocess.run(
-            [python, str(base / "scripts" / "ingest.py"), "--days", "1"],
+            gefs_cmd,
             cwd=str(base.parent),
             capture_output=True,
             timeout=120,
         )
 
+    aqm_cmd = [python, str(base / "scripts" / "ingest_aqm.py"), "--days", "1"]
+    if aqm_local:
+        aqm_cmd.extend(["--local-path", aqm_local])
+
     # Ingest latest AQM
     with contextlib.suppress(Exception):
         subprocess.run(
-            [python, str(base / "scripts" / "ingest_aqm.py"), "--days", "1"],
+            aqm_cmd,
             cwd=str(base.parent),
             capture_output=True,
             timeout=60,
@@ -96,6 +109,7 @@ async def trigger_ingest(
     days: int = 1,
 ):
     """Trigger background data ingest for the specified product."""
+    import os
     import sys
 
     python = sys.executable
@@ -103,10 +117,18 @@ async def trigger_ingest(
 
     results = {}
 
+    gefs_local = os.environ.get("FORECASTVIEW_GEFS_LOCAL_PATH") or os.environ.get(
+        "FORECASTVIEW_LOCAL_PATH"
+    )
+    aqm_local = os.environ.get("FORECASTVIEW_AQM_LOCAL_PATH")
+
     if product in ("all", "air"):
         try:
+            cmd = [python, str(base / "scripts" / "ingest.py"), "--days", str(days)]
+            if gefs_local:
+                cmd.extend(["--local-path", gefs_local])
             proc = subprocess.run(
-                [python, str(base / "scripts" / "ingest.py"), "--days", str(days)],
+                cmd,
                 cwd=str(base.parent),
                 capture_output=True,
                 text=True,
@@ -121,8 +143,11 @@ async def trigger_ingest(
 
     if product in ("all", "aqm"):
         try:
+            cmd = [python, str(base / "scripts" / "ingest_aqm.py"), "--days", str(days)]
+            if aqm_local:
+                cmd.extend(["--local-path", aqm_local])
             proc = subprocess.run(
-                [python, str(base / "scripts" / "ingest_aqm.py"), "--days", str(days)],
+                cmd,
                 cwd=str(base.parent),
                 capture_output=True,
                 text=True,
