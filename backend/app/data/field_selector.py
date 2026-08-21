@@ -112,9 +112,7 @@ class GridProjection:
         if self.grid_type == "mercator":
             lat_ts = self.crs_params.get("LaDInDegrees", 0.0)
             return (
-                f"+proj=merc +lat_ts={lat_ts} "
-                f"+lon_0=0 +x_0=0 +y_0=0 "
-                f"+datum=WGS84 +units=m +no_defs"
+                f"+proj=merc +lat_ts={lat_ts} +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
             )
 
         # Fallback: assume geographic
@@ -495,7 +493,7 @@ class FieldSelector:
         ds = self._store.open_dataset(date, run)
 
         if not ds.data_vars:
-            raise ValueError(f"No data variables found in dataset for " f"date={date}, run={run}.")
+            raise ValueError(f"No data variables found in dataset for date={date}, run={run}.")
 
         # Use the first data variable's attributes for projection info
         first_var_name = next(iter(ds.data_vars))

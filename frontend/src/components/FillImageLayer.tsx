@@ -16,6 +16,15 @@ interface FillImageLayerProps {
 const SOURCE_ID = 'fill-image-source'
 const LAYER_ID = 'fill-image-layer'
 
+const GLOBAL_COORDS: [[number,number],[number,number],[number,number],[number,number]] = [
+  [-180, 85.06],
+  [180, 85.06],
+  [180, -85.06],
+  [-180, -85.06],
+]
+
+import { buildFillImageUrl } from '../api/staticMode'
+
 function buildImageUrl(
   product: string,
   date: string,
@@ -24,23 +33,9 @@ function buildImageUrl(
   fhr: number,
   level: number | null,
 ): string {
-  const params = new URLSearchParams({
-    product,
-    date,
-    run,
-    variable,
-    fhr: String(fhr),
-  })
-  if (level != null) {
-    params.set('level', String(level))
-  }
-  return `/api/fill-image?${params.toString()}`
+  return buildFillImageUrl(product, date, run, variable, fhr, level)
 }
 
-/**
- * Renders a raster fill image overlay on the MapLibre map.
- * Uses updateImage() for seamless frame transitions (no flash).
- */
 function FillImageLayer({
   map,
   product,
@@ -54,7 +49,6 @@ function FillImageLayer({
 }: FillImageLayerProps) {
   const addedRef = useRef(false)
 
-  // Create the source+layer once, then update the image URL on subsequent changes
   useEffect(() => {
     if (!map) return
 
@@ -69,7 +63,6 @@ function FillImageLayer({
     const imageUrl = buildImageUrl(product, date, run, variable, fhr, level)
 
     if (addedRef.current) {
-      // Source already exists — just swap the image URL (no flash)
       const source = map.getSource(SOURCE_ID)
       if (source && 'updateImage' in source) {
         ;(source as any).updateImage({ url: imageUrl })
@@ -77,32 +70,21 @@ function FillImageLayer({
       }
     }
 
-    // First time: create source + layer
     removeLayers(map)
 
     try {
       map.addSource(SOURCE_ID, {
         type: 'image',
         url: imageUrl,
-        coordinates: [
-          [-180, 85.06],
-          [180, 85.06],
-          [180, -85.06],
-          [-180, -85.06],
-        ],
+        coordinates: GLOBAL_COORDS,
       })
 
       map.addLayer({
         id: LAYER_ID,
         type: 'raster',
         source: SOURCE_ID,
-        paint: {
-          'raster-opacity': opacity,
-          'raster-fade-duration': 0,
-        },
-        layout: {
-          visibility: visible ? 'visible' : 'none',
-        },
+        paint: { 'raster-opacity': opacity, 'raster-fade-duration': 0 },
+        layout: { visibility: visible ? 'visible' : 'none' },
       })
 
       addedRef.current = true
@@ -129,7 +111,6 @@ function FillImageLayer({
     } catch { /* ignore */ }
   }, [map, opacity])
 
-  // Cleanup on unmount only
   useEffect(() => {
     return () => {
       if (map) {
@@ -144,15 +125,9 @@ function FillImageLayer({
 
 function removeLayers(map: MaplibreMap): void {
   try {
-    if (map.getLayer(LAYER_ID)) {
-      map.removeLayer(LAYER_ID)
-    }
-    if (map.getSource(SOURCE_ID)) {
-      map.removeSource(SOURCE_ID)
-    }
-  } catch {
-    // ignore
-  }
+    if (map.getLayer(LAYER_ID)) map.removeLayer(LAYER_ID)
+    if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID)
+  } catch { /* ignore */ }
 }
 
 export default FillImageLayer

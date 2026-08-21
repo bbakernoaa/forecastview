@@ -7,7 +7,7 @@ selector components.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import structlog
 from fastapi import APIRouter, HTTPException, Query
@@ -15,6 +15,7 @@ from matplotlib import colormaps as mpl_colormaps
 from pydantic import BaseModel, Field
 
 from backend.app.api.dependencies import get_field_selector
+from backend.app.data.product_registry import ProductDataAccess
 
 logger = structlog.get_logger(__name__)
 
@@ -151,7 +152,7 @@ def _compute_band_colors(colormap_name: str, n_levels: int) -> list[str]:
     for i in range(n_bands):
         t = i / max(n_bands - 1, 1)
         r, g, b, _ = cmap(t)
-        hex_color = f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+        hex_color = f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
         colors.append(hex_color)
 
     return colors
@@ -159,6 +160,7 @@ def _compute_band_colors(colormap_name: str, n_levels: int) -> list[str]:
 
 _CATALOG: list[CatalogEntry] = [
     CatalogEntry(product="air", description="GEFS-Aerosol"),
+    CatalogEntry(product="aqm", description="AQMv7 Air Quality"),
 ]
 
 _VALID_PRODUCTS = {entry.product for entry in _CATALOG}
@@ -223,8 +225,8 @@ async def get_dates(
     _validate_product(product)
     logger.info("api.dates.request", product=product)
 
-    selector = get_field_selector()
-    dates = selector.get_dates()
+    pda = ProductDataAccess(product)
+    dates = pda.available_dates()
 
     return DatesResponse(product=product, dates=dates)
 
@@ -239,8 +241,8 @@ async def get_runs(
     _validate_date(date)
     logger.info("api.runs.request", product=product, date=date)
 
-    selector = get_field_selector()
-    runs = selector.get_runs(date)
+    pda = ProductDataAccess(product)
+    runs = pda.available_runs(date)
 
     return RunsResponse(product=product, date=date, runs=runs)
 
@@ -257,8 +259,8 @@ async def get_variables(
     _validate_run(run)
     logger.info("api.variables.request", product=product, date=date, run=run)
 
-    selector = get_field_selector()
-    raw_variables = selector.get_variables(date, run, product=product)
+    pda = ProductDataAccess(product)
+    raw_variables = pda.available_variables(date, run)
 
     variables = []
     for v in raw_variables:
@@ -333,8 +335,7 @@ async def get_times(
     _validate_run(run)
     logger.info("api.times.request", product=product, date=date, run=run)
 
-    selector = get_field_selector()
-    raw_hours = selector.get_forecast_hours(date, run)
+    pda = ProductDataAccess(product)
 
     # Compute initialization time
     try:
@@ -345,9 +346,18 @@ async def get_times(
             detail=f"Cannot compute init time from date={date}, run={run}.",
         )
 
-    forecast_hours = [
-        ForecastHourEntry(fhr=entry["fhr"], valid_time=entry["valid_time"]) for entry in raw_hours
-    ]
+    raw_hours = pda.get_forecast_hours(date, run)
+
+    forecast_hours = []
+    for entry in raw_hours:
+        if isinstance(entry, dict):
+            forecast_hours.append(
+                ForecastHourEntry(fhr=entry["fhr"], valid_time=entry["valid_time"])
+            )
+        else:
+            # entry is just an int (fhr)
+            valid = init_time + timedelta(hours=entry)
+            forecast_hours.append(ForecastHourEntry(fhr=entry, valid_time=valid.isoformat()))
 
     return TimesResponse(
         product=product,

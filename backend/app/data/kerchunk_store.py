@@ -11,6 +11,7 @@ Directory layout:
 from __future__ import annotations
 
 import os
+import time
 from datetime import UTC
 from pathlib import Path
 from typing import Any
@@ -23,7 +24,7 @@ from cachetools import LRUCache
 logger = structlog.get_logger(__name__)
 
 # Default configuration
-_DEFAULT_STORE_PATH = "data/manifests"
+_DEFAULT_STORE_PATH = "data/manifests/gefs"
 _DEFAULT_CACHE_SIZE = 8
 _DEFAULT_STORAGE_OPTIONS: dict[str, Any] = {"anon": True}
 
@@ -90,6 +91,8 @@ class ManifestStore:
 
         # Scan the manifest directory on init
         self._available: dict[str, list[str]] = {}  # date -> [runs]
+        self._last_scan: float = 0.0
+        self._scan_interval: float = 300.0  # rescan every 5 minutes
         self._scan_manifests()
 
         logger.info(
@@ -133,6 +136,8 @@ class ManifestStore:
             if runs:
                 self._available[date] = runs
 
+        self._last_scan = time.time()
+        self._last_scan = time.time()
         logger.info(
             "manifest_store.scan.complete",
             dates=len(self._available),
@@ -146,11 +151,22 @@ class ManifestStore:
     def discover_dates(self) -> list[str]:
         """Discover available forecast dates from local manifests.
 
+        Automatically rescans the manifest directory if more than 5 minutes
+        have passed since the last scan, so new ingested dates are picked up
+        without a server restart.
+
         Returns
         -------
         list[str]
             Sorted list of date strings in ``YYYYMMDD`` format.
         """
+        # Auto-rescan if stale
+        if time.time() - self._last_scan > self._scan_interval:
+            self._scan_manifests()
+
+        # Auto-rescan if stale (>5min)
+        if time.time() - self._last_scan > self._scan_interval:
+            self._scan_manifests()
         dates = sorted(self._available.keys())
         logger.info("manifest_store.discover_dates", count=len(dates))
         return dates

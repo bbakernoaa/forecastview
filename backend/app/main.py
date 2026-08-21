@@ -1,5 +1,9 @@
 """Air Composition Forecast Viewer — FastAPI application."""
 
+import subprocess
+import threading
+from pathlib import Path as _Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -49,6 +53,89 @@ app.include_router(fill_image_router)
 app.include_router(export_gif_router)
 app.include_router(point_router)
 app.include_router(preview_router)
+
+
+def _background_ingest():
+    """Run ingest scripts in background on startup."""
+    import sys
+
+    python = sys.executable
+    base = _Path(__file__).resolve().parent.parent
+
+    import contextlib
+
+    # Ingest latest GEFS
+    with contextlib.suppress(Exception):
+        subprocess.run(
+            [python, str(base / "scripts" / "ingest.py"), "--days", "1"],
+            cwd=str(base.parent),
+            capture_output=True,
+            timeout=120,
+        )
+
+    # Ingest latest AQM
+    with contextlib.suppress(Exception):
+        subprocess.run(
+            [python, str(base / "scripts" / "ingest_aqm.py"), "--days", "1"],
+            cwd=str(base.parent),
+            capture_output=True,
+            timeout=60,
+        )
+
+
+@app.on_event("startup")
+async def startup_ingest():
+    """Trigger background data ingest on server startup."""
+    thread = threading.Thread(target=_background_ingest, daemon=True)
+    thread.start()
+
+
+@app.post("/api/ingest")
+async def trigger_ingest(
+    product: str = "all",
+    days: int = 1,
+):
+    """Trigger background data ingest for the specified product."""
+    import sys
+
+    python = sys.executable
+    base = _Path(__file__).resolve().parent.parent
+
+    results = {}
+
+    if product in ("all", "air"):
+        try:
+            proc = subprocess.run(
+                [python, str(base / "scripts" / "ingest.py"), "--days", str(days)],
+                cwd=str(base.parent),
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            results["air"] = {
+                "status": "ok" if proc.returncode == 0 else "error",
+                "output": proc.stdout[-500:] if proc.stdout else "",
+            }
+        except Exception as e:
+            results["air"] = {"status": "error", "output": str(e)}
+
+    if product in ("all", "aqm"):
+        try:
+            proc = subprocess.run(
+                [python, str(base / "scripts" / "ingest_aqm.py"), "--days", str(days)],
+                cwd=str(base.parent),
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            results["aqm"] = {
+                "status": "ok" if proc.returncode == 0 else "error",
+                "output": proc.stdout[-500:] if proc.stdout else "",
+            }
+        except Exception as e:
+            results["aqm"] = {"status": "error", "output": str(e)}
+
+    return {"results": results}
 
 
 @app.get("/api/health", response_model=HealthResponse)

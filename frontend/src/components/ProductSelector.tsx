@@ -20,7 +20,8 @@ interface ProductOption {
 
 const PRODUCT_OPTIONS: ProductOption[] = [
   { key: 'air', label: 'GEFS-Aerosol', disabled: false },
-  { key: 'met', label: 'Meteorology', disabled: true },
+  { key: 'aqm', label: 'AQMv7', disabled: false },
+  // { key: 'met', label: 'Meteorology', disabled: true },
 ]
 
 function ProductSelector({ product, onChange }: ProductSelectorProps) {

@@ -29,7 +29,7 @@ logger = structlog.get_logger(__name__)
 # Default S3 configuration
 _DEFAULT_BUCKET = "noaa-gefs-pds"
 _DEFAULT_PATH_PATTERN = (
-    "gefs.{date}/{cycle}/chem/pgrb2ap25/" "gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
+    "gefs.{date}/{cycle}/chem/pgrb2ap25/gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
 )
 _DEFAULT_STORAGE_OPTIONS: dict = {"anon": True}
 _DEFAULT_MAX_WORKERS = 16
@@ -70,13 +70,20 @@ def build_urls(
     bucket: str = _DEFAULT_BUCKET,
     path_pattern: str = _DEFAULT_PATH_PATTERN,
     forecast_hours: list[int] | None = None,
+    local_path_pattern: str | None = None,
 ) -> list[str]:
-    """Build S3 URLs for all forecast hours in a given date/cycle."""
+    """Build URLs (S3 or local file paths) for all forecast hours."""
     hours = forecast_hours or _DEFAULT_FORECAST_HOURS
     urls = []
     for fhr in hours:
-        path = path_pattern.format(date=date, cycle=cycle, fhr=fhr)
-        urls.append(f"s3://{bucket}/{path}")
+        if local_path_pattern:
+            # Local file path
+            path = local_path_pattern.format(date=date, cycle=cycle, fhr=fhr)
+            urls.append(path)
+        else:
+            # S3 URL
+            path = path_pattern.format(date=date, cycle=cycle, fhr=fhr)
+            urls.append(f"s3://{bucket}/{path}")
     return urls
 
 
@@ -236,8 +243,8 @@ def main() -> None:
     parser.add_argument(
         "--store-path",
         type=str,
-        default="data/manifests",
-        help="Path to the manifest store directory (default: data/manifests)",
+        default="data/manifests/gefs",
+        help="Path to the manifest store directory (default: data/manifests/gefs)",
     )
     parser.add_argument(
         "--cycle",
@@ -263,6 +270,16 @@ def main() -> None:
         default=None,
         help="Comma-separated forecast hours (default: 0-120). Example: 0,3,6,12,24",
     )
+    parser.add_argument(
+        "--local-path",
+        type=str,
+        default=None,
+        help=(
+            "Path to local GRIB2 files (offline mode, no S3 access needed). "
+            "Uses same path pattern with {date}, {cycle}, {fhr} placeholders. "
+            "Example: /data/gefs.{date}/{cycle}/chem/pgrb2ap25/gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -274,16 +291,19 @@ def main() -> None:
     if args.forecast_hours:
         forecast_hours = [int(h.strip()) for h in args.forecast_hours.split(",")]
 
-    print(f"\n{'='*60}")
+    # Local mode: use local file paths instead of S3
+    _ = args.local_path  # TODO: pass to ingest_date when local mode is fully wired
+
+    print(f"\n{'=' * 60}")
     print("  GEFS-Aerosols Manifest Ingest")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"  Days:           {args.days}")
     print(f"  Cycle:          {args.cycle}")
     print(f"  Store path:     {store_path.resolve()}")
     print(f"  Bucket:         {args.bucket}")
     print(f"  Max workers:    {args.max_workers}")
     print(f"  Forecast hours: {forecast_hours or '0-120 (all)'}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     # Discover available dates
     print("[1/3] Discovering available dates from S3...")
@@ -326,14 +346,14 @@ def main() -> None:
     t_ingest_total = time.perf_counter() - t_ingest_start
 
     # Summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("  [3/3] Ingest Complete")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"  Succeeded: {successes}/{len(selected_dates)}")
     print(f"  Failed:    {failures}/{len(selected_dates)}")
     print(f"  Duration:  {t_ingest_total:.1f}s")
     print(f"  Store:     {store_path.resolve()}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     if failures > 0:
         sys.exit(1)

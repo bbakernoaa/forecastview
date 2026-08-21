@@ -85,8 +85,7 @@ async def get_bounds(
         )
         raise HTTPException(
             status_code=404,
-            detail=f"Could not open dataset for product={product}, "
-            f"date={date}, run={run}: {exc}",
+            detail=f"Could not open dataset for product={product}, date={date}, run={run}: {exc}",
         )
 
     # Transform coordinates to geographic lon/lat

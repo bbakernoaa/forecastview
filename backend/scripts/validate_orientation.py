@@ -181,8 +181,7 @@ def main() -> int:
             field,
             coords.lats,
             coords.lons,
-            title=f"Orientation Validation: {variable_label}\n"
-            f"Date: {date}, Run: {run}Z, FHR: 000",
+            title=f"Orientation Validation: {variable_label}\nDate: {date}, Run: {run}Z, FHR: 000",
             units="AOD (dimensionless)",
             crs_string=crs_string,
             cmap="YlOrRd",

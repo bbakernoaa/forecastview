@@ -133,6 +133,34 @@ async def get_contours(
             headers={"Cache-Control": "public, max-age=3600, immutable"},
         )
 
+    # AQM uses a different data store — contours not yet supported for regional grids
+    if product == "aqm":
+        from backend.app.data.product_registry import ProductDataAccess
+
+        pda = ProductDataAccess(product)
+        try:
+            field = pda.select_field(date, run, variable, fhr=fhr, level=level)
+        except (ValueError, RuntimeError) as exc:
+            raise HTTPException(status_code=404, detail=f"Could not select field: {exc}")
+        # Return empty contours for now (regional grid contouring needs more work)
+        return ORJSONResponse(
+            content={
+                "type": "FeatureCollection",
+                "features": [],
+                "metadata": {
+                    "variable": variable,
+                    "level": level,
+                    "fhr": fhr,
+                    "contourInterval": None,
+                    "majorInterval": None,
+                    "fieldMin": float(field.min()),
+                    "fieldMax": float(field.max()),
+                    "numLevels": 0,
+                    "numFeatures": 0,
+                },
+            }
+        )
+
     selector = get_field_selector()
 
     # Resolve contour interval from domain config if not provided

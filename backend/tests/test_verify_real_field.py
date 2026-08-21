@@ -97,10 +97,9 @@ class TestVerifyRealField:
         stats = summarize_field(field, variable_name="totAOD550")
         max_val = stats["max"]
 
-        assert max_val < 10, (
-            f"AOD should be < 10 for reasonable atmospheric conditions, "
-            f"but max value is {max_val}"
-        )
+        assert (
+            max_val < 10
+        ), f"AOD should be < 10 for reasonable atmospheric conditions, but max value is {max_val}"
 
     def test_coordinate_latitude_range(self):
         """Latitude coordinates span approximately -90 to 90."""

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductSelector from './components/ProductSelector'
 import ForecastMap from './components/ForecastMap'
 import BoundsLayer from './components/BoundsLayer'
@@ -13,6 +13,7 @@ import ContourIntervalSelector from './components/ContourIntervalSelector'
 import OpacitySlider from './components/OpacitySlider'
 import ConnectionStatus from './components/ConnectionStatus'
 import ExportButton from './components/ExportButton'
+import IngestButton from './components/IngestButton'
 import NotificationArea from './components/NotificationArea'
 import DateSelector from './components/DateSelector'
 import RunSelector from './components/RunSelector'
@@ -62,6 +63,13 @@ function AppContent() {
     if (!timesData) return []
     return timesData.forecastHours.map((entry) => entry.fhr)
   }, [timesData])
+
+  // Auto-select first forecast hour if current is not in the available list
+  useEffect(() => {
+    if (forecastHours.length > 0 && !forecastHours.includes(forecastHour)) {
+      dispatch({ type: 'SET_FORECAST_HOUR', payload: forecastHours[0] })
+    }
+  }, [forecastHours, forecastHour, dispatch])
 
   // Prefetch neighboring forecast hours (fhr±1) for smooth animation
   usePrefetch({
@@ -155,6 +163,7 @@ function AppContent() {
         <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
         <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
         <ExportButton />
+        <IngestButton />
         <ConnectionStatus />
       </Toolbar>
       <TimeDisplayBar />

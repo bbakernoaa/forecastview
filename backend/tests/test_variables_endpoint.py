@@ -100,10 +100,9 @@ class TestConfigLoader:
         # Check category ordering matches config
         category_keys = list(grouped.keys())
         for i, cat in enumerate(config.categories):
-            assert category_keys[i] == cat, (
-                f"Category order mismatch at index {i}: "
-                f"expected '{cat}', got '{category_keys[i]}'"
-            )
+            assert (
+                category_keys[i] == cat
+            ), f"Category order mismatch at index {i}: expected '{cat}', got '{category_keys[i]}'"
 
     def test_specific_variable_lookup(self):
         """get_variable returns correct metadata for totAOD550."""

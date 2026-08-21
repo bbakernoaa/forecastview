@@ -293,7 +293,7 @@ def main():
                     pct = 100 * completed / len(jobs)
                     print(
                         f"  [{completed}/{len(jobs)}] {pct:.0f}% "
-                        f"(last: {variable} f{fhr:03d} {elapsed_ms:.0f}ms {size_bytes//1024}KB)"
+                        f"(last: {variable} f{fhr:03d} {elapsed_ms:.0f}ms {size_bytes // 1024}KB)"
                     )
             except Exception as exc:
                 job = futures[future]
@@ -302,7 +302,7 @@ def main():
     t_total = time.perf_counter() - t_start
     print("=" * 60)
     print(f"  Done: {completed}/{len(jobs)} images in {t_total:.1f}s")
-    print(f"  Total size: {total_bytes / (1024*1024):.1f} MB")
+    print(f"  Total size: {total_bytes / (1024 * 1024):.1f} MB")
     print(f"  Output: {output_dir}")
     print("=" * 60)
 

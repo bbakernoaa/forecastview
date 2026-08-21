@@ -27,9 +27,9 @@ from rasterio.crs import CRS
 from rasterio.transform import from_bounds
 from rasterio.warp import Resampling, reproject
 
-from backend.app.api.dependencies import get_field_selector
 from backend.app.config.loader import get_domain_config_safe
 from backend.app.contours.geojson import shift_grid_to_minus180
+from backend.app.data.product_registry import ProductDataAccess
 
 logger = structlog.get_logger(__name__)
 
@@ -125,7 +125,7 @@ async def get_fill_image(
             headers={"Cache-Control": "public, max-age=3600"},
         )
 
-    selector = get_field_selector()
+    pda = ProductDataAccess(product)
 
     # Resolve fill levels and colormap from domain config
     fill_levels: list[float] | None = None
@@ -148,73 +148,104 @@ async def get_fill_image(
 
     # --- Step 1: Extract field ---
     try:
-        field = selector.select(date, run, variable, level=level, fhr=fhr)
+        field = pda.select_field(date, run, variable, fhr=fhr, level=level)
     except (ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=404, detail=f"Could not select field: {exc}")
 
     # --- Step 2: Get coordinates ---
     try:
-        coordinates = selector.get_coordinates(date, run)
+        lats, lons = pda.get_latlons(date, run)
     except (ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=404, detail=f"Could not get coordinates: {exc}")
 
-    # --- Step 3: Shift grid from 0-360 to -180..180 ---
-    lons_1d = coordinates.lons[0, :] if coordinates.lons.ndim == 2 else coordinates.lons
-    lats_1d = coordinates.lats[:, 0] if coordinates.lats.ndim == 2 else coordinates.lats
-
-    shifted_field, shifted_lons, _ = shift_grid_to_minus180(field, lons_1d)
-    if not np.array_equal(shifted_lons, lons_1d):
-        field = shifted_field
-        lons_1d = shifted_lons
-
     t_field = time.perf_counter()
 
-    # --- Step 4: Crop to Web Mercator latitude bounds ---
-    valid_mask = (lats_1d >= -WEB_MERCATOR_MAX_LAT) & (lats_1d <= WEB_MERCATOR_MAX_LAT)
-    valid_rows = np.where(valid_mask)[0]
-    row_start, row_end = valid_rows[0], valid_rows[-1]
-    field = field[row_start : row_end + 1, :]
-    lats_cropped = lats_1d[row_start : row_end + 1]
+    # --- Step 3: Determine grid type and reproject to Web Mercator ---
+    bounds = pda.get_geographic_bounds(date, run)
+    is_global = bounds is None
 
-    src_height, src_width = field.shape
+    if is_global:
+        # Global equirectangular grid (GEFS): shift 0-360 → -180..180
+        lons_1d = lons[0, :] if lons.ndim == 2 else lons
+        lats_1d = lats[:, 0] if lats.ndim == 2 else lats
 
-    src_lon_min = float(lons_1d[0])
-    src_lon_max = float(lons_1d[-1]) + (float(lons_1d[1]) - float(lons_1d[0]))
-    src_lat_min = float(lats_cropped[-1])
-    src_lat_max = float(lats_cropped[0])
+        shifted_field, shifted_lons, _ = shift_grid_to_minus180(field, lons_1d)
+        if not np.array_equal(shifted_lons, lons_1d):
+            field = shifted_field
+            lons_1d = shifted_lons
 
-    src_transform = from_bounds(
-        src_lon_min,
-        src_lat_min,
-        src_lon_max,
-        src_lat_max,
-        src_width,
-        src_height,
-    )
+        # Crop to Web Mercator latitude bounds
+        valid_mask = (lats_1d >= -WEB_MERCATOR_MAX_LAT) & (lats_1d <= WEB_MERCATOR_MAX_LAT)
+        valid_rows = np.where(valid_mask)[0]
+        row_start, row_end = valid_rows[0], valid_rows[-1]
+        field = field[row_start : row_end + 1, :]
+        lats_cropped = lats_1d[row_start : row_end + 1]
 
-    # --- Step 5: Reproject field to Web Mercator ---
-    dst_transform = from_bounds(
-        MERCATOR_XMIN,
-        MERCATOR_YMIN,
-        MERCATOR_XMAX,
-        MERCATOR_YMAX,
-        MERCATOR_WIDTH,
-        MERCATOR_HEIGHT,
-    )
+        src_height, src_width = field.shape
+        src_lon_min = float(lons_1d[0])
+        src_lon_max = float(lons_1d[-1]) + (float(lons_1d[1]) - float(lons_1d[0]))
+        src_lat_min = float(lats_cropped[-1])
+        src_lat_max = float(lats_cropped[0])
 
-    dst_field = np.zeros((MERCATOR_HEIGHT, MERCATOR_WIDTH), dtype=np.float32)
+        src_transform = from_bounds(
+            src_lon_min, src_lat_min, src_lon_max, src_lat_max, src_width, src_height
+        )
+        dst_transform = from_bounds(
+            MERCATOR_XMIN,
+            MERCATOR_YMIN,
+            MERCATOR_XMAX,
+            MERCATOR_YMAX,
+            MERCATOR_WIDTH,
+            MERCATOR_HEIGHT,
+        )
 
-    reproject(
-        source=field.astype(np.float32),
-        destination=dst_field,
-        src_transform=src_transform,
-        src_crs=CRS_4326,
-        dst_transform=dst_transform,
-        dst_crs=CRS_3857,
-        resampling=Resampling.bilinear,
-        src_nodata=np.nan,
-        dst_nodata=np.nan,
-    )
+        dst_field = np.zeros((MERCATOR_HEIGHT, MERCATOR_WIDTH), dtype=np.float32)
+        reproject(
+            source=field.astype(np.float32),
+            destination=dst_field,
+            src_transform=src_transform,
+            src_crs=CRS_4326,
+            dst_transform=dst_transform,
+            dst_crs=CRS_3857,
+            resampling=Resampling.bilinear,
+            src_nodata=np.nan,
+            dst_nodata=np.nan,
+        )
+    else:
+        # Regional grid (AQM): reproject into full-globe Mercator image
+        # Data lands in its correct geographic position; rest is NaN (transparent)
+        src_height, src_width = field.shape
+        src_lat_min = bounds["lat_min"]
+        src_lat_max = bounds["lat_max"]
+        src_lon_min = bounds["lon_min"]
+        src_lon_max = bounds["lon_max"]
+
+        src_transform = from_bounds(
+            src_lon_min, src_lat_min, src_lon_max, src_lat_max, src_width, src_height
+        )
+
+        # Output is full-globe Web Mercator (same as GEFS)
+        dst_transform = from_bounds(
+            MERCATOR_XMIN,
+            MERCATOR_YMIN,
+            MERCATOR_XMAX,
+            MERCATOR_YMAX,
+            MERCATOR_WIDTH,
+            MERCATOR_HEIGHT,
+        )
+        dst_field = np.full((MERCATOR_HEIGHT, MERCATOR_WIDTH), np.nan, dtype=np.float32)
+
+        reproject(
+            source=field.astype(np.float32),
+            destination=dst_field,
+            src_transform=src_transform,
+            src_crs=CRS_4326,
+            dst_transform=dst_transform,
+            dst_crs=CRS_3857,
+            resampling=Resampling.bilinear,
+            src_nodata=np.nan,
+            dst_nodata=np.nan,
+        )
 
     t_reproject = time.perf_counter()
 
