@@ -72,6 +72,50 @@ The Vite dev server proxies `/api/*` requests to the backend on port 8000, so bo
 
 ---
 
+## Offline / Local Data Pipeline
+
+ForecastView can run completely offline without an internet connection or S3 access by pointing the ingest scripts or backend to local GRIB2 files on disk.
+
+### 1. Ingesting Local GRIB2 Files
+
+You can pass a local directory or file path directly to `ingest.py` (for GEFS-Aerosols) or `ingest_aqm.py` (for AQMv7):
+
+```bash
+# GEFS-Aerosols: Ingest from a flat or structured local directory containing GRIB2 files
+python backend/scripts/ingest.py --local-path /path/to/local/grib/files
+
+# AQMv7: Ingest from a local directory
+python backend/scripts/ingest_aqm.py --local-path /path/to/local/aqm/files --domain CS
+```
+
+The ingest script will:
+- Discover local GRIB2 files (e.g. `*.grib2`, `*.grib`, `*.grb2`).
+- Parse reference dates (`YYYYMMDD`), cycles (`HH`), and forecast hours automatically from filenames or GRIB2 Section 1/4 headers.
+- Generate Kerchunk JSON manifests under `data/manifests/` referencing local `file://` URIs without touching AWS S3.
+
+### 2. Running the Backend in Offline Mode
+
+To configure the backend to use local GRIB2 files for background ingest on startup, set the environment variables before starting the server:
+
+```bash
+export FORECASTVIEW_GEFS_LOCAL_PATH="/path/to/local/gefs/gribs"
+export FORECASTVIEW_AQM_LOCAL_PATH="/path/to/local/aqm/gribs"
+
+python backend/run.py
+```
+
+### 3. Pre-Rendering Static Image Overlays
+
+To speed up map rendering or eliminate on-the-fly rasterization at runtime, you can pre-render RGBA PNG map overlays for all variables and forecast hours:
+
+```bash
+python backend/scripts/prerender_images.py --product air --run 00 --workers 4
+```
+
+Pre-rendered images are saved to `data/tiles/{date}/{run}/` where the `/api/fill-image` endpoint serves them directly.
+
+---
+
 ## Using the Application
 
 1. **Select a product** — Choose from the available forecast products (e.g., Air Composition).
@@ -94,6 +138,8 @@ The map renders contour isolines and filled contour polygons as GeoJSON layers o
 | `FORECASTVIEW_PATH_PATTERN` | GRIB2 file path pattern in bucket (supports `{date}`, `{cycle}`, `{fhr}` placeholders) | — |
 | `FORECASTVIEW_MAX_WORKERS` | Thread count for manifest generation | `16` |
 | `FORECASTVIEW_CACHE_SIZE` | Dataset handle cache size | `8` |
+| `FORECASTVIEW_GEFS_LOCAL_PATH` | Path to local GEFS GRIB2 directory/files for offline mode | — |
+| `FORECASTVIEW_AQM_LOCAL_PATH` | Path to local AQM GRIB2 directory/files for offline mode | — |
 
 Example path pattern:
 
@@ -261,6 +307,28 @@ location / {
 ### Single-Origin Alternative
 
 You can also mount the built frontend as static files directly in FastAPI, serving everything from a single process. This simplifies deployment at the cost of scaling flexibility.
+
+### Fully Static Site Export (NOAA RZDM / Web Server)
+
+For environments like NOAA's RZDM or simple static web hosts where running an active Python backend process is prohibited or unnecessary, ForecastView can be exported as a 100% static site bundle.
+
+1. **Build the static site bundle:**
+   ```bash
+   python backend/scripts/export_static.py --product air --days 3 --output static_site
+   ```
+   This script:
+   - Ingests local or S3 data into Kerchunk manifests.
+   - Pre-renders Web Mercator PNG overlay maps for every variable and forecast hour.
+   - Generates static JSON files for API responses (`api/catalog`, `api/dates`, `api/variables`, etc.).
+   - Builds the React SPA and copies all static assets into the output folder.
+
+2. **Deploy to RZDM or any static web host:**
+   Copy the generated `static_site/` directory directly to your web server:
+   ```bash
+   rsync -avz static_site/ user@rzdm.noaa.gov:/home/www/forecastview/
+   ```
+
+Because all API routes are pre-rendered as static JSON and PNG files, the entire application functions interactively on the web without any backend server.
 
 ---
 
