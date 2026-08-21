@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from backend.app.data.aqm_store import AQMStore
-from backend.scripts.ingest import build_urls, ingest_date
+from backend.scripts.ingest import build_urls, ingest_date, parse_grib_file_metadata
 from backend.scripts.ingest_aqm import (
     build_manifest_local,
     discover_dates_local,
@@ -159,3 +159,66 @@ def test_aqm_store_reads_local_file(tmp_path: Path):
 
     bytes_read = store._read_file_bytes(manifest["variables"]["test_var"])
     assert bytes_read == b"grib_data_content"
+
+
+def test_parse_grib_file_metadata_regex():
+    """parse_grib_file_metadata extracts date, cycle, and fhr from filenames and paths."""
+    p1 = Path("/tmp/data/20260821/00/gefs.chem.t00z.a2d_0p25.f003.grib2")
+    date1, cycle1, fhr1 = parse_grib_file_metadata(p1)
+    assert date1 == "20260821"
+    assert cycle1 == "00"
+    assert fhr1 == 3
+
+    p2 = Path("/flat/dir/aqm.t12z.ave_1hr_pm25.20260820.227.grib2")
+    date2, cycle2, fhr2 = parse_grib_file_metadata(p2)
+    assert date2 == "20260820"
+    assert cycle2 == "12"
+    assert fhr2 == 227
+
+
+def test_ingest_flat_directory_without_structure(tmp_path: Path):
+    """Local ingest works directly on a flat directory containing GRIB files without date/cycle folders."""
+    flat_dir = tmp_path / "grib_files"
+    flat_dir.mkdir()
+
+    # Create flat GRIB files with dates and forecast hours in their names
+    f1 = flat_dir / "gefs.chem.t00z.20260821.f000.grib2"
+    f2 = flat_dir / "gefs.chem.t00z.20260821.f003.grib2"
+    f1.write_bytes(b"dummy1")
+    f2.write_bytes(b"dummy2")
+
+    store_dir = tmp_path / "manifests"
+
+    mock_gen = MagicMock()
+    mock_gen.generate.return_value = {"version": 1, "refs": {}}
+
+    with (
+        patch("grib2io.kerchunk.ReferenceGenerator", return_value=mock_gen) as mock_class,
+        patch("xarray.open_dataset") as mock_open_ds,
+    ):
+        mock_ds = MagicMock()
+        mock_ds.sizes = {"time": 2}
+        mock_ds.data_vars = ["aod"]
+        mock_open_ds.return_value = mock_ds
+
+        d, c, fhr1 = parse_grib_file_metadata(f1)
+        _, _, fhr2 = parse_grib_file_metadata(f2)
+        assert d == "20260821"
+        assert c == "00"
+
+        success = ingest_date(
+            date=d,
+            cycle=c,
+            store_path=store_dir,
+            urls=[str(f1.resolve()), str(f2.resolve())],
+        )
+
+        assert success is True
+        mock_class.assert_called_once()
+        urls_passed = mock_class.call_args[0][0]
+        assert len(urls_passed) == 2
+        assert urls_passed[0] == str(f1.resolve())
+        assert urls_passed[1] == str(f2.resolve())
+
+    manifest_file = store_dir / "20260821" / "00" / "manifest.json"
+    assert manifest_file.exists()
