@@ -292,7 +292,7 @@ def main() -> None:
         forecast_hours = [int(h.strip()) for h in args.forecast_hours.split(",")]
 
     # Local mode: use local file paths instead of S3
-    _ = args.local_path  # TODO: pass to ingest_date when local mode is fully wired
+    local_path = args.local_path
 
     print(f"\n{'=' * 60}")
     print("  GEFS-Aerosols Manifest Ingest")
@@ -306,13 +306,29 @@ def main() -> None:
     print(f"{'=' * 60}\n")
 
     # Discover available dates
-    print("[1/3] Discovering available dates from S3...")
     t0 = time.perf_counter()
-    dates = discover_available_dates(args.bucket)
+    if local_path:
+        import re
+
+        print("[1/3] Discovering available dates from local path...")
+        # Extract base directory before {date} placeholder
+        base = local_path.split("{date}")[0] if "{date}" in local_path else local_path
+        parent = Path(base).resolve()
+        if not parent.is_dir():
+            parent = parent.parent
+        dates = []
+        for entry in sorted(parent.iterdir()):
+            match = re.search(r"(\d{8})", entry.name)
+            if match and entry.is_dir():
+                dates.append(match.group(1))
+        dates.sort()
+    else:
+        print("[1/3] Discovering available dates from S3...")
+        dates = discover_available_dates(args.bucket)
     t_discover = time.perf_counter() - t0
 
     if not dates:
-        print("  ERROR: No dates discovered from S3. Check connectivity.")
+        print("  ERROR: No dates discovered. Check path/connectivity.")
         sys.exit(1)
 
     print(f"  Found {len(dates)} dates in {t_discover:.1f}s")
