@@ -72,17 +72,59 @@ The Vite dev server proxies `/api/*` requests to the backend on port 8000, so bo
 
 ---
 
+## Dataset Ingestion
+
+`backend/scripts/ingest.py` accepts a dataset YAML file, so the same ingest
+workflow can be used for any global gridded GRIB2 product. The YAML file may
+contain an `ingest` section alongside the existing `product` and `variables`
+metadata:
+
+```yaml
+product:
+  name: Global Temperature
+  id: temperature
+
+ingest:
+  bucket: example-bucket
+  path_pattern: temperature.{date}/{cycle}/field.f{fhr:03d}.grib2
+  store_path: data/manifests/temperature
+  forecast_hours: [0, 6, 12, 18, 24]
+  filters:
+    typeOfFirstFixedSurface: 1
+  date_prefix: temperature.
+```
+
+Run ingestion using the configuration. Values supplied explicitly on the
+command line override the YAML values:
+
+```bash
+python backend/scripts/ingest.py \
+  --config config/domains/air.yaml \
+  --days 3 \
+  --cycle 00
+```
+
+The `path_pattern` supports `{date}`, `{cycle}`, and `{fhr}` placeholders.
+`bucket` and `date_prefix` control S3 discovery, while `filters` is passed to
+`grib2io.kerchunk.ReferenceGenerator`. `store_path` determines where manifests
+are written. Existing invocations without `--config` retain the GEFS-Aerosol
+defaults.
+
 ## Offline / Local Data Pipeline
 
 ForecastView can run completely offline without an internet connection or S3 access by pointing the ingest scripts or backend to local GRIB2 files on disk.
 
 ### 1. Ingesting Local GRIB2 Files
 
-You can pass a local directory or file path directly to `ingest.py` (for GEFS-Aerosols) or `ingest_aqm.py` (for AQMv7):
+You can pass a local directory or file path directly to `ingest.py`, or set a
+`local_path_pattern` in the dataset YAML. This works for flat or structured
+directories containing any global GRIB2 product:
 
 ```bash
-# GEFS-Aerosols: Ingest from a flat or structured local directory containing GRIB2 files
-python backend/scripts/ingest.py --local-path /path/to/local/grib/files
+# Dataset-configured ingest with a local path override
+python backend/scripts/ingest.py \
+  --config config/domains/air.yaml \
+  --local-path /path/to/local/grib/files
 
 # AQMv7: Ingest from a local directory
 python backend/scripts/ingest_aqm.py --local-path /path/to/local/aqm/files --domain CS

@@ -6,6 +6,15 @@ product:
   name: "GEFS-Aerosol"
   id: "air"
 
+ingest:
+  bucket: "noaa-gefs-pds"
+  path_pattern: "gefs.{date}/{cycle}/chem/pgrb2ap25/gefs.chem.t{cycle}z.a2d_0p25.f{fhr:03d}.grib2"
+  store_path: "data/manifests/gefs"
+  forecast_hours: [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108, 111, 114, 117, 120]
+  filters:
+    typeOfFirstFixedSurface: 10
+  date_prefix: "gefs."
+
 categories:
   - "Optical Depth"
   - "Scattering Optical Depth"

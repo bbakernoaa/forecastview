@@ -11,7 +11,12 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from backend.app.data.aqm_store import AQMStore
-from backend.scripts.ingest import build_urls, ingest_date, parse_grib_file_metadata
+from backend.scripts.ingest import (
+    build_urls,
+    ingest_date,
+    load_ingest_config,
+    parse_grib_file_metadata,
+)
 from backend.scripts.ingest_aqm import (
     build_manifest_local,
     discover_dates_local,
@@ -34,6 +39,34 @@ def test_build_urls_local_path():
     assert urls[0] == "/tmp/data/gefs.20260821/00/gefs.chem.t00z.f000.grib2"
     assert urls[1] == "/tmp/data/gefs.20260821/00/gefs.chem.t00z.f003.grib2"
     assert not any(u.startswith("s3://") for u in urls)
+
+
+def test_load_ingest_config_from_dataset_yaml(tmp_path: Path):
+    """load_ingest_config reads source and Kerchunk settings from YAML."""
+    config_path = tmp_path / "dataset.yaml"
+    config_path.write_text(
+        """
+product:
+    name: Global Temperature
+    id: temperature
+ingest:
+    bucket: example-bucket
+    path_pattern: temperature.{date}/{cycle}/field.f{fhr:03d}.grib2
+    store_path: data/manifests/temperature
+    forecast_hours: [0, 6, 12]
+    filters:
+        typeOfFirstFixedSurface: 1
+    date_prefix: temperature.
+"""
+    )
+
+    config = load_ingest_config(config_path)
+
+    assert config["bucket"] == "example-bucket"
+    assert config["path_pattern"] == "temperature.{date}/{cycle}/field.f{fhr:03d}.grib2"
+    assert config["forecast_hours"] == [0, 6, 12]
+    assert config["filters"] == {"typeOfFirstFixedSurface": 1}
+    assert config["date_prefix"] == "temperature."
 
 
 def test_ingest_date_local_mode(tmp_path: Path):

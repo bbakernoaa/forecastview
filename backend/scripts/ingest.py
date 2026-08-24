@@ -19,6 +19,7 @@ from pathlib import Path
 
 import fsspec
 import structlog
+import yaml
 
 structlog.configure(
     processors=[
@@ -37,9 +38,45 @@ _DEFAULT_MAX_WORKERS = 16
 _DEFAULT_FORECAST_HOURS = list(range(0, 121, 3))
 
 
+def load_ingest_config(config_path: Path) -> dict:
+    """Load ingestion settings from a dataset YAML file.
+
+    Parameters
+    ----------
+    config_path : Path
+        Dataset YAML file containing an optional ``ingest`` mapping.
+
+    Returns
+    -------
+    dict
+        Ingest settings merged with the legacy GEFS defaults.
+    """
+    with config_path.open() as config_file:
+        data = yaml.safe_load(config_file)
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected YAML mapping at top level: {config_path}")
+    ingest = data.get("ingest", {})
+    if not isinstance(ingest, dict):
+        raise ValueError(f"Expected 'ingest' mapping in {config_path}")
+
+    settings = {
+        "bucket": _DEFAULT_BUCKET,
+        "path_pattern": _DEFAULT_PATH_PATTERN,
+        "store_path": "data/manifests/gefs",
+        "forecast_hours": list(_DEFAULT_FORECAST_HOURS),
+        "filters": {"typeOfFirstFixedSurface": 10},
+        "date_prefix": "gefs.",
+        "local_path_pattern": None,
+    }
+    settings.update(ingest)
+    return settings
+
+
 def discover_available_dates(
     bucket: str = _DEFAULT_BUCKET,
     storage_options: dict | None = None,
+    date_prefix: str = "gefs.",
 ) -> list[str]:
     """Discover available forecast dates in the S3 bucket.
 
@@ -49,15 +86,14 @@ def discover_available_dates(
         Sorted list of date strings in YYYYMMDD format.
     """
     opts = storage_options or _DEFAULT_STORAGE_OPTIONS
-    prefix = "gefs."
     try:
         fs = fsspec.filesystem("s3", **opts)
         entries = fs.ls(bucket, detail=False)
         dates: list[str] = []
         for entry in entries:
             name = entry.rsplit("/", 1)[-1]
-            if name.startswith(prefix) and len(name) == len(prefix) + 8:
-                dates.append(name[len(prefix) :])
+            if name.startswith(date_prefix) and len(name) == len(date_prefix) + 8:
+                dates.append(name[len(date_prefix) :])
         dates.sort()
         return dates
     except Exception as exc:
@@ -167,6 +203,7 @@ def ingest_date(
     max_workers: int = _DEFAULT_MAX_WORKERS,
     local_path_pattern: str | None = None,
     urls: list[str] | None = None,
+    filters: dict | None = None,
 ) -> bool:
     """Build and save a Kerchunk manifest for a single date/cycle.
 
@@ -250,11 +287,13 @@ def ingest_date(
     t_start = time.perf_counter()
 
     storage_opts = None if is_local else _DEFAULT_STORAGE_OPTIONS
+    if filters is None:
+        filters = {"typeOfFirstFixedSurface": 10}
 
     try:
         gen = ReferenceGenerator(
             urls,
-            filters={"typeOfFirstFixedSurface": 10},
+            filters=filters,
             storage_options=storage_opts,
             max_workers=max_workers,
         )
@@ -344,36 +383,42 @@ def ingest_date(
 def main() -> None:
     """CLI entry point for the ingest script."""
     parser = argparse.ArgumentParser(
-        description="Ingest GEFS-Aerosols GRIB2 data into local Kerchunk manifests."
+        description="Ingest global gridded GRIB2 data into local Kerchunk manifests."
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=None,
+        help="Dataset YAML file containing an optional ingest configuration.",
     )
     parser.add_argument(
         "--days",
         type=int,
-        default=3,
+        default=None,
         help="Number of most recent days to ingest (default: 3)",
     )
     parser.add_argument(
         "--store-path",
         type=str,
-        default="data/manifests/gefs",
-        help="Path to the manifest store directory (default: data/manifests/gefs)",
+        default=None,
+        help="Path to the manifest store directory (or use the YAML setting).",
     )
     parser.add_argument(
         "--cycle",
         type=str,
-        default="00",
+        default=None,
         help="Model initialization cycle to ingest (default: 00)",
     )
     parser.add_argument(
         "--bucket",
         type=str,
-        default=_DEFAULT_BUCKET,
+        default=None,
         help=f"S3 bucket name (default: {_DEFAULT_BUCKET})",
     )
     parser.add_argument(
         "--max-workers",
         type=int,
-        default=_DEFAULT_MAX_WORKERS,
+        default=None,
         help=f"Thread-pool size for manifest generation (default: {_DEFAULT_MAX_WORKERS})",
     )
     parser.add_argument(
@@ -395,25 +440,43 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    store_path = Path(args.store_path)
+    config = load_ingest_config(args.config) if args.config else {}
+    days = args.days if args.days is not None else 3
+    cycle = args.cycle if args.cycle is not None else "00"
+    bucket = args.bucket if args.bucket is not None else config.get("bucket", _DEFAULT_BUCKET)
+    path_pattern = config.get("path_pattern", _DEFAULT_PATH_PATTERN)
+    filters = config.get("filters", {"typeOfFirstFixedSurface": 10})
+    max_workers = (
+        args.max_workers
+        if args.max_workers is not None
+        else config.get("max_workers", _DEFAULT_MAX_WORKERS)
+    )
+    store_path = Path(
+        args.store_path
+        if args.store_path is not None
+        else config.get("store_path", "data/manifests/gefs")
+    )
+
     store_path.mkdir(parents=True, exist_ok=True)
 
     # Parse forecast hours
     forecast_hours: list[int] | None = None
     if args.forecast_hours:
         forecast_hours = [int(h.strip()) for h in args.forecast_hours.split(",")]
+    elif args.config and config.get("forecast_hours") is not None:
+        forecast_hours = [int(hour) for hour in config["forecast_hours"]]
 
     # Local mode: use local file paths instead of S3
-    local_path = args.local_path
+    local_path = args.local_path or config.get("local_path_pattern")
 
     print(f"\n{'=' * 60}")
-    print("  GEFS-Aerosols Manifest Ingest")
+    print("  Global Gridded Manifest Ingest")
     print(f"{'=' * 60}")
-    print(f"  Days:           {args.days}")
-    print(f"  Cycle:          {args.cycle}")
+    print(f"  Days:           {days}")
+    print(f"  Cycle:          {cycle}")
     print(f"  Store path:     {store_path.resolve()}")
-    print(f"  Bucket:         {args.bucket}")
-    print(f"  Max workers:    {args.max_workers}")
+    print(f"  Bucket:         {bucket}")
+    print(f"  Max workers:    {max_workers}")
     print(f"  Forecast hours: {forecast_hours or '0-120 (all)'}")
     print(f"{'=' * 60}\n")
 
@@ -438,14 +501,14 @@ def main() -> None:
 
             grouped: dict[tuple[str, str], list[tuple[int, str]]] = {}
             for gf in grib_files:
-                d, c, fhr = parse_grib_file_metadata(gf, default_cycle=args.cycle)
+                d, c, fhr = parse_grib_file_metadata(gf, default_cycle=cycle)
                 key = (d, c)
                 if key not in grouped:
                     grouped[key] = []
                 grouped[key].append((fhr, str(gf.resolve())))
 
             all_dates = sorted(set(d for d, c in grouped))
-            selected_dates = all_dates[-args.days :]
+            selected_dates = all_dates[-days:]
             print(f"  Found {len(all_dates)} date(s): {all_dates}")
             print(f"\n[2/3] Ingesting {len(selected_dates)} most recent date(s)...")
 
@@ -468,9 +531,10 @@ def main() -> None:
                         date=date,
                         cycle=cycle,
                         store_path=store_path,
-                        max_workers=args.max_workers,
+                        max_workers=max_workers,
                         local_path_pattern=local_path,
                         urls=urls,
+                        filters=filters,
                     )
                     if ok:
                         successes += 1
@@ -508,7 +572,7 @@ def main() -> None:
         dates.sort()
     else:
         print("[1/3] Discovering available dates from S3...")
-        dates = discover_available_dates(args.bucket)
+        dates = discover_available_dates(bucket, date_prefix=config.get("date_prefix", "gefs."))
     t_discover = time.perf_counter() - t0
 
     if not dates:
@@ -519,7 +583,7 @@ def main() -> None:
     print(f"  Latest: {dates[-1]}, Earliest: {dates[0]}")
 
     # Select most recent N days
-    selected_dates = dates[-args.days :]
+    selected_dates = dates[-days:]
     print(f"\n[2/3] Ingesting {len(selected_dates)} most recent date(s)...")
     print(f"  Dates: {selected_dates}")
 
@@ -529,15 +593,17 @@ def main() -> None:
     t_ingest_start = time.perf_counter()
 
     for i, date in enumerate(selected_dates, 1):
-        print(f"\n  [{i}/{len(selected_dates)}] Ingesting {date}/{args.cycle}...")
+        print(f"\n  [{i}/{len(selected_dates)}] Ingesting {date}/{cycle}...")
         success = ingest_date(
             date=date,
-            cycle=args.cycle,
+            cycle=cycle,
             store_path=store_path,
-            bucket=args.bucket,
+            bucket=bucket,
+            path_pattern=path_pattern,
             forecast_hours=forecast_hours,
-            max_workers=args.max_workers,
+            max_workers=max_workers,
             local_path_pattern=local_path,
+            filters=filters,
         )
         if success:
             successes += 1
