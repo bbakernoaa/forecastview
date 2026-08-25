@@ -354,23 +354,57 @@ You can also mount the built frontend as static files directly in FastAPI, servi
 
 For environments like NOAA's RZDM or simple static web hosts where running an active Python backend process is prohibited or unnecessary, ForecastView can be exported as a 100% static site bundle.
 
-1. **Build the static site bundle:**
+The important lifecycle is:
+
+1. **Ingest raw GRIB2 files into local Kerchunk manifests**
+   ```bash
+   python backend/scripts/ingest.py \
+     --config config/domains/air.yaml \
+     --local-path /path/to/local/gefs/gribs \
+     --store-path data/manifests/gefs \
+     --days 3 \
+     --cycle 00
+   ```
+   This step reads local GRIB2 files, discovers dates/cycles/forecast hours, and writes `manifest.json` files under the local manifest store. `--local-path` is the supported way to point ingestion at local files; it does not belong on the static export script.
+
+2. **Generate the static site bundle from the manifest store**
    ```bash
    python backend/scripts/export_static.py --product air --days 3 --output static_site
    ```
    This script:
-   - Ingests local or S3 data into Kerchunk manifests.
-   - Pre-renders Web Mercator PNG overlay maps for every variable and forecast hour.
-   - Generates static JSON files for API responses (`api/catalog`, `api/dates`, `api/variables`, etc.).
-   - Builds the React SPA and copies all static assets into the output folder.
+   - Reads the already-generated manifest store (`data/manifests/gefs` by default)
+   - Pre-renders Web Mercator PNG overlay maps for every variable and forecast hour
+   - Generates static JSON files for API responses (`api/catalog`, `api/dates`, `api/variables`, etc.)
+   - Copies the React SPA and static assets into the output folder
 
-2. **Deploy to RZDM or any static web host:**
+3. **Deploy to RZDM or any static web host**
    Copy the generated `static_site/` directory directly to your web server:
    ```bash
    rsync -avz static_site/ user@rzdm.noaa.gov:/home/www/forecastview/
    ```
 
-Because all API routes are pre-rendered as static JSON and PNG files, the entire application functions interactively on the web without any backend server.
+A complete offline RZDM workflow therefore looks like this:
+
+```bash
+# 1) Local GRIB2 files -> manifest store
+python backend/scripts/ingest.py \
+  --config config/domains/air.yaml \
+  --local-path /path/to/local/gefs/gribs \
+  --store-path /data/forecastview/manifests/gefs \
+  --days 3 \
+  --cycle 00
+
+# 2) manifest store -> static bundle
+python backend/scripts/export_static.py \
+  --product air \
+  --days 3 \
+  --output /srv/rzdm/forecastview_static
+
+# 3) static bundle -> deployed web root
+rsync -avz /srv/rzdm/forecastview_static/ user@rzdm.noaa.gov:/home/www/forecastview/
+```
+
+Because all API routes are pre-rendered as static JSON and PNG files, the entire application can function interactively on the web without any running backend server.
 
 ---
 
