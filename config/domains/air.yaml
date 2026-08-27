@@ -76,154 +76,154 @@ variables:
       contourInterval: 0.01
       fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD340:
-    shortName: "totAOD340"
-    fullName: "Total Aerosol Optical Depth at 340nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.1
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD340:
+  #   shortName: "totAOD340"
+  #   fullName: "Total Aerosol Optical Depth at 340nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.1
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD440:
-    shortName: "totAOD440"
-    fullName: "Total Aerosol Optical Depth at 440nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.1
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD440:
+  #   shortName: "totAOD440"
+  #   fullName: "Total Aerosol Optical Depth at 440nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.1
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD645:
-    shortName: "totAOD645"
-    fullName: "Total Aerosol Optical Depth at 645nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.1
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD645:
+  #   shortName: "totAOD645"
+  #   fullName: "Total Aerosol Optical Depth at 645nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.1
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD870:
-    shortName: "totAOD870"
-    fullName: "Total Aerosol Optical Depth at 870nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.1
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD870:
+  #   shortName: "totAOD870"
+  #   fullName: "Total Aerosol Optical Depth at 870nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.1
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD1640:
-    shortName: "totAOD1640"
-    fullName: "Total Aerosol Optical Depth at 1640nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.05
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD1640:
+  #   shortName: "totAOD1640"
+  #   fullName: "Total Aerosol Optical Depth at 1640nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.05
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
-  totAOD11100:
-    shortName: "totAOD11100"
-    fullName: "Total Aerosol Optical Depth at 11100nm"
-    units: "Numeric"
-    category: "Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.02
-      fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
+  # totAOD11100:
+  #   shortName: "totAOD11100"
+  #   fullName: "Total Aerosol Optical Depth at 11100nm"
+  #   units: "Numeric"
+  #   category: "Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.02
+  #     fillLevels: [0.05, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 2.0]
 
   # ===================================================================
   # Scattering Optical Depth
   # ===================================================================
-  totScatAOD550:
-    shortName: "totScatAOD550"
-    fullName: "Total Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "rainbow"
-      contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+  # totScatAOD550:
+  #   shortName: "totScatAOD550"
+  #   fullName: "Total Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "rainbow"
+  #     contourInterval: 0.1
+  #     fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
 
-  duScatAOD550:
-    shortName: "duScatAOD550"
-    fullName: "Dust Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "YlOrBr"
-      contourInterval: 0.1
-      fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
+  # duScatAOD550:
+  #   shortName: "duScatAOD550"
+  #   fullName: "Dust Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "YlOrBr"
+  #     contourInterval: 0.1
+  #     fillLevels: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0]
 
-  ssScatAOD550:
-    shortName: "ssScatAOD550"
-    fullName: "Sea Salt Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "Blues"
-      contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+  # ssScatAOD550:
+  #   shortName: "ssScatAOD550"
+  #   fullName: "Sea Salt Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "Blues"
+  #     contourInterval: 0.05
+  #     fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
 
-  so4ScatAOD550:
-    shortName: "so4ScatAOD550"
-    fullName: "Sulfate Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "Reds"
-      contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
+  # so4ScatAOD550:
+  #   shortName: "so4ScatAOD550"
+  #   fullName: "Sulfate Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "Reds"
+  #     contourInterval: 0.05
+  #     fillLevels: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5]
 
-  omScatAOD550:
-    shortName: "omScatAOD550"
-    fullName: "Organic Matter Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "Greens"
-      contourInterval: 0.05
-      fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
+  # omScatAOD550:
+  #   shortName: "omScatAOD550"
+  #   fullName: "Organic Matter Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "Greens"
+  #     contourInterval: 0.05
+  #     fillLevels: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0]
 
-  bcScatAOD550:
-    shortName: "bcScatAOD550"
-    fullName: "Black Carbon Scattering Aerosol Optical Depth at 550nm"
-    units: "Numeric"
-    category: "Scattering Optical Depth"
-    rendering:
-      colormap: "Greys"
-      contourInterval: 0.005
-      fillLevels: [0, 0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]
+  # bcScatAOD550:
+  #   shortName: "bcScatAOD550"
+  #   fullName: "Black Carbon Scattering Aerosol Optical Depth at 550nm"
+  #   units: "Numeric"
+  #   category: "Scattering Optical Depth"
+  #   rendering:
+  #     colormap: "Greys"
+  #     contourInterval: 0.005
+  #     fillLevels: [0, 0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]
 
-  # ===================================================================
-  # Single Scattering Albedo
-  # ===================================================================
-  totSSA340:
-    shortName: "totSSA340"
-    fullName: "Total Single Scattering Albedo at 340nm"
-    units: "Numeric"
-    category: "Single Scattering Albedo"
-    rendering:
-      colormap: "RdYlGn"
-      contourInterval: 0.02
-      fillLevels: [0.80, 0.84, 0.88, 0.90, 0.92, 0.94, 0.96, 0.98, 0.99, 1.00]
+  # # ===================================================================
+  # # Single Scattering Albedo
+  # # ===================================================================
+  # totSSA340:
+  #   shortName: "totSSA340"
+  #   fullName: "Total Single Scattering Albedo at 340nm"
+  #   units: "Numeric"
+  #   category: "Single Scattering Albedo"
+  #   rendering:
+  #     colormap: "RdYlGn"
+  #     contourInterval: 0.02
+  #     fillLevels: [0.80, 0.84, 0.88, 0.90, 0.92, 0.94, 0.96, 0.98, 0.99, 1.00]
 
-  # ===================================================================
-  # Asymmetry
-  # ===================================================================
-  totAsy340:
-    shortName: "totAsy340"
-    fullName: "Total Asymmetry Parameter at 340nm"
-    units: "Numeric"
-    category: "Asymmetry"
-    rendering:
-      colormap: "coolwarm"
-      contourInterval: 0.05
-      fillLevels: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+  # # ===================================================================
+  # # Asymmetry
+  # # ===================================================================
+  # totAsy340:
+  #   shortName: "totAsy340"
+  #   fullName: "Total Asymmetry Parameter at 340nm"
+  #   units: "Numeric"
+  #   category: "Asymmetry"
+  #   rendering:
+  #     colormap: "coolwarm"
+  #     contourInterval: 0.05
+  #     fillLevels: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
 
   # ===================================================================
   # Column Mass Density
