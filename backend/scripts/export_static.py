@@ -132,13 +132,51 @@ def main():
     (out / "data" / "catalog.json").write_text(
         json.dumps({"products": [{"product": "air", "description": "GEFS-Aerosol"}]})
     )
-    (out / "data" / a.product / "dates.json").parent.mkdir(parents=True, exist_ok=True)
-    (out / "data" / a.product / "dates.json").write_text(
-        json.dumps({"product": a.product, "dates": dates})
-    )
+    dates_path = out / "data" / a.product / "dates.json"
+    dates_path.parent.mkdir(parents=True, exist_ok=True)
+    existing: list[str] = []
+    if dates_path.exists():
+        try:
+            existing = json.loads(dates_path.read_text()).get("dates", [])
+        except (json.JSONDecodeError, AttributeError):
+            existing = []
+    merged = sorted(set(existing) | set(dates))
+    dates_path.write_text(json.dumps({"product": a.product, "dates": merged}, sort_keys=True))
+    # bounds.json (per product, written once)
+    bounds_path = out / "data" / a.product / "bounds.json"
+    if not bounds_path.exists() and dates:
+        from backend.app.projections.coordinates import CoordinateMapper
+        from backend.app.projections.transform import CoordinateTransformer
+
+        first_run = next(iter(store.discover_runs(dates[0])), "00")
+        coords = sel.get_coordinates(dates[0], first_run)
+        proj = sel.get_projection(dates[0], first_run)
+        transformer = CoordinateTransformer.from_projection(proj)
+        mapper = CoordinateMapper(coords, proj)
+        lon_n, lat_n = mapper.get_grid_meshgrid()
+        lons_geo, lats_geo = transformer.transform_grid(lon_n, lat_n)
+        lo0, lo1 = float(lons_geo.min()), float(lons_geo.max())
+        la0, la1 = float(lats_geo.min()), float(lats_geo.max())
+        ring = [[lo0, la0], [lo1, la0], [lo1, la1], [lo0, la1], [lo0, la0]]
+        bounds_path.parent.mkdir(parents=True, exist_ok=True)
+        bounds_path.write_text(
+            json.dumps(
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "Polygon", "coordinates": [ring]},
+                    "properties": {"grid_type": proj.grid_type, "shape": list(coords.shape)},
+                },
+                sort_keys=True,
+            )
+        )
     tf = 0
     for date in dates:
-        for run in store.discover_runs(date):
+        runs = store.discover_runs(date)
+        (out / "data" / a.product / date).mkdir(parents=True, exist_ok=True)
+        (out / "data" / a.product / date / "runs.json").write_text(
+            json.dumps({"product": a.product, "date": date, "runs": list(runs)}, sort_keys=True)
+        )
+        for run in runs:
             rd = out / "data" / a.product / date / run
             rd.mkdir(parents=True, exist_ok=True)
             rv = sel.get_variables(date, run)
@@ -166,6 +204,27 @@ def main():
                 )
             (rd / "variables.json").write_text(
                 json.dumps({"product": a.product, "date": date, "run": run, "variables": vout})
+            )
+            levels_out = {}
+            for v in vout:
+                vc = dc.get_variable(v["name"])
+                lv = getattr(vc, "levels", None) if vc else None
+                if lv:
+                    levels_out[v["name"]] = [
+                        {
+                            "surfaceType": getattr(x, "surfaceType", None),
+                            "value": float(getattr(x, "value", x)),
+                            "label": getattr(x, "label", str(x)),
+                        }
+                        for x in lv
+                    ]
+                else:
+                    levels_out[v["name"]] = [{"surfaceType": 1, "value": 0.0, "label": "surface"}]
+            (rd / "levels.json").write_text(
+                json.dumps(
+                    {"product": a.product, "date": date, "run": run, "byVariable": levels_out},
+                    sort_keys=True,
+                )
             )
             it = datetime.strptime(f"{date}{run}", "%Y%m%d%H").replace(tzinfo=UTC)
             fe = sel.get_forecast_hours(date, run)
