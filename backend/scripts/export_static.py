@@ -76,8 +76,48 @@ def render_fill_png(field, lons_1d, lats_1d, fill_levels, cmap_name):
     return buf.getvalue()
 
 
+def render_contour_geojson(field, lons_1d, lats_1d, coords, projection, interval, major_interval):
+    """Return a GeoJSON FeatureCollection dict for one field frame.
+
+    Mirrors the /api/contours response shape (type, features, metadata) so
+    the frontend's useContours hook consumes static files unchanged.
+    """
+    from backend.app.contours.generator import generate_isolines
+    from backend.app.contours.geojson import contours_to_geojson
+    from backend.app.data.field_selector import GridCoordinates
+    from backend.app.projections.coordinates import CoordinateMapper
+    from backend.app.projections.transform import CoordinateTransformer
+
+    sf, sl, _ = shift_grid_to_minus180(field, lons_1d)
+    coordinates = coords
+    if not np.array_equal(sl, lons_1d):
+        lons_2d, lats_2d = np.meshgrid(sl, lats_1d)
+        coordinates = GridCoordinates(lats=lats_2d, lons=lons_2d, shape=coords.shape)
+    result = generate_isolines(sf, interval=interval, major_interval=major_interval)
+    transformer = CoordinateTransformer.from_projection(projection)
+    mapper = CoordinateMapper(coordinates, projection)
+    geojson = contours_to_geojson(result, mapper, transformer)
+    valid = sf[np.isfinite(sf)]
+    metadata = {
+        "variable": None,
+        "level": None,
+        "fhr": None,
+        "contourInterval": interval,
+        "majorInterval": major_interval,
+        "fieldMin": float(valid.min()) if valid.size else 0.0,
+        "fieldMax": float(valid.max()) if valid.size else 0.0,
+        "numLevels": len(result.levels),
+        "numFeatures": len(geojson.get("features", [])),
+    }
+    return {
+        "type": "FeatureCollection",
+        "features": geojson.get("features", []),
+        "metadata": metadata,
+    }
+
+
 def render_one(args):
-    sp, date, run, var, fhr, fl, cm, op, want_fields = args
+    sp, date, run, var, fhr, fl, cm, op, want_fields, want_contours, interval = args
     from backend.app.data.field_selector import FieldSelector
     from backend.app.data.kerchunk_store import ManifestStore
 
@@ -91,9 +131,9 @@ def render_one(args):
     p = Path(op)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(png)
+    # Fill path is <run>/fill/<var>/f<NNN>.png -> run dir is 3 levels up.
+    run_dir = p.parent.parent.parent
     if want_fields:
-        # Fill path is <run>/fill/<var>/f<NNN>.png -> run dir is 3 levels up.
-        run_dir = p.parent.parent.parent
         sf, sl, _ = shift_grid_to_minus180(field, lo)
         vm = (la >= -WEB_MERCATOR_MAX_LAT) & (la <= WEB_MERCATOR_MAX_LAT)
         vr = np.where(vm)[0]
@@ -119,6 +159,15 @@ def render_one(args):
                     sort_keys=True,
                 )
             )
+    if want_contours:
+        proj = sel.get_projection(date, run)
+        iv = interval or 0.1
+        gj = render_contour_geojson(field, lo, la, c, proj, iv, iv * 5)
+        gj["metadata"]["variable"] = var
+        gj["metadata"]["fhr"] = fhr
+        cdir = run_dir / "contours" / var
+        cdir.mkdir(parents=True, exist_ok=True)
+        (cdir / f"{p.stem}.json").write_text(json.dumps(gj, sort_keys=True))
     return (var, fhr, len(png))
 
 
@@ -144,6 +193,11 @@ def main():
         "--no-fields",
         action="store_true",
         help="Skip Float32 field grid export (needed for static point queries)",
+    )
+    ap.add_argument(
+        "--no-contours",
+        action="store_true",
+        help="Skip precomputed contour GeoJSON export",
     )
     a = ap.parse_args()
     out = Path(a.output)
@@ -290,6 +344,8 @@ def main():
                                 v["rendering"]["colormap"],
                                 str(pp),
                                 not a.no_fields,
+                                not a.no_contours,
+                                v["rendering"].get("contourInterval"),
                             )
                         )
             if jobs:

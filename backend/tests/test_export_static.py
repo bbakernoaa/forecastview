@@ -253,3 +253,29 @@ def test_export_no_fields_skips_bins(tmp_path, monkeypatch, domain_config):
     assert not (rd / "grid.json").exists()
     assert not (rd / "field").exists()
     assert (rd / "fill" / "totAOD550" / "f000.png").is_file()
+
+
+def test_export_writes_contour_geojson(tmp_path, monkeypatch, domain_config):
+    """Precomputed contour GeoJSON is emitted per frame, matching /api/contours."""
+    out = _run_export(tmp_path, monkeypatch, domain_config)
+    f = out / "data" / "air" / "20260821" / "00" / "contours" / "totAOD550" / "f000.json"
+    assert f.is_file()
+    gj = json.loads(f.read_text())
+    assert gj["type"] == "FeatureCollection"
+    assert "metadata" in gj
+    assert gj["metadata"]["variable"] == "totAOD550"
+    assert gj["metadata"]["fhr"] == 0
+    assert gj["metadata"]["contourInterval"] > 0
+    assert gj["features"], "synthetic field must produce contour features"
+    assert all(
+        feat["type"] == "Feature" and feat["geometry"]["type"] == "MultiLineString"
+        for feat in gj["features"]
+    )
+
+
+def test_export_no_contours_skips_geojson(tmp_path, monkeypatch, domain_config):
+    """--no-contours skips contour emission but keeps fills."""
+    out = _run_export(tmp_path, monkeypatch, domain_config, extra_args=("--no-contours",))
+    rd = out / "data" / "air" / "20260821" / "00"
+    assert not (rd / "contours").exists()
+    assert (rd / "fill" / "totAOD550" / "f000.png").is_file()
