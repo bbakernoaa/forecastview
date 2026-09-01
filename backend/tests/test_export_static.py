@@ -37,7 +37,7 @@ class _Coords:
 
 @dataclass
 class _FakeProjection:
-    grid_type: str = "regular_latlon"
+    grid_type: str = "regular_ll"
     crs_params: dict | None = None
     scanning_mode: int = 0
 
@@ -100,7 +100,7 @@ def domain_config():
     return dc
 
 
-def _run_export(tmp_path: Path, monkeypatch) -> Path:
+def _run_export(tmp_path: Path, monkeypatch, domain_config) -> Path:
     """Invoke export_static.main() with mocked stores and inline rendering."""
     out = tmp_path / "dist_static"
 
@@ -140,10 +140,7 @@ def _run_export(tmp_path: Path, monkeypatch) -> Path:
         "render_fill_png",
         lambda *a, **k: _tiny_png(),
     )
-    monkeypatch.setattr(
-        "backend.app.config.loader.get_domain_config_safe",
-        lambda product: domain_config,
-    )
+    monkeypatch.setattr(export_static, "get_domain_config_safe", lambda product: domain_config)
 
     monkeypatch.setattr("sys.argv", ["export_static.py", "--output", str(out), "--product", "air"])
     export_static.main()
@@ -152,7 +149,7 @@ def _run_export(tmp_path: Path, monkeypatch) -> Path:
 
 def test_export_creates_static_site(tmp_path: Path, monkeypatch, domain_config):
     """Export produces catalog, dates, per-run metadata, and PNG frames."""
-    out = _run_export(tmp_path, monkeypatch)
+    out = _run_export(tmp_path, monkeypatch, domain_config)
 
     assert out.is_dir()
 
@@ -177,7 +174,7 @@ def test_export_creates_static_site(tmp_path: Path, monkeypatch, domain_config):
 
 def test_export_renders_png_frames(tmp_path: Path, monkeypatch, domain_config):
     """Each variable/forecast-hour combination gets a rendered PNG frame."""
-    out = _run_export(tmp_path, monkeypatch)
+    out = _run_export(tmp_path, monkeypatch, domain_config)
     run_dir = out / "data" / "air" / "20260821" / "00"
 
     for fhr in (0, 3):
@@ -194,12 +191,12 @@ def test_export_static_site_has_no_html(tmp_path: Path, monkeypatch, domain_conf
     separately; if an index.html is ever emitted by the exporter, update
     this test to assert its presence instead.
     """
-    out = _run_export(tmp_path, monkeypatch)
+    out = _run_export(tmp_path, monkeypatch, domain_config)
     assert not (out / "index.html").exists()
 
 
 def test_export_writes_index_jsons(tmp_path, monkeypatch, domain_config):
-    out = _run_export(tmp_path, monkeypatch)
+    out = _run_export(tmp_path, monkeypatch, domain_config)
     prod = out / "data" / "air"
 
     runs = json.loads((prod / "20260821" / "runs.json").read_text())
@@ -224,6 +221,6 @@ def test_dates_json_is_union_on_rerun(tmp_path, monkeypatch, domain_config):
     prod = out / "data" / "air"
     prod.mkdir(parents=True)
     (prod / "dates.json").write_text(json.dumps({"product": "air", "dates": ["20200101"]}))
-    _run_export(tmp_path, monkeypatch)
+    _run_export(tmp_path, monkeypatch, domain_config)
     dates = json.loads((prod / "dates.json").read_text())["dates"]
     assert dates == ["20200101", "20260821"]
