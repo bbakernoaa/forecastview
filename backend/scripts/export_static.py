@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
+import subprocess
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import UTC, datetime, timedelta
@@ -199,6 +202,21 @@ def main():
         action="store_true",
         help="Skip precomputed contour GeoJSON export",
     )
+    ap.add_argument(
+        "--frontend-dist",
+        default=None,
+        help="Path to a VITE_STATIC_MODE=true frontend build to copy in",
+    )
+    ap.add_argument(
+        "--build-frontend",
+        action="store_true",
+        help="Run npm ci && npm run build in frontend/ before copying",
+    )
+    ap.add_argument(
+        "--no-frontend",
+        action="store_true",
+        help="Emit data only; skip copying the HTML shell",
+    )
     a = ap.parse_args()
     out = Path(a.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -257,6 +275,7 @@ def main():
             )
         )
     tf = 0
+    failed = 0
     for date in dates:
         runs = store.discover_runs(date)
         (out / "data" / a.product / date).mkdir(parents=True, exist_ok=True)
@@ -356,8 +375,46 @@ def main():
                             f.result()
                             tf += 1
                         except Exception as e:
+                            failed += 1
                             print(f"    ERR: {e}")
+
+    # --- Frontend shell copy ---
+    if not a.no_frontend:
+        if a.build_frontend:
+            fe = Path(__file__).resolve().parent.parent.parent / "frontend"
+            env = {**os.environ, "VITE_STATIC_MODE": "true", "VITE_BASE_PATH": "./"}
+            subprocess.run(["npm", "ci"], cwd=fe, check=True)
+            subprocess.run(["npm", "run", "build"], cwd=fe, check=True, env=env)
+        dist = (
+            Path(a.frontend_dist)
+            if a.frontend_dist
+            else Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+        )
+        if not (dist / "index.html").exists():
+            print(
+                f"FATAL ERROR: frontend dist not found at {dist} "
+                "(run with --build-frontend or build the frontend first)"
+            )
+            sys.exit(1)
+        bi = dist / "data" / "build-info.json"
+        if not bi.exists() or not json.loads(bi.read_text()).get("staticMode"):
+            print("FATAL ERROR: frontend dist was not built with VITE_STATIC_MODE=true")
+            sys.exit(1)
+        for item in sorted(dist.iterdir()):
+            if item.name == "data":
+                continue  # never clobber exporter data
+            dest = out / item.name
+            if dest.exists():
+                continue  # append mode: don't overwrite existing shell
+            if item.is_dir():
+                shutil.copytree(item, dest)
+            else:
+                shutil.copy2(item, dest)
+
     print(f"Done: {tf} frames to {out}")
+    if failed:
+        print(f"FATAL ERROR: {failed} frame(s) failed")
+        sys.exit(2)
 
 
 if __name__ == "__main__":

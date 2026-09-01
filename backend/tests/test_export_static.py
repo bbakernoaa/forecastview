@@ -100,8 +100,12 @@ def domain_config():
     return dc
 
 
-def _run_export(tmp_path: Path, monkeypatch, domain_config, extra_args=()) -> Path:
-    """Invoke export_static.main() with mocked stores and inline rendering."""
+def _run_export(tmp_path, monkeypatch, domain_config, extra_args=(), frontend_dist=None) -> Path:
+    """Invoke export_static.main() with mocked stores and inline rendering.
+
+    Defaults to --no-frontend so data-only tests don't depend on the repo's
+    real frontend/dist being present or static-marked.
+    """
     out = tmp_path / "dist_static"
 
     class _InlineExecutor:
@@ -142,10 +146,12 @@ def _run_export(tmp_path: Path, monkeypatch, domain_config, extra_args=()) -> Pa
     )
     monkeypatch.setattr(export_static, "get_domain_config_safe", lambda product: domain_config)
 
-    monkeypatch.setattr(
-        "sys.argv",
-        ["export_static.py", "--output", str(out), "--product", "air"] + list(extra_args),
-    )
+    argv = ["export_static.py", "--output", str(out), "--product", "air"] + list(extra_args)
+    if frontend_dist is not None:
+        argv += ["--frontend-dist", str(frontend_dist)]
+    elif "--no-frontend" not in extra_args:
+        argv += ["--no-frontend"]
+    monkeypatch.setattr("sys.argv", argv)
     export_static.main()
     return out
 
@@ -279,3 +285,35 @@ def test_export_no_contours_skips_geojson(tmp_path, monkeypatch, domain_config):
     rd = out / "data" / "air" / "20260821" / "00"
     assert not (rd / "contours").exists()
     assert (rd / "fill" / "totAOD550" / "f000.png").is_file()
+
+
+def test_export_copies_frontend_shell(tmp_path, monkeypatch, domain_config):
+    """A valid static frontend dist is copied in without clobbering data/."""
+    dist = tmp_path / "fakedist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text("<html>static</html>")
+    (dist / "assets" / "app.js").write_text("// bundle")
+    (dist / "data").mkdir()
+    (dist / "data" / "build-info.json").write_text(json.dumps({"staticMode": True}))
+    out = _run_export(tmp_path, monkeypatch, domain_config, frontend_dist=dist)
+    assert (out / "index.html").read_text() == "<html>static</html>"
+    assert (out / "assets" / "app.js").is_file()
+    # exporter data must survive; the dist's data/ must NOT be copied in
+    assert (out / "data" / "catalog.json").is_file()
+    assert not (out / "data" / "build-info.json").exists()
+
+
+def test_export_fails_without_static_marker(tmp_path, monkeypatch, domain_config):
+    """A frontend dist lacking the static-mode marker aborts the export."""
+    dist = tmp_path / "bad"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html></html>")
+    with pytest.raises(SystemExit):
+        _run_export(tmp_path, monkeypatch, domain_config, frontend_dist=dist)
+
+
+def test_export_no_frontend_skips_shell(tmp_path, monkeypatch, domain_config):
+    """--no-frontend produces a data-only export with no HTML shell."""
+    out = _run_export(tmp_path, monkeypatch, domain_config, extra_args=("--no-frontend",))
+    assert not (out / "index.html").exists()
+    assert (out / "data" / "catalog.json").is_file()
