@@ -77,7 +77,7 @@ def render_fill_png(field, lons_1d, lats_1d, fill_levels, cmap_name):
 
 
 def render_one(args):
-    sp, date, run, var, fhr, fl, cm, op = args
+    sp, date, run, var, fhr, fl, cm, op, want_fields = args
     from backend.app.data.field_selector import FieldSelector
     from backend.app.data.kerchunk_store import ManifestStore
 
@@ -91,6 +91,34 @@ def render_one(args):
     p = Path(op)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(png)
+    if want_fields:
+        # Fill path is <run>/fill/<var>/f<NNN>.png -> run dir is 3 levels up.
+        run_dir = p.parent.parent.parent
+        sf, sl, _ = shift_grid_to_minus180(field, lo)
+        vm = (la >= -WEB_MERCATOR_MAX_LAT) & (la <= WEB_MERCATOR_MAX_LAT)
+        vr = np.where(vm)[0]
+        sf = sf[vr[0] : vr[-1] + 1, :]
+        lc = la[vr[0] : vr[-1] + 1]
+        field_dir = run_dir / "field" / var
+        field_dir.mkdir(parents=True, exist_ok=True)
+        np.ascontiguousarray(sf, dtype="<f4").tofile(field_dir / f"{p.stem}.bin")
+        grid_path = run_dir / "grid.json"
+        if not grid_path.exists():
+            grid_path.write_text(
+                json.dumps(
+                    {
+                        "ny": int(sf.shape[0]),
+                        "nx": int(sf.shape[1]),
+                        "lon_min": float(sl[0]),
+                        "lon_max": float(sl[-1]),
+                        "lat_min": float(lc[0]),
+                        "lat_max": float(lc[-1]),
+                        "order": "row-major",
+                        "dtype": "float32le",
+                    },
+                    sort_keys=True,
+                )
+            )
     return (var, fhr, len(png))
 
 
@@ -112,6 +140,11 @@ def main():
     ap.add_argument("--days", type=int, default=3)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--product", default="air")
+    ap.add_argument(
+        "--no-fields",
+        action="store_true",
+        help="Skip Float32 field grid export (needed for static point queries)",
+    )
     a = ap.parse_args()
     out = Path(a.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -256,6 +289,7 @@ def main():
                                 v["rendering"]["fillLevels"],
                                 v["rendering"]["colormap"],
                                 str(pp),
+                                not a.no_fields,
                             )
                         )
             if jobs:

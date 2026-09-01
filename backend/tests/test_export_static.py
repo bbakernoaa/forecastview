@@ -100,7 +100,7 @@ def domain_config():
     return dc
 
 
-def _run_export(tmp_path: Path, monkeypatch, domain_config) -> Path:
+def _run_export(tmp_path: Path, monkeypatch, domain_config, extra_args=()) -> Path:
     """Invoke export_static.main() with mocked stores and inline rendering."""
     out = tmp_path / "dist_static"
 
@@ -142,7 +142,10 @@ def _run_export(tmp_path: Path, monkeypatch, domain_config) -> Path:
     )
     monkeypatch.setattr(export_static, "get_domain_config_safe", lambda product: domain_config)
 
-    monkeypatch.setattr("sys.argv", ["export_static.py", "--output", str(out), "--product", "air"])
+    monkeypatch.setattr(
+        "sys.argv",
+        ["export_static.py", "--output", str(out), "--product", "air"] + list(extra_args),
+    )
     export_static.main()
     return out
 
@@ -224,3 +227,29 @@ def test_dates_json_is_union_on_rerun(tmp_path, monkeypatch, domain_config):
     _run_export(tmp_path, monkeypatch, domain_config)
     dates = json.loads((prod / "dates.json").read_text())["dates"]
     assert dates == ["20200101", "20260821"]
+
+
+def test_export_writes_field_bins(tmp_path, monkeypatch, domain_config):
+    """Float32 field grids and grid.json are emitted for point queries."""
+    out = _run_export(tmp_path, monkeypatch, domain_config)
+    rd = out / "data" / "air" / "20260821" / "00"
+    grid = json.loads((rd / "grid.json").read_text())
+    assert grid["ny"] == 24 and grid["nx"] == 36
+    assert grid["dtype"] == "float32le" and grid["order"] == "row-major"
+    assert grid["lon_min"] == -180.0 and grid["lon_max"] == 179.0
+    assert grid["lat_min"] == -80.0 and grid["lat_max"] == 80.0
+
+    raw = (rd / "field" / "totAOD550" / "f000.bin").read_bytes()
+    arr = np.frombuffer(raw, dtype="<f4")
+    assert arr.size == grid["ny"] * grid["nx"]
+    # Deterministic fake field: values in [0, 2)
+    assert arr.min() >= 0.0 and arr.max() < 2.0
+
+
+def test_export_no_fields_skips_bins(tmp_path, monkeypatch, domain_config):
+    """--no-fields skips field/grid emission but keeps fills."""
+    out = _run_export(tmp_path, monkeypatch, domain_config, extra_args=("--no-fields",))
+    rd = out / "data" / "air" / "20260821" / "00"
+    assert not (rd / "grid.json").exists()
+    assert not (rd / "field").exists()
+    assert (rd / "fill" / "totAOD550" / "f000.png").is_file()
