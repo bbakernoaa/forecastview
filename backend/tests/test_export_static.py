@@ -222,6 +222,9 @@ def test_export_writes_index_jsons(tmp_path, monkeypatch, domain_config):
     assert bounds["geometry"]["type"] == "Polygon"
     ring = bounds["geometry"]["coordinates"][0]
     assert len(ring) == 5 and ring[0] == ring[-1]
+    # BoundsLayer.tsx expects these properties in the static file
+    for key in ("grid_type", "shape", "lon_min", "lon_max", "lat_min", "lat_max"):
+        assert key in bounds["properties"], f"bounds.properties missing {key}"
 
 
 def test_dates_json_is_union_on_rerun(tmp_path, monkeypatch, domain_config):

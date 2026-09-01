@@ -269,7 +269,14 @@ def main():
                 {
                     "type": "Feature",
                     "geometry": {"type": "Polygon", "coordinates": [ring]},
-                    "properties": {"grid_type": proj.grid_type, "shape": list(coords.shape)},
+                    "properties": {
+                        "grid_type": proj.grid_type,
+                        "shape": list(coords.shape),
+                        "lon_min": lo0,
+                        "lon_max": lo1,
+                        "lat_min": la0,
+                        "lat_max": la1,
+                    },
                 },
                 sort_keys=True,
             )

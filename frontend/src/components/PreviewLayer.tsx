@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { Map as MaplibreMap } from 'maplibre-gl'
 import { apiGet } from '../api/client'
+import { STATIC_MODE } from '../api/staticMode'
 
 /**
  * GeoJSON FeatureCollection response from GET /api/preview.
@@ -63,6 +64,16 @@ function PreviewLayer({
   useEffect(() => {
     if (!map || !date || !run || !variable || !enabled) {
       // Clean up if conditions no longer met
+      if (map && addedRef.current) {
+        removeLayer(map)
+        addedRef.current = false
+      }
+      return
+    }
+
+    // Preview is a dev-only verification overlay backed by /api/preview,
+    // which does not exist in static mode.
+    if (STATIC_MODE) {
       if (map && addedRef.current) {
         removeLayer(map)
         addedRef.current = false
