@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Map as MaplibreMap } from 'maplibre-gl'
 import type { MapStyleKey } from '../config/mapStyles'
 import {
   MAP_STYLES,
+  isRemoteStyle,
+  styleFor,
   DEFAULT_CENTER,
   DEFAULT_ZOOM,
   MIN_ZOOM,
@@ -12,6 +14,49 @@ import {
 interface ForecastMapProps {
   styleKey: MapStyleKey
   onMapReady?: (map: MaplibreMap | null) => void
+}
+
+/**
+ * Set once per page load after a remote basemap style fails to fetch.
+ * Subsequent map creations start with the offline local style directly,
+ * avoiding a failed-load flicker; a page reload retries the remote style.
+ */
+let offlineBasemap = false
+
+function createMap(
+  container: HTMLElement,
+  styleKey: MapStyleKey,
+  view?: { center: [number, number]; zoom: number; bearing: number; pitch: number },
+): MaplibreMap {
+  const startLocal = offlineBasemap && isRemoteStyle(styleKey)
+  const map = new MaplibreMap({
+    preserveDrawingBuffer: true,
+    container,
+    style: startLocal ? MAP_STYLES.local : styleFor(styleKey),
+    center: view?.center ?? DEFAULT_CENTER,
+    zoom: view?.zoom ?? DEFAULT_ZOOM,
+    ...(view ? { bearing: view.bearing, pitch: view.pitch } : {}),
+    minZoom: MIN_ZOOM,
+    maxZoom: MAX_ZOOM,
+  })
+
+  // Fall back to the tile-free local style when the remote style itself
+  // fails to load (before 'load' fires). Tile errors afterwards are ignored
+  // so a mid-session network blip doesn't swap the basemap under the user.
+  if (isRemoteStyle(styleKey)) {
+    let styleLoaded = false
+    let fellBack = false
+    map.on('load', () => {
+      styleLoaded = true
+    })
+    map.on('error', () => {
+      if (styleLoaded || fellBack) return
+      fellBack = true
+      offlineBasemap = true
+      map.setStyle(MAP_STYLES.local)
+    })
+  }
+  return map
 }
 
 function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
@@ -24,15 +69,7 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
     if (!containerRef.current || initializedRef.current) return
     initializedRef.current = true
 
-    const map = new MaplibreMap({
-      preserveDrawingBuffer: true,
-      container: containerRef.current,
-      style: MAP_STYLES[styleKey],
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
-      minZoom: MIN_ZOOM,
-      maxZoom: MAX_ZOOM,
-    })
+    const map = createMap(containerRef.current, styleKey)
 
     mapRef.current = map
     ;(window as unknown as Record<string, unknown>).__map = map
@@ -71,16 +108,11 @@ function ForecastMap({ styleKey, onMapReady }: ForecastMapProps) {
     mapRef.current = null
 
     // Create a new map with the new style
-    const newMap = new MaplibreMap({
-      preserveDrawingBuffer: true,
-      container: containerRef.current,
-      style: MAP_STYLES[styleKey],
-      center,
+    const newMap = createMap(containerRef.current, styleKey, {
+      center: [center.lng, center.lat],
       zoom,
       bearing,
       pitch,
-      minZoom: MIN_ZOOM,
-      maxZoom: MAX_ZOOM,
     })
 
     mapRef.current = newMap
