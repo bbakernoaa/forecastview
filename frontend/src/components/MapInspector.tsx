@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Marker } from 'maplibre-gl'
 import type { MapMouseEvent } from 'maplibre-gl'
 import { apiGet } from '../api/client'
+import { STATIC_MODE } from '../api/staticMode'
+import { queryPointStatic } from '../api/pointStatic'
 import type { PointQueryResponse } from '../api/types'
 import { useViewer } from '../context/ViewerContext'
 
@@ -68,20 +70,25 @@ function MapInspector() {
       const controller = new AbortController()
       abortRef.current = controller
 
-      const params: Record<string, string> = {
-        product,
-        date,
-        run,
-        variable,
-        fhr: String(forecastHour),
-        lat: String(lat),
-        lon: String(lng),
-      }
-      if (level != null) {
-        params.level = String(level)
-      }
+      // Static mode reads the shipped field grid; dynamic mode hits the backend.
+      const promise: Promise<PointQueryResponse | null> = STATIC_MODE
+        ? queryPointStatic(product, date, run, variable, forecastHour, lat, lng, level)
+        : apiGet<PointQueryResponse>(
+            '/api/point',
+            {
+              product,
+              date,
+              run,
+              variable,
+              fhr: String(forecastHour),
+              lat: String(lat),
+              lon: String(lng),
+              ...(level != null ? { level: String(level) } : {}),
+            },
+            controller.signal,
+          )
 
-      apiGet<PointQueryResponse>('/api/point', params, controller.signal)
+      promise
         .then((data) => {
           if (controller.signal.aborted) return
           setInspector({
