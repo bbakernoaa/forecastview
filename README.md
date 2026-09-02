@@ -346,9 +346,33 @@ location / {
 }
 ```
 
-### Single-Origin Alternative
+### Single-Origin Alternative (FastAPI + built frontend)
 
-You can also mount the built frontend as static files directly in FastAPI, serving everything from a single process. This simplifies deployment at the cost of scaling flexibility.
+You can also mount the built frontend as static files directly in FastAPI and serve everything from a single process. This is the simplest deployment option when you want one app entry point and do not need separate frontend/backend infrastructure.
+
+1. **Build the frontend**
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. **Serve the built frontend from FastAPI**
+   ```bash
+   uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+   ```
+
+   The FastAPI app can mount the built static files from `frontend/dist/` and serve the SPA for browser routes while still exposing `/api/*` endpoints. This is the easiest option for local deployments, internal web servers, or simple containerized deployments.
+
+3. **Example layout**
+   ```text
+   forecastview/
+   ├── backend/
+   ├── frontend/
+   │   └── dist/           # built frontend assets
+   └── backend/app/main.py
+   ```
+
+This setup keeps the app as a single origin, which is often easier for proxies, TLS termination, and operational rollouts. It is different from the static export path, because the API is still live and the app is not pre-rendered to files.
 
 ### Fully Static Site Export (NOAA RZDM / Web Server)
 
