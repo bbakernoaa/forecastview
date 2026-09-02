@@ -152,10 +152,12 @@ def render_one(args):
                     {
                         "ny": int(sf.shape[0]),
                         "nx": int(sf.shape[1]),
-                        "lon_min": float(sl[0]),
-                        "lon_max": float(sl[-1]),
-                        "lat_min": float(lc[0]),
-                        "lat_max": float(lc[-1]),
+                        "lon_min": float(min(sl[0], sl[-1])),
+                        "lon_max": float(max(sl[0], sl[-1])),
+                        # Row 0 is north (lat_max): GEFS lats descend. Use
+                        # min/max so the bounds are orientation-independent.
+                        "lat_min": float(min(lc[0], lc[-1])),
+                        "lat_max": float(max(lc[0], lc[-1])),
                         "order": "row-major",
                         "dtype": "float32le",
                     },

@@ -70,7 +70,8 @@ class _FakeSelector:
     def get_coordinates(self, date, run):
         return _Coords(
             lons=np.linspace(-180.0, 179.0, 36, dtype=np.float64),
-            lats=np.linspace(-80.0, 80.0, 24, dtype=np.float64),
+            # North-first (descending) like real GEFS: row 0 is lat_max.
+            lats=np.linspace(80.0, -80.0, 24, dtype=np.float64),
         )
 
     def get_projection(self, date, run):

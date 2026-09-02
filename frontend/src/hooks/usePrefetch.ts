@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { apiGet } from '../api/client'
+import { apiGetStatic } from '../api/client'
 import { buildFillImageUrl } from '../api/staticMode'
 import type { ContourFeatureCollection } from '../api/types'
 import { buildCacheKey } from './useGeoJsonCache'
@@ -165,9 +165,9 @@ export function usePrefetch(params: UsePrefetchParams): void {
         if (level != null) queryParams.level = String(level)
         if (interval != null) queryParams.interval = String(interval)
 
-        apiGet<ContourFeatureCollection>('/api/contours', queryParams, controller.signal)
+        apiGetStatic<ContourFeatureCollection>('contours', queryParams, controller.signal)
           .then((data) => {
-            prefetchCache.set(contourKey, data)
+            if (data) prefetchCache.set(contourKey, data)
           })
           .catch(() => {})
       }

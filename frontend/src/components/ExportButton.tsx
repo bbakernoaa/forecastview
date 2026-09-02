@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { apiGetStatic } from '../api/client'
 import { buildFillImageUrl } from '../api/staticMode'
 import { useViewer } from '../context/ViewerContext'
 import { useVariables } from '../hooks/useMetadata'
@@ -207,9 +208,12 @@ function ExportButton() {
 
     try {
       // Get forecast hours
-      const timesResp = await fetch(`/api/times?product=${product}&date=${date}&run=${run}`)
-      if (!timesResp.ok) { setExporting(false); return }
-      const timesData = await timesResp.json()
+      const timesData = await apiGetStatic<{ forecast_hours: { fhr: number }[] }>('times', {
+        product,
+        date,
+        run,
+      })
+      if (!timesData) { setExporting(false); return }
       const fhrs: number[] = timesData.forecast_hours.map((e: { fhr: number }) => e.fhr)
       if (fhrs.length === 0) { setExporting(false); return }
 
