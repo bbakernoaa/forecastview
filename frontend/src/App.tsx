@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductSelector from './components/ProductSelector'
 import ForecastMap from './components/ForecastMap'
-import BoundsLayer from './components/BoundsLayer'
-import PreviewLayer from './components/PreviewLayer'
+// NOTE: re-add `import BoundsLayer from './components/BoundsLayer'` and
+// `import PreviewLayer from './components/PreviewLayer'` when the dev-only
+// layers in the JSX below are re-enabled.
 import FillImageLayer from './components/FillImageLayer'
 import IsolineLayer from './components/IsolineLayer'
 import ContourLabelLayer from './components/ContourLabelLayer'

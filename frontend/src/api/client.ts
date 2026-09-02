@@ -5,6 +5,8 @@
  * to the backend at http://localhost:8000.
  */
 
+import { buildUrl, STATIC_MODE } from "./staticMode";
+
 /**
  * Structured error for non-2xx API responses.
  */
@@ -47,6 +49,45 @@ export async function apiGet<T>(
   const response = await fetch(url.toString(), { signal });
 
   if (!response.ok) {
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      body = await response.text().catch(() => null);
+    }
+    throw new ApiError(response.status, response.statusText, body);
+  }
+
+  return (await response.json()) as T;
+}
+
+/**
+ * Options for apiGetStatic.
+ */
+export interface StaticOpts {
+  /** Override the module-level STATIC_MODE flag (tests). */
+  static?: boolean;
+  /** Resolve null instead of throwing when static mode hits a 404. */
+  allowMissing?: boolean;
+}
+
+/**
+ * Fetch endpoint data in either dynamic (/api/...) or static (./data/...) mode.
+ *
+ * Delegates URL construction to buildUrl so hooks stay agnostic of mode.
+ */
+export async function apiGetStatic<T>(
+  endpoint: string,
+  params?: Record<string, string>,
+  signal?: AbortSignal,
+  opts: StaticOpts = {},
+): Promise<T | null> {
+  const isStatic = opts.static ?? STATIC_MODE;
+  const url = buildUrl(endpoint, params ?? {}, isStatic);
+  const response = await fetch(url, { signal });
+
+  if (!response.ok) {
+    if (response.status === 404 && opts.allowMissing) return null;
     let body: unknown;
     try {
       body = await response.json();

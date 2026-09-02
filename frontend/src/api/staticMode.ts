@@ -12,9 +12,15 @@ export const STATIC_MODE = import.meta.env.VITE_STATIC_MODE === 'true'
  *
  * Dynamic mode: /api/dates?product=air
  * Static mode:  ./data/air/dates.json
+ *
+ * @param isStatic - override the module-level STATIC_MODE flag (used by tests)
  */
-export function buildUrl(endpoint: string, params: Record<string, string>): string {
-  if (!STATIC_MODE) {
+export function buildUrl(
+  endpoint: string,
+  params: Record<string, string>,
+  isStatic: boolean = STATIC_MODE,
+): string {
+  if (!isStatic) {
     const qs = new URLSearchParams(params).toString()
     return `/api/${endpoint}?${qs}`
   }
@@ -27,14 +33,20 @@ export function buildUrl(endpoint: string, params: Record<string, string>): stri
       return `./data/catalog.json`
     case 'dates':
       return `./data/${product}/dates.json`
+    case 'bounds':
+      return `./data/${product}/bounds.json`
     case 'runs':
       // In static mode, runs are implicit from directory structure
       // We embed them in dates.json or derive from variables.json existence
       return `./data/${product}/${date}/runs.json`
     case 'variables':
       return `./data/${product}/${date}/${run}/variables.json`
+    case 'levels':
+      return `./data/${product}/${date}/${run}/levels.json`
     case 'times':
       return `./data/${product}/${date}/${run}/times.json`
+    case 'contours':
+      return `./data/${product}/${date}/${run}/contours/${variable}/f${fhr.padStart(3, '0')}.json`
     case 'fill-image':
       return `./data/${product}/${date}/${run}/fill/${variable}/f${fhr.padStart(3, '0')}.png`
     default:
@@ -46,6 +58,8 @@ export function buildUrl(endpoint: string, params: Record<string, string>): stri
 
 /**
  * Build fill image URL (used by FillImageLayer).
+ *
+ * @param isStatic - override the module-level STATIC_MODE flag (used by tests)
  */
 export function buildFillImageUrl(
   product: string,
@@ -54,8 +68,9 @@ export function buildFillImageUrl(
   variable: string,
   fhr: number,
   level: number | null,
+  isStatic: boolean = STATIC_MODE,
 ): string {
-  if (!STATIC_MODE) {
+  if (!isStatic) {
     const params = new URLSearchParams({ product, date, run, variable, fhr: String(fhr) })
     if (level != null) params.set('level', String(level))
     return `/api/fill-image?${params.toString()}`

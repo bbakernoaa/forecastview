@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+import { apiGetStatic } from '../api/client'
+import { buildFillImageUrl } from '../api/staticMode'
 import { useViewer } from '../context/ViewerContext'
 import { useVariables } from '../hooks/useMetadata'
 
@@ -206,9 +208,12 @@ function ExportButton() {
 
     try {
       // Get forecast hours
-      const timesResp = await fetch(`/api/times?product=${product}&date=${date}&run=${run}`)
-      if (!timesResp.ok) { setExporting(false); return }
-      const timesData = await timesResp.json()
+      const timesData = await apiGetStatic<{ forecast_hours: { fhr: number }[] }>('times', {
+        product,
+        date,
+        run,
+      })
+      if (!timesData) { setExporting(false); return }
       const fhrs: number[] = timesData.forecast_hours.map((e: { fhr: number }) => e.fhr)
       if (fhrs.length === 0) { setExporting(false); return }
 
@@ -227,15 +232,15 @@ function ExportButton() {
       const varInfo = variablesList?.find(v => v.name === variable)
 
       // Capture each frame
-      const frames: { data: Uint8ClampedArray; delay: number }[] = []
+      const frames: { data: Uint8ClampedArray<ArrayBuffer>; delay: number }[] = []
 
       for (const fhr of fhrs) {
         // Update fill image source
         const imgSrc = map.getSource('fill-image-source') as any
         if (imgSrc && 'updateImage' in imgSrc) {
-          const p = new URLSearchParams({ product, date, run, variable, fhr: String(fhr) })
-          if (level != null) p.set('level', String(level))
-          imgSrc.updateImage({ url: `/api/fill-image?${p.toString()}` })
+          imgSrc.updateImage({
+            url: buildFillImageUrl(product, date, run, variable, fhr, level),
+          })
         }
 
         // Wait for image load + render
@@ -286,9 +291,9 @@ function ExportButton() {
       // Restore original frame
       const imgSrc = map.getSource('fill-image-source') as any
       if (imgSrc && 'updateImage' in imgSrc) {
-        const p = new URLSearchParams({ product, date, run, variable, fhr: String(originalFhr) })
-        if (level != null) p.set('level', String(level))
-        imgSrc.updateImage({ url: `/api/fill-image?${p.toString()}` })
+        imgSrc.updateImage({
+          url: buildFillImageUrl(product, date, run, variable, originalFhr, level),
+        })
       }
 
       // Resize and encode GIF (max 800px wide for reasonable size)

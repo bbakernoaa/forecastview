@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { apiGet } from '../api/client'
+import { apiGetStatic } from '../api/client'
 import type {
   DatesResponse,
   RunsResponse,
@@ -43,9 +43,9 @@ export function useDates(product: string | null): FetchState<string[]> {
     const controller = new AbortController()
     setState({ status: 'loading', data: null, error: null })
 
-    apiGet<DatesResponse>('/api/dates', { product }, controller.signal)
+    apiGetStatic<DatesResponse>('dates', { product }, controller.signal)
       .then((res) => {
-        setState({ status: 'success', data: res.dates, error: null })
+        setState({ status: 'success', data: res?.dates ?? [], error: null })
       })
       .catch((err) => {
         if (err instanceof DOMException && err.name === 'AbortError') return
@@ -81,9 +81,9 @@ export function useRuns(
     const controller = new AbortController()
     setState({ status: 'loading', data: null, error: null })
 
-    apiGet<RunsResponse>('/api/runs', { product, date }, controller.signal)
+    apiGetStatic<RunsResponse>('runs', { product, date }, controller.signal)
       .then((res) => {
-        setState({ status: 'success', data: res.runs, error: null })
+        setState({ status: 'success', data: res?.runs ?? [], error: null })
       })
       .catch((err) => {
         if (err instanceof DOMException && err.name === 'AbortError') return
@@ -120,13 +120,13 @@ export function useVariables(
     const controller = new AbortController()
     setState({ status: 'loading', data: null, error: null })
 
-    apiGet<VariablesResponse>(
-      '/api/variables',
+    apiGetStatic<VariablesResponse>(
+      'variables',
       { product, date, run },
-      controller.signal
+      controller.signal,
     )
       .then((res) => {
-        setState({ status: 'success', data: res.variables, error: null })
+        setState({ status: 'success', data: res?.variables ?? [], error: null })
       })
       .catch((err) => {
         if (err instanceof DOMException && err.name === 'AbortError') return
@@ -164,13 +164,16 @@ export function useLevels(
     const controller = new AbortController()
     setState({ status: 'loading', data: null, error: null })
 
-    apiGet<LevelsResponse>(
-      '/api/levels',
+    apiGetStatic<Partial<LevelsResponse> & { byVariable?: Record<string, LevelInfo[]> }>(
+      'levels',
       { product, date, run, variable },
-      controller.signal
+      controller.signal,
+      { allowMissing: true },
     )
       .then((res) => {
-        setState({ status: 'success', data: res.levels, error: null })
+        // Static files key levels by variable; the API returns a flat list.
+        const levels = res?.byVariable?.[variable] ?? res?.levels ?? []
+        setState({ status: 'success', data: levels, error: null })
       })
       .catch((err) => {
         if (err instanceof DOMException && err.name === 'AbortError') return
@@ -212,11 +215,11 @@ export function useTimes(
     const controller = new AbortController()
     setState({ status: 'loading', data: null, error: null })
 
-    apiGet<TimesResponse>('/api/times', { product, date, run }, controller.signal)
+    apiGetStatic<TimesResponse>('times', { product, date, run }, controller.signal)
       .then((res) => {
         setState({
           status: 'success',
-          data: { initTime: res.init_time, forecastHours: res.forecast_hours },
+          data: { initTime: res?.init_time ?? '', forecastHours: res?.forecast_hours ?? [] },
           error: null,
         })
       })

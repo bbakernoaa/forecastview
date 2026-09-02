@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { STATIC_MODE } from '../api/staticMode'
 
 const buttonStyle: React.CSSProperties = {
   padding: '4px 10px',
@@ -48,6 +49,11 @@ function IngestButton() {
       setIngesting(false)
     }
   }, [])
+
+  // Ingest requires the backend API; a static deployment has no server to
+  // push data to (dates are appended by re-running the exporter). Guard
+  // after all hooks so hook order stays unconditional.
+  if (STATIC_MODE) return null
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>

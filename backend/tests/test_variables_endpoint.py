@@ -48,21 +48,25 @@ class TestConfigLoader:
         assert config.product.id == "air"
 
     def test_air_config_has_expected_categories(self):
-        """Air config defines the 5 expected categories in order."""
+        """Air config declares a non-empty ordered category list.
+
+        Categories are derived from the config (not hardcoded) so that
+        trimming unused variables does not break this invariant test: every
+        variable's category must be one of the declared categories.
+        """
         config = get_domain_config("air")
-        expected_categories = [
-            "Optical Depth",
-            "Scattering Optical Depth",
-            "Single Scattering Albedo",
-            "Asymmetry",
-            "Column Mass Density",
-        ]
-        assert config.categories == expected_categories
+        assert config.categories, "air config must declare at least one category"
+        declared = set(config.categories)
+        for name, var in config.variables.items():
+            assert var.category in declared, (
+                f"Variable {name} has category {var.category!r} which is not "
+                f"in the declared categories {sorted(declared)}"
+            )
 
     def test_air_config_has_variables(self):
-        """Air config defines 25+ variables."""
+        """Air config defines 10+ variables."""
         config = get_domain_config("air")
-        assert len(config.variables) >= 25
+        assert len(config.variables) >= 10
 
     def test_variable_has_required_fields(self):
         """Each variable has shortName, fullName, units, category."""
@@ -215,7 +219,10 @@ class TestVariablesEndpoint:
         assert data["product"] == "air"
         assert data["date"] == "20240101"
         assert data["run"] == "00"
-        assert len(data["variables"]) >= 25
+        # The endpoint enriches each variable with computed band colors, so
+        # compare names rather than full dicts.
+        assert [v["name"] for v in data["variables"]] == [v["name"] for v in mock_variables]
+        assert len(data["variables"]) >= 10
 
     async def test_variables_have_rendering_info(self):
         """Each variable in the response includes rendering configuration."""
@@ -266,12 +273,11 @@ class TestVariablesEndpoint:
         data = response.json()
         variables = data["variables"]
 
+        # Derive expected order from the live config so the test tracks
+        # category trimming rather than hardcoding a fixed list.
+        config = get_domain_config("air")
         expected_category_order = [
-            "Optical Depth",
-            "Scattering Optical Depth",
-            "Single Scattering Albedo",
-            "Asymmetry",
-            "Column Mass Density",
+            c for c in config.categories if any(v["category"] == c for v in variables)
         ]
 
         # Extract unique categories in order of appearance

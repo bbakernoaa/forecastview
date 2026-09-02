@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { apiGet } from '../api/client'
+import { apiGetStatic } from '../api/client'
 import type { ContourFeatureCollection } from '../api/types'
 
 // --------------------------------------------------------------------------
@@ -71,7 +71,7 @@ export function useContours(params: UseContoursParams): FetchState<ContourFeatur
       queryParams.interval = String(interval)
     }
 
-    apiGet<ContourFeatureCollection>('/api/contours', queryParams, controller.signal)
+    apiGetStatic<ContourFeatureCollection>('contours', queryParams, controller.signal)
       .then((res) => {
         setState({ status: 'success', data: res, error: null })
       })

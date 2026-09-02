@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { Map as MaplibreMap } from 'maplibre-gl'
-import { apiGet } from '../api/client'
+import { apiGetStatic } from '../api/client'
 
 /**
  * GeoJSON Feature response from GET /api/bounds.
@@ -60,13 +60,13 @@ function BoundsLayer({ map, product, date, run, enabled = true }: BoundsLayerPro
 
     const controller = new AbortController()
 
-    apiGet<BoundsFeature>(
-      '/api/bounds',
+    apiGetStatic<BoundsFeature>(
+      'bounds',
       { product, date, run },
       controller.signal,
     )
       .then((feature) => {
-        if (controller.signal.aborted) return
+        if (controller.signal.aborted || !feature) return
         addOrUpdateLayer(map, feature)
         addedRef.current = true
       })

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { apiGet } from '../api/client'
+import { apiGetStatic } from '../api/client'
+import { buildFillImageUrl } from '../api/staticMode'
 import type { ContourFeatureCollection } from '../api/types'
 import { buildCacheKey } from './useGeoJsonCache'
 
@@ -42,27 +43,6 @@ const PREFETCH_WINDOW = 1
 
 /** Set of fill-image URLs that have been preloaded into browser cache */
 const preloadedImages = new Set<string>()
-
-function buildFillImageUrl(
-  product: string,
-  date: string,
-  run: string,
-  variable: string,
-  fhr: number,
-  level: number | null,
-): string {
-  const params = new URLSearchParams({
-    product,
-    date,
-    run,
-    variable,
-    fhr: String(fhr),
-  })
-  if (level != null) {
-    params.set('level', String(level))
-  }
-  return `/api/fill-image?${params.toString()}`
-}
 
 /**
  * Preload a fill image URL into the browser cache via an Image() element.
@@ -185,9 +165,9 @@ export function usePrefetch(params: UsePrefetchParams): void {
         if (level != null) queryParams.level = String(level)
         if (interval != null) queryParams.interval = String(interval)
 
-        apiGet<ContourFeatureCollection>('/api/contours', queryParams, controller.signal)
+        apiGetStatic<ContourFeatureCollection>('contours', queryParams, controller.signal)
           .then((data) => {
-            prefetchCache.set(contourKey, data)
+            if (data) prefetchCache.set(contourKey, data)
           })
           .catch(() => {})
       }
