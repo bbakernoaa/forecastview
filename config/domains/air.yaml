@@ -17,10 +17,11 @@ ingest:
 
 categories:
   - "Optical Depth"
-  - "Scattering Optical Depth"
-  - "Single Scattering Albedo"
-  - "Asymmetry"
+  # - "Scattering Optical Depth"
+  # - "Single Scattering Albedo"
+  # - "Asymmetry"
   - "Column Mass Density"
+  # - "Surface Concentration"
 
 variables:
   # ===================================================================
