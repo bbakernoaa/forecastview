@@ -30,3 +30,11 @@ data/manifests/**/*.json
 .idea/
 
 data/
+
+# Vendored third-party assets dropped into docs/ for local use — NOT for
+# version control. These caused "stage all" to sweep ~300MB of app binaries
+# (and macOS-protected files that crash pre-commit) into commits.
+docs/WezTerm-macos-*/
+docs/iTerm2-*.zip
+docs/Fira_Code_v6.2/
+docs/*.xlsx

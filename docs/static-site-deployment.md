@@ -205,10 +205,24 @@ Notes:
 
 ## 8. Offline basemap
 
-The map uses remote vector tiles when the browser has internet access. If the
-tile style fails to load (air-gapped / Wi-Fi off), `ForecastMap` automatically
-falls back to a bundled **tile-free background style**
-(`frontend/src/config/localStyle.ts`) — a plain ocean-colored canvas with no
-sources. The forecast layers (fill, contours, labels) are independent of the
-basemap and still render normally, so the site remains fully usable offline;
-only the reference geography is absent.
+The map styles **Liberty / Dark / Light** are remote vector-tile services and
+need internet access. A static-mode build therefore defaults to the bundled
+**Offline** basemap (`frontend/src/config/localStyle.ts`), which draws
+Natural Earth 50m geography (coastlines, country + US state borders) from
+GeoJSON files served with the site — no tile server, no glyphs, no network.
+The Map Style selector exposes it explicitly as **Offline**; if a remote style
+is chosen and its tiles are unreachable, the map falls back to the same
+offline basemap automatically.
+
+The basemap GeoJSON ships in `frontend/public/basemap/` (copied into
+`dist/basemap/` by the build, then into the exported site by the exporter —
+the `data/` tree is untouched). It is generated from Natural Earth by:
+
+```bash
+python frontend/scripts/prepare_basemap.py
+```
+
+Re-run that only when the basemap itself should change; the trimmed 50m files
+(~2.4 MB raw) are committed to the repo. Cities are intentionally excluded:
+offline labels would require a remote glyph endpoint, and unlabeled dots add
+clutter without information.

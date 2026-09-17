@@ -9,6 +9,7 @@ const STYLE_OPTIONS: { key: MapStyleKey; label: string }[] = [
   { key: 'liberty', label: 'Liberty' },
   { key: 'dark', label: 'Dark' },
   { key: 'light', label: 'Light' },
+  { key: 'local', label: 'Offline' },
 ]
 
 function MapStyleSelector({ styleKey, onChange }: MapStyleSelectorProps) {

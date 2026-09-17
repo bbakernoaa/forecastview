@@ -7,6 +7,10 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
         args: ['--maxkb=500']
+        # Bundled offline basemap (Natural Earth 50m) is intentionally this
+        # size for air-gapped RZDM deployments; it is committed data, not
+        # accidental bloat. Regenerate with frontend/scripts/prepare_basemap.py.
+        exclude: '^frontend/public/basemap/.*\.geojson$'
       - id: check-merge-conflict
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -20,14 +24,16 @@ repos:
     hooks:
       - id: frontend-lint
         name: frontend lint (oxlint)
-        entry: bash -c 'cd frontend && npx oxlint'
+        # -l (login shell) so path_helper adds Homebrew's /opt/homebrew/bin
+        # even when git runs from a GUI (VS Code) with a bare launchd PATH.
+        entry: bash -lc 'cd frontend && npx oxlint'
         language: system
         files: '^frontend/.*\.(ts|tsx|js|jsx)$'
         pass_filenames: false
 
       - id: frontend-typecheck
         name: frontend typecheck
-        entry: bash -c 'cd frontend && npx tsc --noEmit'
+        entry: bash -lc 'cd frontend && npx tsc --noEmit'
         language: system
         files: '^frontend/.*\.(ts|tsx)$'
         pass_filenames: false
