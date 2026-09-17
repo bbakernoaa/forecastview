@@ -8,6 +8,7 @@
 
 import type { StyleSpecification } from 'maplibre-gl'
 import localStyle from './localStyle'
+import { STATIC_MODE } from '../api/staticMode'
 
 export const MAP_STYLES = {
   /** OpenFreeMap Liberty — clear boundaries and coastlines under overlays */
@@ -16,7 +17,7 @@ export const MAP_STYLES = {
   dark: 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json',
   /** CARTO Positron (no labels) — light minimal background */
   light: 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json',
-  /** Offline fallback: plain background, no tiles */
+  /** Offline basemap: bundled Natural Earth GeoJSON, no remote tiles */
   local: localStyle,
 } as const
 
@@ -32,7 +33,9 @@ export function styleFor(key: MapStyleKey): string | StyleSpecification {
   return MAP_STYLES[key]
 }
 
-export const DEFAULT_MAP_STYLE: MapStyleKey = 'liberty'
+// Static-mode builds (RZDM / air-gapped) default to the bundled offline
+// basemap so no remote tile request is attempted; dynamic builds use Liberty.
+export const DEFAULT_MAP_STYLE: MapStyleKey = STATIC_MODE ? 'local' : 'liberty'
 
 export const DEFAULT_CENTER: [number, number] = [-98.5, 39.8]
 export const DEFAULT_ZOOM = 2

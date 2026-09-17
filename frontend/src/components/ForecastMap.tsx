@@ -10,6 +10,7 @@ import {
   MIN_ZOOM,
   MAX_ZOOM,
 } from '../config/mapStyles'
+import { STATIC_MODE } from '../api/staticMode'
 
 interface ForecastMapProps {
   styleKey: MapStyleKey
@@ -28,7 +29,10 @@ function createMap(
   styleKey: MapStyleKey,
   view?: { center: [number, number]; zoom: number; bearing: number; pitch: number },
 ): MaplibreMap {
-  const startLocal = offlineBasemap && isRemoteStyle(styleKey)
+  // Static builds (air-gapped) never attempt remote styles; a remote choice
+  // renders the bundled offline basemap instead.
+  const startLocal =
+    (STATIC_MODE || offlineBasemap) && isRemoteStyle(styleKey)
   const map = new MaplibreMap({
     preserveDrawingBuffer: true,
     container,
