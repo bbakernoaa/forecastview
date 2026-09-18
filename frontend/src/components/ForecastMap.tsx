@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { Map as MaplibreMap } from 'maplibre-gl'
+// CSP-safe entry: re-exports the maplibre-gl-csp build with a same-origin
+// worker (see src/config/maplibre.ts). Do not import maplibre-gl values here.
+import { Map as MaplibreMap } from '../config/maplibre'
 import type { MapStyleKey } from '../config/mapStyles'
 import {
   MAP_STYLES,

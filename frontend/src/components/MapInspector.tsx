@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Marker } from 'maplibre-gl'
+// CSP-safe entry: see src/config/maplibre.ts for why values come from here.
+import { Marker } from '../config/maplibre'
 import type { MapMouseEvent } from 'maplibre-gl'
 import { apiGet } from '../api/client'
 import { STATIC_MODE } from '../api/staticMode'
