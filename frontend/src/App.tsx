@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductSelector from './components/ProductSelector'
 import ForecastMap from './components/ForecastMap'
-// NOTE: re-add `import BoundsLayer from './components/BoundsLayer'` and
-// `import PreviewLayer from './components/PreviewLayer'` when the dev-only
-// layers in the JSX below are re-enabled.
 import FillImageLayer from './components/FillImageLayer'
 import IsolineLayer from './components/IsolineLayer'
 import ContourLabelLayer from './components/ContourLabelLayer'
@@ -21,11 +18,17 @@ import RunSelector from './components/RunSelector'
 import VariableSelector from './components/VariableSelector'
 import LevelSelector from './components/LevelSelector'
 import LayerPanel from './components/LayerPanel'
+import MapInspector from './components/MapInspector'
+import SmartSearch from './components/SmartSearch'
 import Toolbar from './components/layout/Toolbar'
 import TimeDisplayBar from './components/layout/TimeDisplayBar'
 import LeftPanel from './components/layout/LeftPanel'
 import RightPanel from './components/layout/RightPanel'
 import TimelineBar from './components/layout/TimelineBar'
+import MobileHeader from './components/layout/MobileHeader'
+import type { MobileTab } from './components/layout/MobileHeader'
+import MobileDrawer from './components/layout/MobileDrawer'
+import { useResponsive } from './hooks/useResponsive'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useVariables, useTimes } from './hooks/useMetadata'
 import { useUrlState } from './hooks/useUrlState'
@@ -34,6 +37,7 @@ import { ViewerProvider, useViewer } from './context/ViewerContext'
 import { NotificationProvider } from './context/NotificationContext'
 import { DEFAULT_MAP_STYLE, MAP_STYLES } from './config/mapStyles'
 import type { MapStyleKey } from './config/mapStyles'
+import './App.css'
 
 const STORAGE_KEY = 'forecastview:mapStyle'
 
@@ -45,6 +49,9 @@ function AppContent() {
   const { state, dispatch, map, setMap, playing } = useViewer()
   const { product, date, run, variable, level, forecastHour, renderingMode, contourInterval } = state
   const [fillOpacity, setFillOpacity] = useState(0.7)
+  const [mobileTab, setMobileTab] = useState<MobileTab>(null)
+
+  const { isMobile } = useResponsive()
 
   // Sync viewer state ↔ URL query parameters
   useUrlState(state, dispatch)
@@ -91,7 +98,7 @@ function AppContent() {
     return variablesList.find((v) => v.name === variable) ?? null
   }, [variable, variablesList])
 
-  // Dispatch-based handlers for selectors
+  // Handlers
   const handleProductChange = useCallback((newProduct: string) => {
     dispatch({ type: 'SET_PRODUCT', payload: newProduct })
   }, [dispatch])
@@ -120,76 +127,79 @@ function AppContent() {
     dispatch({ type: 'SET_CONTOUR_INTERVAL', payload: interval })
   }, [dispatch])
 
-  // Derive the default contour interval from the selected variable's config
   const defaultContourInterval = useMemo(() => {
     return selectedVariableInfo?.rendering?.contourInterval ?? null
   }, [selectedVariableInfo])
 
+  const currentInfo = useMemo(() => ({
+    variableName: selectedVariableInfo?.shortName || selectedVariableInfo?.fullName || variable,
+    fhrLabel: `F${String(forecastHour).padStart(3, '0')}`,
+  }), [selectedVariableInfo, variable, forecastHour])
+
   return (
     <div id="app">
-      <Toolbar>
-        <ProductSelector product={product} onChange={handleProductChange} />
-        <DateSelector
-          product={product}
-          selectedDate={date}
-          onDateChange={handleDateChange}
+      {isMobile ? (
+        <MobileHeader
+          activeTab={mobileTab}
+          onToggleTab={setMobileTab}
+          currentInfo={currentInfo}
         />
-        <RunSelector
-          product={product}
-          date={date}
-          selectedRun={run}
-          onRunChange={handleRunChange}
-        />
-        <VariableSelector
-          product={product}
-          date={date}
-          run={run}
-          selectedVariable={variable}
-          onVariableChange={handleVariableChange}
-        />
-        <LevelSelector
-          product={product}
-          date={date}
-          run={run}
-          variable={variable}
-          selectedLevel={level}
-          onLevelChange={handleLevelChange}
-        />
-        <RenderingSelector mode={renderingMode} onChange={handleRenderingChange} />
-        <ContourIntervalSelector
-          defaultInterval={defaultContourInterval}
-          interval={contourInterval}
-          onChange={handleContourIntervalChange}
-        />
-        <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
-        <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
-        <ExportButton />
-        <IngestButton />
-        <ConnectionStatus />
-      </Toolbar>
-      <TimeDisplayBar />
-      <NotificationArea />
-      <div className="main-content">
-        <LeftPanel variable={selectedVariableInfo}>
-          <LayerPanel map={map} />
-        </LeftPanel>
-        <div className="map-area">
-          <ForecastMap styleKey={mapStyle} onMapReady={setMap} />
-          {/* { /* Dev-only layers disabled for production
-          <BoundsLayer
-            map={map}
+      ) : (
+        <Toolbar>
+          <SmartSearch />
+          <ProductSelector product={product} onChange={handleProductChange} />
+          <DateSelector
+            product={product}
+            selectedDate={date}
+            onDateChange={handleDateChange}
+          />
+          <RunSelector
+            product={product}
+            date={date}
+            selectedRun={run}
+            onRunChange={handleRunChange}
+          />
+          <VariableSelector
             product={product}
             date={date}
             run={run}
+            selectedVariable={variable}
+            onVariableChange={handleVariableChange}
           />
-          <PreviewLayer
-            map={map}
+          <LevelSelector
             product={product}
             date={date}
             run={run}
             variable={variable}
+            selectedLevel={level}
+            onLevelChange={handleLevelChange}
           />
-          */ }
+          <RenderingSelector mode={renderingMode} onChange={handleRenderingChange} />
+          <ContourIntervalSelector
+            defaultInterval={defaultContourInterval}
+            interval={contourInterval}
+            onChange={handleContourIntervalChange}
+          />
+          <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
+          <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
+          <ExportButton />
+          <IngestButton />
+          <ConnectionStatus />
+        </Toolbar>
+      )}
+
+      <TimeDisplayBar />
+      <NotificationArea />
+
+      <div className="main-content">
+        {!isMobile && (
+          <LeftPanel variable={selectedVariableInfo}>
+            <LayerPanel map={map} />
+          </LeftPanel>
+        )}
+
+        <div className="map-area">
+          <ForecastMap styleKey={mapStyle} onMapReady={setMap} />
           <FillImageLayer
             map={map}
             product={product}
@@ -217,8 +227,71 @@ function AppContent() {
             visible={renderingMode === 'contours' || renderingMode === 'filled+contours'}
           />
         </div>
-        <RightPanel />
+
+        {!isMobile && <RightPanel />}
       </div>
+
+      {isMobile && mobileTab && (
+        <MobileDrawer activeTab={mobileTab} onClose={() => setMobileTab(null)}>
+          {mobileTab === 'search' && (
+            <SmartSearch onSelectResult={() => setMobileTab(null)} placeholder="Search species, region..." />
+          )}
+
+          {mobileTab === 'controls' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <ProductSelector product={product} onChange={handleProductChange} />
+              <DateSelector
+                product={product}
+                selectedDate={date}
+                onDateChange={handleDateChange}
+              />
+              <RunSelector
+                product={product}
+                date={date}
+                selectedRun={run}
+                onRunChange={handleRunChange}
+              />
+              <VariableSelector
+                product={product}
+                date={date}
+                run={run}
+                selectedVariable={variable}
+                onVariableChange={handleVariableChange}
+              />
+              <LevelSelector
+                product={product}
+                date={date}
+                run={run}
+                variable={variable}
+                selectedLevel={level}
+                onLevelChange={handleLevelChange}
+              />
+              <RenderingSelector mode={renderingMode} onChange={handleRenderingChange} />
+              <ContourIntervalSelector
+                defaultInterval={defaultContourInterval}
+                interval={contourInterval}
+                onChange={handleContourIntervalChange}
+              />
+              <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
+              <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
+              <LayerPanel map={map} />
+              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                <ExportButton />
+                <IngestButton />
+              </div>
+            </div>
+          )}
+
+          {mobileTab === 'legend' && (
+            <LeftPanel variable={selectedVariableInfo}>
+              <LayerPanel map={map} />
+            </LeftPanel>
+          )}
+
+          {mobileTab === 'inspector' && <MapInspector />}
+        </MobileDrawer>
+      )}
+
       <TimelineBar />
     </div>
   )

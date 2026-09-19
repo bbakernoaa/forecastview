@@ -1,0 +1,61 @@
+/* App Layout & Mobile Responsive CSS */
+
+#app {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  color: #ccc;
+}
+
+/* Main map area flex container */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-area {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  height: 100%;
+}
+
+.map-area .maplibregl-map {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Mobile responsive media queries */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  /* Side panels hidden on mobile desktop flow (handled via MobileDrawer) */
+  .desktop-panel {
+    display: none !important;
+  }
+
+  /* Touch friendly input & select elements */
+  select, button, input {
+    min-height: 38px;
+    font-size: 0.9rem !important;
+  }
+
+  .date-selector select,
+  .run-selector select,
+  .variable-selector select,
+  .level-selector select {
+    padding: 6px 10px !important;
+  }
+}

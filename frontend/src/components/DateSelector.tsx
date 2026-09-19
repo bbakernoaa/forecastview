@@ -33,11 +33,13 @@ function formatDateLabel(dateStr: string): string {
 function DateSelector({ product, selectedDate, onDateChange }: DateSelectorProps) {
   const { status, data: dates } = useDates(product)
 
-  // Auto-select the most recent date when dates become available
-  // and no date is currently selected
+  // Smart auto-select: choose the most recent date when dates load
+  // or fall back if the currently selected date is not in the list
   useEffect(() => {
-    if (!selectedDate && dates && dates.length > 0) {
-      onDateChange(dates[dates.length - 1])
+    if (dates && dates.length > 0) {
+      if (!selectedDate || !dates.includes(selectedDate)) {
+        onDateChange(dates[dates.length - 1])
+      }
     }
   }, [selectedDate, dates, onDateChange])
 
