@@ -83,10 +83,14 @@ def test_ingest_date_local_mode(tmp_path: Path):
     mock_gen = MagicMock()
     mock_gen.generate.return_value = {"version": 1, "refs": {}}
 
+    mock_grib2io = MagicMock()
+    mock_grib2io.kerchunk.ReferenceGenerator = MagicMock(return_value=mock_gen)
+
     with (
-        patch("grib2io.kerchunk.ReferenceGenerator", return_value=mock_gen) as mock_class,
+        patch.dict("sys.modules", {"grib2io": mock_grib2io, "grib2io.kerchunk": mock_grib2io.kerchunk}),
         patch("xarray.open_dataset") as mock_open_ds,
     ):
+        mock_class = mock_grib2io.kerchunk.ReferenceGenerator
         mock_ds = MagicMock()
         mock_ds.sizes = {"time": 1}
         mock_ds.data_vars = ["aod"]
@@ -225,10 +229,14 @@ def test_ingest_flat_directory_without_structure(tmp_path: Path):
     mock_gen = MagicMock()
     mock_gen.generate.return_value = {"version": 1, "refs": {}}
 
+    mock_grib2io = MagicMock()
+    mock_grib2io.kerchunk.ReferenceGenerator = MagicMock(return_value=mock_gen)
+
     with (
-        patch("grib2io.kerchunk.ReferenceGenerator", return_value=mock_gen) as mock_class,
+        patch.dict("sys.modules", {"grib2io": mock_grib2io, "grib2io.kerchunk": mock_grib2io.kerchunk}),
         patch("xarray.open_dataset") as mock_open_ds,
     ):
+        mock_class = mock_grib2io.kerchunk.ReferenceGenerator
         mock_ds = MagicMock()
         mock_ds.sizes = {"time": 2}
         mock_ds.data_vars = ["aod"]

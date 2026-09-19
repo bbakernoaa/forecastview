@@ -44,11 +44,13 @@ function VariableSelector({
 }: VariableSelectorProps) {
   const { status, data: variables } = useVariables(product, date, run)
 
-  // Auto-select the first variable when variables become available
-  // and no variable is currently selected
+  // Smart auto-select: choose the first variable when variables load
+  // or fall back if the currently selected variable is not in the list
   useEffect(() => {
-    if (!selectedVariable && variables && variables.length > 0) {
-      onVariableChange(variables[0].name)
+    if (variables && variables.length > 0) {
+      if (!selectedVariable || !variables.some((v) => v.name === selectedVariable)) {
+        onVariableChange(variables[0].name)
+      }
     }
   }, [selectedVariable, variables, onVariableChange])
 
