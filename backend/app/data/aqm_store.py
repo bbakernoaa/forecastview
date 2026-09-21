@@ -12,7 +12,10 @@ import time
 from pathlib import Path
 from typing import Any
 
-import grib2io
+try:
+    import grib2io
+except ImportError:
+    grib2io = None
 import numpy as np
 import s3fs
 import structlog

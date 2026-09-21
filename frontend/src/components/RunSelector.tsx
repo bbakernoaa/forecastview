@@ -27,11 +27,13 @@ function formatRunLabel(run: string): string {
 function RunSelector({ product, date, selectedRun, onRunChange }: RunSelectorProps) {
   const { status, data: runs } = useRuns(product, date)
 
-  // Auto-select the latest run when runs become available
-  // and no run is currently selected
+  // Smart auto-select: choose the latest run when runs load
+  // or fall back if the currently selected run is not in the list
   useEffect(() => {
-    if (!selectedRun && runs && runs.length > 0) {
-      onRunChange(runs[runs.length - 1])
+    if (runs && runs.length > 0) {
+      if (!selectedRun || !runs.includes(selectedRun)) {
+        onRunChange(runs[runs.length - 1])
+      }
     }
   }, [selectedRun, runs, onRunChange])
 
