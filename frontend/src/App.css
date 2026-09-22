@@ -1,7 +1,11 @@
 /* App Layout & Mobile Responsive CSS */
 
 #app {
+  /* iOS Safari: 100vh includes the area behind the collapsing URL bar, which
+     pushes the bottom timeline off-screen. 100dvh tracks the visible
+     viewport; the vh line is the fallback for browsers without dvh. */
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -44,6 +48,15 @@
   /* Side panels hidden on mobile desktop flow (handled via MobileDrawer) */
   .desktop-panel {
     display: none !important;
+  }
+
+  /* Keep the timeline reachable above the iOS Safari home indicator.
+     height:auto overrides the inline 48px so the safe-area padding extends
+     the bar instead of squeezing the controls (border-box sizing). */
+  .timeline-bar {
+    height: auto !important;
+    min-height: 48px;
+    padding-bottom: calc(0px + env(safe-area-inset-bottom)) !important;
   }
 
   /* Touch friendly input & select elements */
