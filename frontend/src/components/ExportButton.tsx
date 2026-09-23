@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import H264MP4Encoder from 'h264-mp4-encoder'
 import { apiGetStatic } from '../api/client'
 import { buildFillImageUrl, STATIC_MODE } from '../api/staticMode'
 import { useViewer } from '../context/ViewerContext'
@@ -207,23 +208,15 @@ function ExportButton() {
     setExporting(true)
 
     try {
-      // If live mode (not static mode) and backend export-mp4 is available, we can either use server backend or client MediaRecorder.
-      // Client-side MediaRecorder with H.264 (video/mp4;codecs=avc1) works in both static and live mode across browser environments.
-      // Check if MediaRecorder supports mp4 h264 or fallback to backend endpoint if not supported in browser or static mode.
+      // In live mode (not static mode), if client prefers server generation or if WASM encoding is unavailable, fallback to API
+      // Otherwise, build the MP4 video image-by-image from composited frame canvases!
+      const timesData = await apiGetStatic<{ forecast_hours: { fhr: number }[] }>('times', {
+        product,
+        date,
+        run,
+      })
 
-      let mimeType = ''
-      if (typeof MediaRecorder !== 'undefined') {
-        const candidateTypes = [
-          'video/mp4;codecs=avc1',
-          'video/mp4;codecs=avc1.42E01E',
-          'video/mp4;codecs=h264',
-          'video/mp4',
-        ]
-        mimeType = candidateTypes.find(t => MediaRecorder.isTypeSupported(t)) || ''
-      }
-
-      // If MediaRecorder with mp4 is NOT supported in browser AND not in static mode, use backend endpoint
-      if (!mimeType && !STATIC_MODE) {
+      if (!timesData && !STATIC_MODE) {
         const levelQuery = level != null ? `&level=${level}` : ''
         const response = await fetch(`/api/export-mp4?product=${product}&date=${date}&run=${run}&variable=${variable}${levelQuery}`)
         if (!response.ok) throw new Error(`Backend MP4 export failed: ${response.statusText}`)
@@ -237,12 +230,6 @@ function ExportButton() {
         return
       }
 
-      // Client-side animation rendering onto canvas stream with MediaRecorder (or video blob)
-      const timesData = await apiGetStatic<{ forecast_hours: { fhr: number }[] }>('times', {
-        product,
-        date,
-        run,
-      })
       if (!timesData) { setExporting(false); return }
       const fhrs: number[] = timesData.forecast_hours.map((e: { fhr: number }) => e.fhr)
       if (fhrs.length === 0) { setExporting(false); return }
@@ -264,34 +251,13 @@ function ExportButton() {
 
       const varInfo = variablesList?.find(v => v.name === variable)
 
-      // Offscreen canvas for composited frames
-      const streamCanvas = document.createElement('canvas')
-      streamCanvas.width = w
-      streamCanvas.height = h
-      const ctx = streamCanvas.getContext('2d')!
-
-      // Setup MediaRecorder
-      const fps = 5 // 200ms per frame
-      const stream = streamCanvas.captureStream(fps)
-      const recordedChunks: Blob[] = []
-
-      const recorderOptions: MediaRecorderOptions = mimeType ? { mimeType } : {}
-      const recorder = new MediaRecorder(stream, recorderOptions)
-
-      recorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) {
-          recordedChunks.push(e.data)
-        }
-      }
-
-      const recorderStopped = new Promise<Blob>((resolve) => {
-        recorder.onstop = () => {
-          const finalBlob = new Blob(recordedChunks, { type: mimeType || 'video/mp4' })
-          resolve(finalBlob)
-        }
-      })
-
-      recorder.start()
+      // Initialize H.264 MP4 Encoder (WASM)
+      const encoder = await H264MP4Encoder.createH264MP4Encoder()
+      encoder.width = w
+      encoder.height = h
+      encoder.frameRate = 5 // 5 fps (200ms per frame)
+      encoder.kbps = 4000
+      encoder.initialize()
 
       for (const fhr of fhrs) {
         // Update fill image source
@@ -308,7 +274,11 @@ function ExportButton() {
         await new Promise(r => requestAnimationFrame(r))
         await new Promise(r => setTimeout(r, 100))
 
-        // Composite frame onto stream canvas
+        // Composite frame image (exactly matching PNG / JPEG layout)
+        const fc = document.createElement('canvas')
+        fc.width = w
+        fc.height = h
+        const ctx = fc.getContext('2d')!
         ctx.drawImage(mapCanvas, 0, 0, w, h)
 
         // Colorbar
@@ -340,11 +310,14 @@ function ExportButton() {
           ctx.drawImage(logo, w - 46, h - 38, 36, 36)
         }
 
-        // Keep frame rendered for duration (200ms)
-        await new Promise(r => setTimeout(r, 200))
+        // Add frame image data (RGBA Uint8Array or ImageData) to H.264 encoder
+        const imgData = ctx.getImageData(0, 0, w, h)
+        encoder.addFrameRgba(imgData.data)
       }
 
-      recorder.stop()
+      encoder.finalize()
+      const uint8Array = encoder.FS.readFile(encoder.outputFilename)
+      encoder.delete()
 
       // Restore original frame
       const imgSrc = map.getSource('fill-image-source') as any
@@ -354,7 +327,7 @@ function ExportButton() {
         })
       }
 
-      const videoBlob = await recorderStopped
+      const videoBlob = new Blob([new Uint8Array(uint8Array)], { type: 'video/mp4' })
       const url = URL.createObjectURL(videoBlob)
       const link = document.createElement('a')
       link.download = `${variable}_${date}_animation.mp4`

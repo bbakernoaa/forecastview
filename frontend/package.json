@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "h264-mp4-encoder": "^1.0.12",
     "maplibre-gl": "^4.7.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
