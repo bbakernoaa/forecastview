@@ -8,6 +8,7 @@ import ForecastSlider from '../ForecastSlider'
 function TimelineBar() {
   return (
     <div
+      className="timeline-bar"
       style={{
         display: 'flex',
         alignItems: 'center',
