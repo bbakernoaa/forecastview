@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
+import H264MP4Encoder from 'h264-mp4-encoder'
 import { apiGetStatic } from '../api/client'
-import { buildFillImageUrl } from '../api/staticMode'
+import { buildFillImageUrl, STATIC_MODE } from '../api/staticMode'
 import { useViewer } from '../context/ViewerContext'
 import { useVariables } from '../hooks/useMetadata'
 
@@ -76,7 +77,7 @@ function drawColorbar(
   // Draw title (wrapped)
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 11px sans-serif'
-  let textY = y + padding
+  const textY = y + padding
   for (let i = 0; i < titleLines.length; i++) {
     ctx.fillText(titleLines[i], x, textY + (i + 1) * lineHeight - 2)
   }
@@ -199,7 +200,7 @@ function ExportButton() {
     }
   }, [map, state, variablesList, variable, date, run, forecastHour])
 
-  const exportGif = useCallback(async () => {
+  const exportMp4 = useCallback(async () => {
     if (!map) return
     const { product, date, run, variable, level } = state
     if (!product || !date || !run || !variable) return
@@ -207,20 +208,39 @@ function ExportButton() {
     setExporting(true)
 
     try {
-      // Get forecast hours
+      // In live mode (not static mode), if client prefers server generation or if WASM encoding is unavailable, fallback to API
+      // Otherwise, build the MP4 video image-by-image from composited frame canvases!
       const timesData = await apiGetStatic<{ forecast_hours: { fhr: number }[] }>('times', {
         product,
         date,
         run,
       })
+
+      if (!timesData && !STATIC_MODE) {
+        const levelQuery = level != null ? `&level=${level}` : ''
+        const response = await fetch(`/api/export-mp4?product=${product}&date=${date}&run=${run}&variable=${variable}${levelQuery}`)
+        if (!response.ok) throw new Error(`Backend MP4 export failed: ${response.statusText}`)
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.download = `${variable}_${date}_animation.mp4`
+        link.href = url
+        link.click()
+        URL.revokeObjectURL(url)
+        return
+      }
+
       if (!timesData) { setExporting(false); return }
       const fhrs: number[] = timesData.forecast_hours.map((e: { fhr: number }) => e.fhr)
       if (fhrs.length === 0) { setExporting(false); return }
 
-      const { encode } = await import('modern-gif')
       const mapCanvas = map.getCanvas()
-      const w = mapCanvas.width
-      const h = mapCanvas.height
+      let w = mapCanvas.width
+      let h = mapCanvas.height
+      // H.264 video dimensions must be even
+      if (w % 2 !== 0) w -= 1
+      if (h % 2 !== 0) h -= 1
+
       const originalFhr = forecastHour
 
       // Load logo
@@ -231,8 +251,13 @@ function ExportButton() {
 
       const varInfo = variablesList?.find(v => v.name === variable)
 
-      // Capture each frame
-      const frames: { data: Uint8ClampedArray<ArrayBuffer>; delay: number }[] = []
+      // Initialize H.264 MP4 Encoder (WASM)
+      const encoder = await H264MP4Encoder.createH264MP4Encoder()
+      encoder.width = w
+      encoder.height = h
+      encoder.frameRate = 5 // 5 fps (200ms per frame)
+      encoder.kbps = 4000
+      encoder.initialize()
 
       for (const fhr of fhrs) {
         // Update fill image source
@@ -244,16 +269,17 @@ function ExportButton() {
         }
 
         // Wait for image load + render
-        await new Promise(r => setTimeout(r, 500))
+        await new Promise(r => setTimeout(r, 400))
         map.triggerRepaint()
         await new Promise(r => requestAnimationFrame(r))
-        await new Promise(r => setTimeout(r, 150))
+        await new Promise(r => setTimeout(r, 100))
 
-        // Composite frame (same as PNG export)
+        // Composite frame image (exactly matching PNG / JPEG layout)
         const fc = document.createElement('canvas')
-        fc.width = w; fc.height = h
+        fc.width = w
+        fc.height = h
         const ctx = fc.getContext('2d')!
-        ctx.drawImage(mapCanvas, 0, 0)
+        ctx.drawImage(mapCanvas, 0, 0, w, h)
 
         // Colorbar
         if (varInfo?.rendering?.colors && varInfo.rendering.fillLevels) {
@@ -284,9 +310,14 @@ function ExportButton() {
           ctx.drawImage(logo, w - 46, h - 38, 36, 36)
         }
 
+        // Add frame image data (RGBA Uint8Array or ImageData) to H.264 encoder
         const imgData = ctx.getImageData(0, 0, w, h)
-        frames.push({ data: imgData.data, delay: 200 })
+        encoder.addFrameRgba(imgData.data)
       }
+
+      encoder.finalize()
+      const uint8Array = encoder.FS.readFile(encoder.outputFilename)
+      encoder.delete()
 
       // Restore original frame
       const imgSrc = map.getSource('fill-image-source') as any
@@ -296,35 +327,15 @@ function ExportButton() {
         })
       }
 
-      // Resize and encode GIF (max 800px wide for reasonable size)
-      const gifW = Math.min(w, 800)
-      const gifH = Math.round(gifW * h / w)
-
-      const resized = frames.map(f => {
-        const s = document.createElement('canvas'); s.width = w; s.height = h
-        const sc = s.getContext('2d')!
-        sc.putImageData(new ImageData(f.data, w, h), 0, 0)
-        const d = document.createElement('canvas'); d.width = gifW; d.height = gifH
-        const dc = d.getContext('2d')!
-        dc.drawImage(s, 0, 0, gifW, gifH)
-        return { data: dc.getImageData(0, 0, gifW, gifH).data, delay: f.delay }
-      })
-
-      const output = await encode({
-        width: gifW,
-        height: gifH,
-        frames: resized.map(f => ({ data: f.data, delay: f.delay })),
-      })
-
-      const blob = new Blob([output], { type: 'image/gif' })
-      const url = URL.createObjectURL(blob)
+      const videoBlob = new Blob([new Uint8Array(uint8Array)], { type: 'video/mp4' })
+      const url = URL.createObjectURL(videoBlob)
       const link = document.createElement('a')
-      link.download = `${variable}_${date}_animation.gif`
+      link.download = `${variable}_${date}_animation.mp4`
       link.href = url
       link.click()
       URL.revokeObjectURL(url)
     } catch (err) {
-      console.error('GIF export error:', err)
+      console.error('MP4 export error:', err)
     } finally {
       setExporting(false)
     }
@@ -353,12 +364,12 @@ function ExportButton() {
       </button>
       <button
         type="button"
-        onClick={exportGif}
+        onClick={exportMp4}
         disabled={exporting}
         style={exporting ? activeStyle : buttonStyle}
-        title="Export animated GIF of all forecast hours"
+        title="Export animated MP4 video (H.264) of all forecast hours"
       >
-        {exporting ? 'GIF...' : 'GIF'}
+        {exporting ? 'MP4...' : 'MP4'}
       </button>
     </fieldset>
   )

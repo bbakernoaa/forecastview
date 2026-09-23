@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from backend.app.api.bounds import router as bounds_router
 from backend.app.api.contours import router as contours_router
-from backend.app.api.export_gif import router as export_gif_router
+from backend.app.api.export_mp4 import router as export_mp4_router
 from backend.app.api.fill_image import router as fill_image_router
 from backend.app.api.filled import router as filled_router
 from backend.app.api.metadata import router as metadata_router
@@ -50,7 +50,7 @@ app.include_router(bounds_router)
 app.include_router(contours_router)
 app.include_router(filled_router)
 app.include_router(fill_image_router)
-app.include_router(export_gif_router)
+app.include_router(export_mp4_router)
 app.include_router(point_router)
 app.include_router(preview_router)
 

@@ -1,8 +1,7 @@
-"""Animated GIF export endpoint.
+"""MP4 video export endpoint using H.264 codec.
 
-Generates an animated GIF from all forecast hours for a given variable.
-Each frame is the fill-image PNG rendered at a reduced resolution for
-reasonable file sizes.
+Generates an MP4 video (H.264 / yuv420p) from all forecast hours for a given variable.
+Each frame is the fill-image PNG rendered at high resolution for video output.
 """
 
 from __future__ import annotations
@@ -10,6 +9,7 @@ from __future__ import annotations
 import time
 from io import BytesIO
 
+import imageio
 import numpy as np
 import structlog
 from fastapi import APIRouter, HTTPException, Query
@@ -28,9 +28,9 @@ logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api", tags=["export"])
 
-# GIF frame dimensions (smaller than live view for file size)
-GIF_WIDTH = 1024
-GIF_HEIGHT = 1024
+# MP4 frame dimensions (must be even numbers for H.264 / yuv420p)
+MP4_WIDTH = 1024
+MP4_HEIGHT = 1024
 
 WEB_MERCATOR_MAX_LAT = 85.06
 CRS_4326 = CRS.from_epsg(4326)
@@ -50,7 +50,7 @@ def _render_frame(
     fhr: int,
     variable: str,
 ) -> Image.Image:
-    """Render a single frame for the GIF."""
+    """Render a single frame for the MP4 video."""
     # Shift grid
     shifted_field, shifted_lons, _ = shift_grid_to_minus180(field, lons_1d)
     if not np.array_equal(shifted_lons, lons_1d):
@@ -77,11 +77,11 @@ def _render_frame(
         MERCATOR_YMIN,
         MERCATOR_XMAX,
         MERCATOR_YMAX,
-        GIF_WIDTH,
-        GIF_HEIGHT,
+        MP4_WIDTH,
+        MP4_HEIGHT,
     )
 
-    dst_field = np.zeros((GIF_HEIGHT, GIF_WIDTH), dtype=np.float32)
+    dst_field = np.zeros((MP4_HEIGHT, MP4_WIDTH), dtype=np.float32)
     reproject(
         source=field.astype(np.float32),
         destination=dst_field,
@@ -104,7 +104,7 @@ def _render_frame(
         cmap = colormaps["turbo"]
 
     rgba_colors = np.zeros((n_bands, 4), dtype=np.uint8)
-    rgba_colors[0] = (20, 20, 30, 255)  # dark background for GIF (no transparency in GIF)
+    rgba_colors[0] = (20, 20, 30, 255)  # dark background for video
     for i in range(n_levels):
         t = i / max(n_levels - 1, 1)
         r, g, b, _ = cmap(t)
@@ -125,17 +125,17 @@ def _render_frame(
     return img
 
 
-@router.get("/export-gif")
-async def export_gif(
+@router.get("/export-mp4")
+async def export_mp4(
     product: str = Query(...),
     date: str = Query(...),
     run: str = Query(...),
     variable: str = Query(...),
     level: float | None = Query(None),
 ) -> Response:
-    """Generate an animated GIF of all forecast hours for a variable."""
+    """Generate an MP4 video (H.264) of all forecast hours for a variable."""
     t_start = time.perf_counter()
-    logger.info("api.export_gif.request", product=product, variable=variable)
+    logger.info("api.export_mp4.request", product=product, variable=variable)
 
     selector = get_field_selector()
 
@@ -162,47 +162,51 @@ async def export_gif(
     lats_1d = coordinates.lats[:, 0] if coordinates.lats.ndim == 2 else coordinates.lats
 
     # Render all frames
-    frames: list[Image.Image] = []
+    frames: list[np.ndarray] = []
     for fhr_entry in fhrs:
         fhr = fhr_entry["fhr"] if isinstance(fhr_entry, dict) else fhr_entry
         try:
             field = selector.select(date, run, variable, level=level, fhr=fhr)
-            frame = _render_frame(
+            frame_img = _render_frame(
                 field, lons_1d.copy(), lats_1d, fill_levels, colormap_name, fhr, variable
             )
-            frames.append(frame)
+            frames.append(np.array(frame_img))
         except Exception as exc:
-            logger.warning("api.export_gif.frame_failed", fhr=fhr, error=str(exc))
+            logger.warning("api.export_mp4.frame_failed", fhr=fhr, error=str(exc))
             continue
 
     if not frames:
         raise HTTPException(status_code=500, detail="No frames could be rendered")
 
-    # Encode as animated GIF
+    # Encode as MP4 with H.264 (yuv420p for maximum compatibility)
     buf = BytesIO()
-    frames[0].save(
+    writer = imageio.get_writer(
         buf,
-        format="GIF",
-        save_all=True,
-        append_images=frames[1:],
-        duration=200,  # ms per frame
-        loop=0,  # infinite loop
+        format="mp4",
+        mode="I",
+        fps=5,  # 5 frames per second (200ms per frame)
+        codec="libx264",
+        pixelformat="yuv420p",
     )
-    gif_bytes = buf.getvalue()
+    for frame in frames:
+        writer.append_data(frame)
+    writer.close()
+
+    mp4_bytes = buf.getvalue()
 
     t_total = time.perf_counter() - t_start
     logger.info(
-        "api.export_gif.done",
+        "api.export_mp4.done",
         variable=variable,
         num_frames=len(frames),
-        size_mb=round(len(gif_bytes) / (1024 * 1024), 2),
+        size_mb=round(len(mp4_bytes) / (1024 * 1024), 2),
         timing_s=round(t_total, 1),
     )
 
     return Response(
-        content=gif_bytes,
-        media_type="image/gif",
+        content=mp4_bytes,
+        media_type="video/mp4",
         headers={
-            "Content-Disposition": f'attachment; filename="{variable}_{date}_animation.gif"',
+            "Content-Disposition": f'attachment; filename="{variable}_{date}_animation.mp4"',
         },
     )
