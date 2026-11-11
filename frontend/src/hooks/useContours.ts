@@ -71,7 +71,12 @@ export function useContours(params: UseContoursParams): FetchState<ContourFeatur
       queryParams.interval = String(interval)
     }
 
-    apiGetStatic<ContourFeatureCollection>('contours', queryParams, controller.signal)
+    apiGetStatic<ContourFeatureCollection>(
+      'contours',
+      queryParams,
+      controller.signal,
+      { allowMissing: true },
+    )
       .then((res) => {
         setState({ status: 'success', data: res, error: null })
       })

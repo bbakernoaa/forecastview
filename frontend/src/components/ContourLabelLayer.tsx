@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { Map as MaplibreMap } from 'maplibre-gl'
+import { STATIC_MODE } from '../api/staticMode'
 
 interface ContourLabelLayerProps {
   /** MapLibre map instance to add the label layer to */
@@ -24,7 +25,10 @@ function ContourLabelLayer({ map, visible = true }: ContourLabelLayerProps) {
 
   // Add the label layer when the isoline source becomes available
   useEffect(() => {
-    if (!map) return
+    // The bundled static basemap has no glyph source by design, and adding a
+    // text layer without glyphs produces a MapLibre validation error. Static
+    // mode keeps contours themselves while omitting text labels.
+    if (STATIC_MODE || !map) return
 
     const addLayer = () => {
       if (addedRef.current) return
@@ -104,11 +108,11 @@ function ContourLabelLayer({ map, visible = true }: ContourLabelLayerProps) {
         addedRef.current = false
       }
     }
-  }, [map])
+  }, [map, visible])
 
   // Handle visibility toggle
   useEffect(() => {
-    if (!map || !addedRef.current) return
+    if (STATIC_MODE || !map || !addedRef.current) return
 
     try {
       if (map.getLayer(LABEL_LAYER_ID)) {

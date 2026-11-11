@@ -12,6 +12,7 @@ type ConnectionStatus = 'loading' | 'connected' | 'error'
 interface HealthState {
   status: ConnectionStatus
   version?: string
+  exportedAt?: string
 }
 
 /**
@@ -24,7 +25,10 @@ export function useHealth(): HealthState {
 
   useEffect(() => {
     if (STATIC_MODE) {
-      setState({ status: 'connected', version: 'static' })
+      fetch('./export-info.json')
+        .then((response) => response.ok ? response.json() : null)
+        .then((info) => setState({ status: 'connected', exportedAt: info?.exportedAt }))
+        .catch(() => setState({ status: 'connected' }))
       return
     }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MAP_STYLES, isRemoteStyle } from './mapStyles'
+import { MAP_STYLES, isRemoteStyle, availableMapStyleKeys } from './mapStyles'
 import localStyle from './localStyle'
 
 describe('mapStyles', () => {
@@ -30,5 +30,10 @@ describe('mapStyles', () => {
     expect(isRemoteStyle('liberty')).toBe(true)
     expect(isRemoteStyle('dark')).toBe(true)
     expect(isRemoteStyle('local')).toBe(false)
+  })
+
+  it('limits static deployments to the bundled local basemap', () => {
+    expect(availableMapStyleKeys(true)).toEqual(['local'])
+    expect(availableMapStyleKeys(false)).toEqual(['liberty', 'dark', 'light', 'local'])
   })
 })

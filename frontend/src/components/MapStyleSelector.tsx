@@ -1,16 +1,15 @@
+import { availableMapStyleKeys } from '../config/mapStyles'
 import type { MapStyleKey } from '../config/mapStyles'
+import { STATIC_MODE } from '../api/staticMode'
 
 interface MapStyleSelectorProps {
   styleKey: MapStyleKey
   onChange: (style: MapStyleKey) => void
 }
 
-const STYLE_OPTIONS: { key: MapStyleKey; label: string }[] = [
-  { key: 'liberty', label: 'Liberty' },
-  { key: 'dark', label: 'Dark' },
-  { key: 'light', label: 'Light' },
-  { key: 'local', label: 'Offline' },
-]
+const STYLE_LABELS: Record<MapStyleKey, string> = {
+  liberty: 'Liberty', dark: 'Dark', light: 'Light', local: 'Local',
+}
 
 function MapStyleSelector({ styleKey, onChange }: MapStyleSelectorProps) {
   return (
@@ -19,7 +18,7 @@ function MapStyleSelector({ styleKey, onChange }: MapStyleSelectorProps) {
       style={{ border: 'none', padding: 0, display: 'flex', gap: '4px', alignItems: 'center' }}
     >
       <legend style={{ fontSize: '0.75rem', marginBottom: '2px' }}>Map Style</legend>
-      {STYLE_OPTIONS.map(({ key, label }) => (
+      {availableMapStyleKeys(STATIC_MODE).map((key) => (
         <button
           key={key}
           type="button"
@@ -35,7 +34,7 @@ function MapStyleSelector({ styleKey, onChange }: MapStyleSelectorProps) {
             color: styleKey === key ? '#fff' : '#ccc',
           }}
         >
-          {label}
+          {STYLE_LABELS[key]}
         </button>
       ))}
     </fieldset>

@@ -48,6 +48,25 @@ function FillImageLayer({
   opacity = 0.7,
 }: FillImageLayerProps) {
   const addedRef = useRef(false)
+  const imageUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!map) return
+
+    // MapLibre reports cancelled image requests through its map-level error
+    // event. These are expected when a product or forecast frame changes
+    // before the previous image finishes loading.
+    const ignoreCancelledImageRequest = (event: { error?: unknown }) => {
+      if (isAbortError(event.error)) {
+        return
+      }
+      if (event.error) console.error('[MapLibre]', event.error)
+    }
+    map.on('error', ignoreCancelledImageRequest)
+    return () => {
+      map.off('error', ignoreCancelledImageRequest)
+    }
+  }, [map])
 
   useEffect(() => {
     if (!map) return
@@ -57,6 +76,7 @@ function FillImageLayer({
         removeLayers(map)
         addedRef.current = false
       }
+      imageUrlRef.current = null
       return
     }
 
@@ -65,7 +85,11 @@ function FillImageLayer({
     if (addedRef.current) {
       const source = map.getSource(SOURCE_ID)
       if (source && 'updateImage' in source) {
+        // Static URLs do not include level, so a level metadata update can
+        // otherwise abort and restart the exact same image request.
+        if (imageUrlRef.current === imageUrl) return
         ;(source as any).updateImage({ url: imageUrl })
+        imageUrlRef.current = imageUrl
         return
       }
     }
@@ -88,6 +112,7 @@ function FillImageLayer({
       })
 
       addedRef.current = true
+      imageUrlRef.current = imageUrl
     } catch (err) {
       console.error('[FillImageLayer] Error:', err)
     }
@@ -116,11 +141,18 @@ function FillImageLayer({
       if (map) {
         removeLayers(map)
         addedRef.current = false
+        imageUrlRef.current = null
       }
     }
   }, [map])
 
   return null
+}
+
+function isAbortError(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false
+  const candidate = error as { name?: unknown; message?: unknown }
+  return candidate.name === 'AbortError' || candidate.message === 'AbortError'
 }
 
 function removeLayers(map: MaplibreMap): void {

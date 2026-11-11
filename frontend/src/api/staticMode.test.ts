@@ -44,8 +44,8 @@ describe('buildUrl static mapping', () => {
       buildUrl('fill-image', { ...base, variable: 'totAOD550', fhr: '120' }, true),
     ).toBe('./data/air/20260821/00/fill/totAOD550/f120.png')
   })
-  it('falls back to /api for unknown endpoints', () => {
-    expect(buildUrl('health', {}, true)).toBe('/api/health?')
+  it('rejects unknown endpoints without leaking to /api', () => {
+    expect(() => buildUrl('health', {}, true)).toThrow('Unsupported static data endpoint: health')
   })
 })
 

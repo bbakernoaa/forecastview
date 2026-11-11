@@ -16,6 +16,7 @@ export interface GridMeta {
   lon_max: number
   lat_min: number
   lat_max: number
+  coordinates?: string
 }
 
 /**
@@ -41,6 +42,7 @@ export function valueFromGrid(data: Float32Array, i: number, j: number, nx: numb
 }
 
 const gridCache = new Map<string, Promise<GridMeta>>()
+const coordinateCache = new Map<string, Promise<Float32Array>>()
 const binCache = new Map<string, Promise<Float32Array>>()
 const unitsCache = new Map<string, Promise<string>>()
 const validTimeCache = new Map<string, Promise<string>>()
@@ -70,6 +72,37 @@ function loadBin(path: string): Promise<Float32Array> {
     if (!res.ok) throw new Error(`field data unavailable (${res.status})`)
     return new Float32Array(await res.arrayBuffer())
   })
+}
+
+function loadCoordinates(path: string): Promise<Float32Array> {
+  return cached(coordinateCache, path, async () => {
+    const res = await fetch(path)
+    if (!res.ok) throw new Error(`grid coordinates unavailable (${res.status})`)
+    return new Float32Array(await res.arrayBuffer())
+  })
+}
+
+/** Nearest grid cell for interleaved [lon, lat] coordinates on a curvilinear grid. */
+export function nearestCurvilinearIndex(
+  coordinates: Float32Array,
+  nx: number,
+  lon: number,
+  lat: number,
+): [number, number] {
+  let bestIndex = -1
+  let bestDistance = Number.POSITIVE_INFINITY
+  const cosLat = Math.cos((lat * Math.PI) / 180)
+  for (let k = 0; k + 1 < coordinates.length; k += 2) {
+    const gridLon = coordinates[k]
+    const gridLat = coordinates[k + 1]
+    if (!Number.isFinite(gridLon) || !Number.isFinite(gridLat)) continue
+    const lonDelta = ((((gridLon - lon) + 180) % 360) + 360) % 360 - 180
+    const latDelta = gridLat - lat
+    const distance = (lonDelta * cosLat) ** 2 + latDelta ** 2
+    if (distance < bestDistance) { bestDistance = distance; bestIndex = k / 2 }
+  }
+  if (bestIndex < 0) throw new Error('grid contains no valid geographic coordinates')
+  return [Math.floor(bestIndex / nx), bestIndex % nx]
 }
 
 /** Units for a variable, read from the run's variables.json (404 → ''). */
@@ -105,9 +138,9 @@ function loadValidTime(path: string, fhr: number): Promise<string> {
 /**
  * Query the value of `variable` at (lat, lon) for a static export frame.
  *
- * `level` is accepted for signature parity with /api/point; the air product
- * is surface-only, so the static grid has no level dimension and the field is
- * reported as null.
+ * `level` is accepted for signature parity with /api/point. Static exports
+ * contain one configured level per variable, so the selected value is returned
+ * without a separate level dimension in the grid.
  */
 export async function queryPointStatic(
   product: string,
@@ -129,9 +162,10 @@ export async function queryPointStatic(
     loadValidTime(`${base}/times.json`, fhr),
   ])
 
-  const [i, j] = nearestIndex(grid, lon, lat)
-  const dx = (grid.lon_max - grid.lon_min) / (grid.nx - 1)
-  const dy = (grid.lat_max - grid.lat_min) / (grid.ny - 1)
+  const coords = grid.coordinates ? await loadCoordinates(`${base}/${grid.coordinates}`) : null
+  const [i, j] = coords ? nearestCurvilinearIndex(coords, grid.nx, lon, lat) : nearestIndex(grid, lon, lat)
+  const grid_lon = coords ? coords[(i * grid.nx + j) * 2] : grid.lon_min + j * ((grid.lon_max - grid.lon_min) / (grid.nx - 1))
+  const grid_lat = coords ? coords[(i * grid.nx + j) * 2 + 1] : grid.lat_max - i * ((grid.lat_max - grid.lat_min) / (grid.ny - 1))
 
   return {
     lat,
@@ -142,7 +176,7 @@ export async function queryPointStatic(
     level,
     fhr,
     valid_time: validTime,
-    grid_lat: grid.lat_max - i * dy,
-    grid_lon: grid.lon_min + j * dx,
+    grid_lat,
+    grid_lon,
   }
 }

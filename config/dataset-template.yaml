@@ -1,0 +1,32 @@
+# Copy this file to config/domains/<dataset-id>.yaml.
+# source_dir is relative to this YAML file; store_path is relative to the
+# repository root. The first local GRIB2 workflow
+# supports regular latitude/longitude, projected, and curvilinear grids, with
+# one selected level per field. Point inspection is enabled when coordinates
+# are available; the export always renders the fields as static map images.
+product:
+  id: example_dataset
+  name: Example Forecast Dataset
+
+ingest:
+  format: grib2
+  source_dir: ../data/input/example
+  file_glob: "**/*.grib2"
+  store_path: data/manifests/example_dataset
+  # Set this from `datasets.py inspect` to reject incomplete runs.
+  # expected_forecast_hours: [0, 3, 6, 9, 12]
+  filters: {}
+
+categories:
+  - Example
+
+variables:
+  shortNameFromGrib:
+    shortName: Example
+    fullName: Example GRIB2 field
+    units: units
+    category: Example
+    rendering:
+      colormap: viridis
+      contourInterval: 1.0
+      fillLevels: [0, 1, 2, 5, 10]
