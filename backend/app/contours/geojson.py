@@ -89,31 +89,61 @@ def _transform_vertices(
     col_indices = verts[:, 0]
     row_indices = verts[:, 1]
 
-    # Extract 1D coordinate vectors for interpolation.
-    # Works for both truly 1D coords and regular grids stored as 2D meshgrids.
     coords = mapper._coordinates
     if coords.lons.ndim == 1:
         lons_1d = np.asarray(coords.lons, dtype=np.float64)
         lats_1d = np.asarray(coords.lats, dtype=np.float64)
-    elif coords.lons.ndim == 2:
-        # Regular grid stored as 2D meshgrid — extract 1D vectors
-        lons_1d = np.asarray(coords.lons[0, :], dtype=np.float64)
-        lats_1d = np.asarray(coords.lats[:, 0], dtype=np.float64)
+        col_clipped = np.clip(col_indices, 0, len(lons_1d) - 1)
+        row_clipped = np.clip(row_indices, 0, len(lats_1d) - 1)
+        x_native = np.interp(col_clipped, np.arange(len(lons_1d)), lons_1d)
+        y_native = np.interp(row_clipped, np.arange(len(lats_1d)), lats_1d)
+    elif coords.lons.ndim == 2 and coords.lons.shape == coords.lats.shape:
+        # Interpolate each vertex against its four surrounding grid points.
+        # Taking only row zero and column zero loses the cross-row/column
+        # coordinate variation on projected and curvilinear grids.
+        lons_2d = np.asarray(coords.lons, dtype=np.float64)
+        lats_2d = np.asarray(coords.lats, dtype=np.float64)
+        rows = np.clip(row_indices, 0, lons_2d.shape[0] - 1)
+        cols = np.clip(col_indices, 0, lons_2d.shape[1] - 1)
+        row0 = np.floor(rows).astype(int)
+        col0 = np.floor(cols).astype(int)
+        row1 = np.minimum(row0 + 1, lons_2d.shape[0] - 1)
+        col1 = np.minimum(col0 + 1, lons_2d.shape[1] - 1)
+        row_weight = rows - row0
+        col_weight = cols - col0
+
+        def bilinear(values: np.ndarray, *, wrap_longitude: bool = False) -> np.ndarray:
+            top_left = values[row0, col0]
+            top_right = values[row0, col1]
+            bottom_left = values[row1, col0]
+            bottom_right = values[row1, col1]
+            if wrap_longitude:
+                top_right = top_left + (top_right - top_left + 180.0) % 360.0 - 180.0
+                bottom_left = top_left + (bottom_left - top_left + 180.0) % 360.0 - 180.0
+                bottom_right = top_left + (bottom_right - top_left + 180.0) % 360.0 - 180.0
+            top = top_left * (1.0 - col_weight) + top_right * col_weight
+            bottom = bottom_left * (1.0 - col_weight) + bottom_right * col_weight
+            return top * (1.0 - row_weight) + bottom * row_weight
+
+        x_native = bilinear(lons_2d, wrap_longitude=True)
+        y_native = bilinear(lats_2d)
     else:
         # Fallback for unexpected cases
         lons_1d = np.asarray(coords.lons.ravel()[: mapper.shape[1]], dtype=np.float64)
         lats_1d = np.asarray(coords.lats.ravel()[: mapper.shape[0]], dtype=np.float64)
+        col_clipped = np.clip(col_indices, 0, len(lons_1d) - 1)
+        row_clipped = np.clip(row_indices, 0, len(lats_1d) - 1)
+        x_native = np.interp(col_clipped, np.arange(len(lons_1d)), lons_1d)
+        y_native = np.interp(row_clipped, np.arange(len(lats_1d)), lats_1d)
 
-    # Clip to valid index range
-    col_clipped = np.clip(col_indices, 0, len(lons_1d) - 1)
-    row_clipped = np.clip(row_indices, 0, len(lats_1d) - 1)
-
-    # Linear interpolation for fractional grid indices
-    x_native = np.interp(col_clipped, np.arange(len(lons_1d)), lons_1d)
-    y_native = np.interp(row_clipped, np.arange(len(lats_1d)), lats_1d)
-
-    # Transform native CRS → geographic (lon, lat)
-    lon, lat = transformer.native_to_geographic(x_native, y_native)
+    # FieldSelector returns 2D latitude/longitude geolocation arrays in
+    # geographic degrees even when the source GRIB grid is projected. Only
+    # 1D coordinate axes need the projection transform here.
+    if coords.lons.ndim == 2:
+        lon = (x_native + 180.0) % 360.0 - 180.0
+        lat = y_native
+    else:
+        lon, lat = transformer.native_to_geographic(x_native, y_native)
 
     return np.asarray(lon), np.asarray(lat)
 

@@ -56,10 +56,24 @@ class ProductInfo(BaseModel):
     id: str = Field(..., description="Product identifier")
 
 
+class DatasetIngestConfig(BaseModel):
+    """Local GRIB2 source and manifest settings for a static-site dataset."""
+
+    format: str = Field("grib2", description="Input format identifier")
+    store_path: str | None = Field(None, description="Manifest store path for this dataset")
+    source_dir: str | None = Field(None, description="Directory containing local GRIB2 files")
+    file_glob: str = Field("**/*.grib2", description="Glob relative to source_dir")
+    expected_forecast_hours: list[int] | None = Field(
+        None, description="Optional required forecast hours for each ingested run"
+    )
+    filters: dict[str, Any] = Field(default_factory=dict)
+
+
 class DomainConfig(BaseModel):
     """Complete domain configuration loaded from a YAML file."""
 
     product: ProductInfo
+    ingest: DatasetIngestConfig | None = Field(None, description="Optional local ingest settings")
     categories: list[str] = Field(
         default_factory=list,
         description="Ordered list of variable categories",

@@ -232,6 +232,75 @@ All endpoints are prefixed with `/api`.
 
 ## Adding New Datasets
 
+### Local GRIB2 datasets for the static site
+
+Copy `config/dataset-template.yaml` to `config/domains/<dataset-id>.yaml`, set
+`source_dir`, `file_glob`, `store_path`, and the variable
+rendering metadata, then run:
+
+```bash
+python backend/scripts/datasets.py inspect --input /path/to/grib/files --glob '**/*.grib2'
+python backend/scripts/datasets.py validate --config config/domains/my_dataset.yaml
+python backend/scripts/datasets.py update --config config/domains/my_dataset.yaml --output static_site
+python backend/scripts/datasets.py check --site static_site
+```
+
+To build several configured datasets into one local bundle, repeat `--config`:
+
+```bash
+python backend/scripts/datasets.py build \
+  --config config/domains/gcavs_v1.yaml \
+  --config config/domains/aqm_v8.yaml \
+  --output static_site
+```
+
+`build` does not ingest; it exports already prepared manifests. It stages and
+checks a candidate bundle before replacing the local output directory.
+Frame files are reused only while the dataset configuration, run manifest
+fingerprints, and exporter code remain unchanged; missing companion artifacts
+are regenerated on the next build.
+
+`source_dir` is relative to its YAML file; `store_path` is relative to the
+repository root. `inspect` reports the
+initialization times, forecast hours, variable names, levels, units, and grid
+types found in local GRIB2 messages. Use those names when defining `variables`.
+Set `ingest.expected_forecast_hours` from the inspected schedule when every
+run must contain a complete set; ingest then refuses to replace a manifest
+when any configured lead is missing.
+Ingest serializes writers per manifest store, verifies each reference before
+replacing a manifest, and writes `ingest-report.json` with the resolved local
+files, run cycles, available forecast hours, and any failure details.
+The static exporter supports regular grids and projected or curvilinear grids
+when the GRIB2 reader exposes a geographic latitude/longitude coordinate for
+each grid cell. It uses those coordinates to warp image overlays and to serve
+browser-side point queries. A grid without usable geolocation arrays still
+requires a reader adapter. Static exports currently include one selected level
+per variable.
+Keep the resulting `static_site/` candidate separate until it has been checked
+and reviewed; these commands do not deploy or upload files to RZDM. To update
+an existing site with another dataset, run `update` for that dataset against
+the same local bundle directory; its catalog entry is merged with existing
+entries. `update` builds and checks a sibling candidate, then replaces that
+local directory only after the checks pass. If ingestion, export, or checking
+fails, the prior local bundle remains in place. Copy the accepted bundle to a
+staging location for RZDM deployment; these commands do not write to the live
+web server.
+
+For a new dataset, the complete sequence is `inspect` → copy and edit
+`config/dataset-template.yaml` → `validate` → `update` → `check`. For each new
+forecast cycle, place the GRIB2 files under the configured local source
+directory and run `update` again. To refresh the application shell after
+building a new frontend, pass `--refresh-frontend` to `backend/scripts/export_static.py`;
+the default keeps an existing shell unchanged, and refresh preserves older
+hashed assets for browsers with cached pages. Build the frontend for a nested
+static directory with `VITE_STATIC_MODE=true VITE_BASE_PATH=./ npm run build`.
+
+The existing dataset-specific ingest scripts remain available for their
+current workflows. This local path is intended for repeatable static-site
+preparation from local files.
+
+## Existing S3-backed dynamic dataset workflow
+
 ForecastView is designed for GRIB2 data accessible via S3. Adding a new product involves three steps.
 
 ### 1. Create a Domain Config
@@ -413,7 +482,9 @@ The important lifecycle is:
    rsync -avz static_site/ user@rzdm.noaa.gov:/home/www/forecastview/
    ```
 
-A complete offline RZDM workflow therefore looks like this:
+A legacy single-dataset offline workflow is available for the existing GEFS
+configuration. For new local datasets or combined static bundles, use the
+`datasets.py` commands in [Local GRIB2 datasets for the static site](#local-grib2-datasets-for-the-static-site):
 
 ```bash
 # 1) Local GRIB2 files -> manifest store
@@ -430,8 +501,7 @@ python backend/scripts/export_static.py \
   --days 3 \
   --output /srv/rzdm/forecastview_static
 
-# 3) static bundle -> deployed web root
-rsync -avz /srv/rzdm/forecastview_static/ user@rzdm.noaa.gov:/home/www/forecastview/
+# 3) Validate and stage the accepted bundle through your site's deployment process.
 ```
 
 Because all API routes are pre-rendered as static JSON and PNG files, the entire application can function interactively on the web without any running backend server.

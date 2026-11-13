@@ -37,6 +37,9 @@ import { ViewerProvider, useViewer } from './context/ViewerContext'
 import { NotificationProvider } from './context/NotificationContext'
 import { DEFAULT_MAP_STYLE, MAP_STYLES } from './config/mapStyles'
 import type { MapStyleKey } from './config/mapStyles'
+import { STATIC_MODE } from './api/staticMode'
+import { apiGetStatic } from './api/client'
+import type { CatalogResponse } from './api/types'
 import './App.css'
 
 const STORAGE_KEY = 'forecastview:mapStyle'
@@ -61,6 +64,15 @@ function AppContent() {
     DEFAULT_MAP_STYLE,
     isValidMapStyleKey
   )
+  const effectiveMapStyle: MapStyleKey = STATIC_MODE ? 'local' : mapStyle
+
+  // A style saved during a dynamic session may point at a remote service.
+  // Static RZDM builds must normalize it before MapLibre constructs the map.
+  useEffect(() => {
+    if (STATIC_MODE && mapStyle !== 'local') {
+      setMapStyle('local')
+    }
+  }, [mapStyle, setMapStyle])
 
   // Fetch variables for the current product/date/run to get full VariableInfo
   const { data: variablesList } = useVariables(product, date, run)
@@ -147,41 +159,6 @@ function AppContent() {
       ) : (
         <Toolbar>
           <SmartSearch />
-          <ProductSelector product={product} onChange={handleProductChange} />
-          <DateSelector
-            product={product}
-            selectedDate={date}
-            onDateChange={handleDateChange}
-          />
-          <RunSelector
-            product={product}
-            date={date}
-            selectedRun={run}
-            onRunChange={handleRunChange}
-          />
-          <VariableSelector
-            product={product}
-            date={date}
-            run={run}
-            selectedVariable={variable}
-            onVariableChange={handleVariableChange}
-          />
-          <LevelSelector
-            product={product}
-            date={date}
-            run={run}
-            variable={variable}
-            selectedLevel={level}
-            onLevelChange={handleLevelChange}
-          />
-          <RenderingSelector mode={renderingMode} onChange={handleRenderingChange} />
-          <ContourIntervalSelector
-            defaultInterval={defaultContourInterval}
-            interval={contourInterval}
-            onChange={handleContourIntervalChange}
-          />
-          <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
-          <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
           <ExportButton />
           <IngestButton />
           <ConnectionStatus />
@@ -194,12 +171,27 @@ function AppContent() {
       <div className="main-content">
         {!isMobile && (
           <LeftPanel variable={selectedVariableInfo}>
-            <LayerPanel map={map} />
+            <section className="control-section" aria-labelledby="forecast-heading">
+              <h2 id="forecast-heading">Forecast</h2>
+              <ProductSelector product={product} onChange={handleProductChange} />
+              <DateSelector product={product} selectedDate={date} onDateChange={handleDateChange} />
+              <RunSelector product={product} date={date} selectedRun={run} onRunChange={handleRunChange} />
+              <VariableSelector product={product} date={date} run={run} selectedVariable={variable} onVariableChange={handleVariableChange} />
+              <LevelSelector product={product} date={date} run={run} variable={variable} selectedLevel={level} onLevelChange={handleLevelChange} />
+            </section>
+            <section className="control-section" aria-labelledby="map-controls-heading">
+              <h2 id="map-controls-heading">Map</h2>
+              <RenderingSelector mode={renderingMode} onChange={handleRenderingChange} />
+              <ContourIntervalSelector defaultInterval={defaultContourInterval} interval={contourInterval} onChange={handleContourIntervalChange} />
+              <OpacitySlider value={fillOpacity} onChange={setFillOpacity} />
+              <MapStyleSelector styleKey={effectiveMapStyle} onChange={setMapStyle} />
+              <LayerPanel map={map} />
+            </section>
           </LeftPanel>
         )}
 
         <div className="map-area">
-          <ForecastMap styleKey={mapStyle} onMapReady={setMap} />
+          <ForecastMap styleKey={effectiveMapStyle} onMapReady={setMap} />
           <FillImageLayer
             map={map}
             product={product}
@@ -234,7 +226,7 @@ function AppContent() {
       {isMobile && mobileTab && (
         <MobileDrawer activeTab={mobileTab} onClose={() => setMobileTab(null)}>
           {mobileTab === 'search' && (
-            <SmartSearch onSelectResult={() => setMobileTab(null)} placeholder="Search species, region..." />
+            <SmartSearch onSelectResult={() => setMobileTab(null)} placeholder="Search variables, locations..." />
           )}
 
           {mobileTab === 'controls' && (
@@ -298,11 +290,26 @@ function AppContent() {
 }
 
 function App() {
+  const [initialProduct, setInitialProduct] = useState<string | null>(
+    () => new URLSearchParams(window.location.search).get('product'),
+  )
+
+  useEffect(() => {
+    if (initialProduct !== null) return
+    apiGetStatic<CatalogResponse>('catalog')
+      .then((catalog) => setInitialProduct(catalog?.products[0]?.product ?? 'air'))
+      .catch(() => setInitialProduct('air'))
+  }, [initialProduct])
+
   return (
     <NotificationProvider>
-      <ViewerProvider>
-        <AppContent />
-      </ViewerProvider>
+      {initialProduct === null ? (
+        <div className="app-bootstrap" role="status">Loading forecast catalog…</div>
+      ) : (
+        <ViewerProvider initialState={{ product: initialProduct }}>
+          <AppContent />
+        </ViewerProvider>
+      )}
     </NotificationProvider>
   )
 }
