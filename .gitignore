@@ -24,6 +24,7 @@ data/manifests/**/*.json
 
 # Conda
 .conda/
+.venv/
 
 # IDE
 .vscode/

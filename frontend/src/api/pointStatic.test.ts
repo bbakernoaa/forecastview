@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { nearestIndex, valueFromGrid, type GridMeta } from './pointStatic'
+import { nearestIndex, nearestCurvilinearIndex, valueFromGrid, type GridMeta } from './pointStatic'
 
 describe('pointStatic math', () => {
   const grid: GridMeta = { ny: 3, nx: 3, lon_min: -2, lon_max: 2, lat_min: -2, lat_max: 2 }
@@ -33,5 +33,18 @@ describe('pointStatic math', () => {
 
   it('returns finite value otherwise', () => {
     expect(valueFromGrid(data, 0, 0, 3)).toBe(8)
+  })
+
+  it('finds the nearest point in a curvilinear grid and wraps longitude', () => {
+    const coords = new Float32Array([
+      -100, 40, -98, 40, -96, 40,
+      -101, 38, -99, 38, -97, 38,
+    ])
+    expect(nearestCurvilinearIndex(coords, 3, 262, 40.1)).toEqual([0, 1])
+  })
+
+  it('skips invalid geolocation cells', () => {
+    const coords = new Float32Array([NaN, NaN, 10, 20, 30, 40, 50, 60])
+    expect(nearestCurvilinearIndex(coords, 2, 11, 21)).toEqual([0, 1])
   })
 })

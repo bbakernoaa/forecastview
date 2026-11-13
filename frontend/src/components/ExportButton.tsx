@@ -131,7 +131,7 @@ function ExportButton() {
     // Load logo then composite everything
     const logo = new Image()
     logo.crossOrigin = 'anonymous'
-    logo.src = '/nws-logo.png'
+    logo.src = new URL('nws-logo.png', document.baseURI).href
 
     const doExport = () => {
       const canvas = document.createElement('canvas')
@@ -179,7 +179,7 @@ function ExportButton() {
       ctx.fillRect(0, h - 60, w, 20)
       ctx.fillStyle = '#f5a623'
       ctx.font = '10px sans-serif'
-      ctx.fillText('⚠ EXPERIMENTAL — Not for operational use. Data from experimental GEFS-Aerosol model guidance.', 12, h - 46)
+      ctx.fillText('⚠ EXPERIMENTAL — Forecast guidance is for research use.', 12, h - 46)
 
       // Export
       const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
@@ -226,7 +226,7 @@ function ExportButton() {
       // Load logo
       const logo = new Image()
       logo.crossOrigin = 'anonymous'
-      logo.src = '/nws-logo.png'
+      logo.src = new URL('nws-logo.png', document.baseURI).href
       await new Promise<void>(r => { logo.onload = () => r(); logo.onerror = () => r(); if (logo.complete) r() })
 
       const varInfo = variablesList?.find(v => v.name === variable)

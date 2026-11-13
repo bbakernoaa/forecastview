@@ -73,6 +73,15 @@ export interface TimesResponse {
   forecast_hours: ForecastHourEntry[];
 }
 
+export interface CatalogEntry {
+  product: string
+  description: string
+}
+
+export interface CatalogResponse {
+  products: CatalogEntry[]
+}
+
 // --------------------------------------------------------------------------
 // Filled contour API types
 // --------------------------------------------------------------------------

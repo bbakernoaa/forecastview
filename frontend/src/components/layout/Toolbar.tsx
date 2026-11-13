@@ -14,8 +14,8 @@ function Toolbar({ children }: ToolbarProps) {
         alignItems: 'center',
         gap: '12px',
         padding: '6px 12px',
-        background: '#1a1a1a',
-        borderBottom: '1px solid #333',
+        background: '#151f29',
+        borderBottom: '1px solid #2a3a48',
       }}
     >
       {children}

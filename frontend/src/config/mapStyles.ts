@@ -23,6 +23,11 @@ export const MAP_STYLES = {
 
 export type MapStyleKey = keyof typeof MAP_STYLES
 
+/** Styles offered to the user; static builds must never request remote tiles. */
+export function availableMapStyleKeys(isStatic: boolean = STATIC_MODE): MapStyleKey[] {
+  return isStatic ? ['local'] : ['liberty', 'dark', 'light', 'local']
+}
+
 /** True when the style is fetched over the network (i.e. needs internet). */
 export function isRemoteStyle(key: MapStyleKey): boolean {
   return typeof MAP_STYLES[key] === 'string'

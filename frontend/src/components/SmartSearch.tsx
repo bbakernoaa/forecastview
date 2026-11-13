@@ -48,7 +48,7 @@ interface SmartSearchProps {
   placeholder?: string
 }
 
-export default function SmartSearch({ onSelectResult, placeholder = 'Search species, region, city, coordinates...' }: SmartSearchProps) {
+export default function SmartSearch({ onSelectResult, placeholder = 'Search variables, locations, coordinates...' }: SmartSearchProps) {
   const { state, dispatch, map } = useViewer()
   const { product, date, run } = state
   const { data: variablesList } = useVariables(product, date, run)

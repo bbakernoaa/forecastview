@@ -50,9 +50,7 @@ export function buildUrl(
     case 'fill-image':
       return `./data/${product}/${date}/${run}/fill/${variable}/f${fhr.padStart(3, '0')}.png`
     default:
-      // Fallback to API style
-      const qs = new URLSearchParams(params).toString()
-      return `/api/${endpoint}?${qs}`
+      throw new Error(`Unsupported static data endpoint: ${endpoint}`)
   }
 }
 

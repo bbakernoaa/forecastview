@@ -8,28 +8,19 @@ interface LeftPanelProps {
   children?: ReactNode
 }
 
-const DISCLAIMER_TEXT = 'EXPERIMENTAL — Not for operational use. Data shown is from experimental GEFS-Aerosol model guidance and has not been officially validated.'
+const DISCLAIMER_TEXT = 'EXPERIMENTAL — Not for operational use. Forecast guidance is for research use and has not been officially validated.'
 
 function LeftPanel({ variable = null, children }: LeftPanelProps) {
   return (
-    <div
-      style={{
-        width: '220px',
-        minWidth: '220px',
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#1a1a1a',
-        borderRight: '1px solid #333',
-        overflowY: 'auto',
-        padding: '12px',
-        color: '#ccc',
-        fontSize: '0.85rem',
-        gap: '12px',
-      }}
-    >
-      <Legend variable={variable} />
-      <QuickViews />
+    <aside className="desktop-panel left-panel" aria-label="Forecast and map controls">
       {children}
+      <details className="legend-section" open>
+        <summary>Legend and quick views</summary>
+        <div className="legend-content">
+          <Legend variable={variable} />
+          <QuickViews />
+        </div>
+      </details>
       {/* Experimental disclaimer */}
       <div
         style={{
@@ -43,7 +34,7 @@ function LeftPanel({ variable = null, children }: LeftPanelProps) {
       >
         ⚠️ {DISCLAIMER_TEXT}
       </div>
-    </div>
+    </aside>
   )
 }
 

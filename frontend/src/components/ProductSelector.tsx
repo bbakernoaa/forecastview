@@ -1,9 +1,13 @@
 /**
  * Product selector for choosing which forecast product to display.
  *
- * Currently only "Air Composition" is available. "Meteorology" is shown
- * as a disabled placeholder for future expansion.
+ * Product options come from the exported catalog so a new static dataset
+ * appears without a frontend code change.
  */
+
+import { useEffect, useState } from 'react'
+import { apiGetStatic } from '../api/client'
+import type { CatalogEntry, CatalogResponse } from '../api/types'
 
 interface ProductSelectorProps {
   /** Currently active product identifier */
@@ -12,19 +16,27 @@ interface ProductSelectorProps {
   onChange: (product: string) => void
 }
 
-interface ProductOption {
-  key: string
-  label: string
-  disabled: boolean
-}
-
-const PRODUCT_OPTIONS: ProductOption[] = [
-  { key: 'air', label: 'GEFS-Aerosol', disabled: false },
-  { key: 'aqm', label: 'AQMv7', disabled: false },
-  // { key: 'met', label: 'Meteorology', disabled: true },
-]
-
 function ProductSelector({ product, onChange }: ProductSelectorProps) {
+  const [products, setProducts] = useState<CatalogEntry[]>([])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    apiGetStatic<CatalogResponse>('catalog', undefined, controller.signal)
+      .then((catalog) => setProducts(catalog?.products ?? []))
+      .catch((error) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          setProducts([])
+        }
+      })
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    if (products.length > 0 && !products.some((item) => item.product === product)) {
+      onChange(products[0].product)
+    }
+  }, [products, product, onChange])
+
   return (
     <fieldset
       className="product-selector"
@@ -51,9 +63,9 @@ function ProductSelector({ product, onChange }: ProductSelectorProps) {
           cursor: 'pointer',
         }}
       >
-        {PRODUCT_OPTIONS.map(({ key, label, disabled }) => (
-          <option key={key} value={key} disabled={disabled}>
-            {label}{disabled ? ' (coming soon)' : ''}
+        {products.map(({ product: key, description }) => (
+          <option key={key} value={key}>
+            {description || key}
           </option>
         ))}
       </select>
