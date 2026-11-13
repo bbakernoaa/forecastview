@@ -268,7 +268,7 @@ function AppContent() {
               <MapStyleSelector styleKey={mapStyle} onChange={setMapStyle} />
               <LayerPanel map={map} />
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <ExportButton />
+                <ExportButton allowVideo={false} />
                 <IngestButton />
               </div>
             </div>

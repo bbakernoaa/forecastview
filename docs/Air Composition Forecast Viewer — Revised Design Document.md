@@ -1724,3 +1724,11 @@ The web application may display everything in Web Mercator, but the underlying f
 That separation gives the application the combination we want:
 
 **scientifically correct forecast handling underneath and a fast, familiar, DESI-like web-map experience on top.**
+
+## Image and video capture
+
+The Capture menu provides map-only, map with legend and forecast metadata, and full forecast graphic layouts. The full graphic adds the product header and branding. The compositor draws the current geographic map, forecast shading, contours and labels from the MapLibre canvas. It draws the legend, metadata, and source attribution separately and keeps viewer controls out of the graphic.
+
+The default layout includes the legend, variable, level, units, initialization, forecast hour, and valid time. Users can choose the native viewport or a fixed output size of 1920 × 1080, 1600 × 900, 1200 × 675, or 1080 × 1080. Fixed sizes preserve the full map and its aspect ratio. PNG downloads include the URL-encoded forecast selection in a PNG text chunk. Clipboard support depends on browser capabilities and permissions. JPEG and GIF downloads remain available.
+
+Desktop video capture records rendered map frames as users play or step through the forecast timeline. The browser encodes MP4 when available and falls back to WebM. Recording is silent, fits within 1280 × 720, and ends after at most two minutes. Both live and static deployments use the same client-side capture path.

@@ -27,6 +27,12 @@ A web-based scientific forecast viewer for NOAA Forecast data. ForecastView disp
 
 *Exported PNG with embedded colorbar, metadata bar (variable, init time, forecast hour, valid time), NWS logo, and experimental data disclaimer.*
 
+### Capture a forecast
+
+Open **Capture**, choose **Map only**, **Map + legend + metadata**, or **Full forecast graphic**, and select an image size. Download a PNG or JPEG, or copy a PNG in browsers that grant image clipboard access. PNG downloads carry the selected forecast parameters in a metadata field. Fixed sizes preserve the full map extent and add padding as needed.
+
+On desktop, select **Record video**, then play or step through the timeline. Select **Stop and download video** when finished. Recording ends automatically after two minutes. The browser chooses MP4 when supported and WebM otherwise. Videos use the chosen layout and fit within 1280 × 720 pixels. The existing all-hours GIF download is also available.
+
 ---
 
 ## Getting Started

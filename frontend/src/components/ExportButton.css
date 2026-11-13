@@ -1,0 +1,64 @@
+.forecast-capture summary {
+  width: fit-content;
+  padding: 5px 10px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #2a2a2a;
+  color: #e0e0e0;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.forecast-capture__panel {
+  display: grid;
+  gap: 8px;
+  max-width: min(340px, 85vw);
+  padding: 10px 0 2px;
+  color: #ddd;
+  font-size: 0.8rem;
+}
+
+.forecast-capture__panel label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.forecast-capture__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.forecast-capture__actions button:disabled {
+  opacity: 0.55;
+  cursor: default !important;
+}
+
+@media (min-width: 769px) {
+  .forecast-capture {
+    position: relative;
+  }
+
+  .forecast-capture__panel {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    right: 0;
+    width: min(300px, 85vw);
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background: #222;
+    box-shadow: 0 4px 16px #0008;
+  }
+
+  /* The toolbar can wrap Capture onto its own row near the left edge. */
+  @media (max-width: 1200px) {
+    .forecast-capture__panel {
+      position: static;
+    }
+  }
+}

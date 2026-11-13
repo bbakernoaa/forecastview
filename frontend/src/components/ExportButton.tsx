@@ -1,8 +1,15 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { apiGetStatic } from '../api/client'
 import { buildFillImageUrl } from '../api/staticMode'
 import { useViewer } from '../context/ViewerContext'
-import { useVariables } from '../hooks/useMetadata'
+import { useLevels, useVariables } from '../hooks/useMetadata'
+import { encodeStateToUrl } from '../hooks/useUrlState'
+import {
+  CAPTURE_SIZES, canvasBlob, captureMapRect, downloadCapture, embedForecastState,
+} from '../export/imageCapture'
+import type { CaptureLayout, CaptureSize } from '../export/imageCapture'
+import { useCaptureVideo } from '../export/useCaptureVideo'
+import './ExportButton.css'
 
 const buttonStyle: React.CSSProperties = {
   padding: '4px 10px',
@@ -114,90 +121,155 @@ function drawColorbar(
   }
 }
 
-function ExportButton() {
+function ExportButton({ allowVideo = true }: { allowVideo?: boolean }) {
   const { map, state } = useViewer()
   const { product, date, run, variable, forecastHour } = state
   const [exporting, setExporting] = useState(false)
 
   const { data: variablesList } = useVariables(product, date, run)
 
-  const exportFrame = useCallback((format: 'png' | 'jpeg') => {
-    if (!map) return
+  const { data: levels } = useLevels(product, date, run, variable)
+  const [layout, setLayout] = useState<CaptureLayout>('legend')
+  const [size, setSize] = useState<CaptureSize>('native')
+  const [message, setMessage] = useState('')
+  const [logo, setLogo] = useState<HTMLImageElement | null>(null)
 
-    const mapCanvas = map.getCanvas()
-    const w = mapCanvas.width
-    const h = mapCanvas.height
+  useEffect(() => {
+    const image = new Image()
+    image.onload = () => setLogo(image)
+    image.src = new URL('nws-logo.png', document.baseURI).href
+    return () => { image.onload = null }
+  }, [])
 
-    // Load logo then composite everything
-    const logo = new Image()
-    logo.crossOrigin = 'anonymous'
-    logo.src = new URL('nws-logo.png', document.baseURI).href
+  const filename = `${variable ?? 'map'}_${date ?? ''}_${run ?? ''}Z_f${String(forecastHour).padStart(3, '0')}`
 
-    const doExport = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = w
-      canvas.height = h
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+  function drawFrame(canvas: HTMLCanvasElement) {
+    if (!map) throw new Error('The map is unavailable.')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Image capture is unavailable.')
+    const { width, height } = canvas
+    const source = map.getCanvas()
+    if (!source.width || !source.height) throw new Error('The map is unavailable.')
 
-      // Draw the map
-      ctx.drawImage(mapCanvas, 0, 0)
+    const scale = Math.min(2, Math.max(0.65, Math.min(width / 700, height / 440)))
+    const full = layout === 'full'
+    const headerHeight = full ? Math.round(35 * scale) : 0
+    const footerHeight = layout === 'map' ? 0 : Math.round(62 * scale)
+    const mapHeight = height - headerHeight - footerHeight
+    if (mapHeight <= 0) throw new Error('Choose a larger image size.')
+    const rect = captureMapRect(source.width, source.height, width, mapHeight)
 
-      // Find variable info for colorbar
-      const varInfo = variablesList?.find(v => v.name === variable)
-      if (varInfo?.rendering?.colors && varInfo.rendering.fillLevels) {
-        const { colors, fillLevels } = varInfo.rendering
-        const barHeight = Math.min(h * 0.6, 300)
-        const barX = 16
-        const barY = Math.round((h - barHeight) / 2) + 20
-        drawColorbar(ctx, barX, barY, 100, barHeight, colors, fillLevels, varInfo.fullName)
+    ctx.fillStyle = '#171b23'
+    ctx.fillRect(0, 0, width, height)
+    ctx.drawImage(source, rect.x, rect.y + headerHeight, rect.width, rect.height)
+    ctx.save()
+    ctx.scale(scale, scale)
+    const w = width / scale
+    const h = height / scale
+    const varInfo = variablesList?.find(v => v.name === variable)
+    const rendering = varInfo?.rendering
+    const level = levels?.find(item => item.value === state.level)?.label
+      ?? (state.level == null ? levels?.[0]?.label : String(state.level))
+    const title = [varInfo?.fullName ?? variable ?? 'Forecast map', level, varInfo?.units]
+      .filter(Boolean).join(' · ')
+
+    if (layout !== 'map') {
+      const init = new Date(`${date?.slice(0, 4)}-${date?.slice(4, 6)}-${date?.slice(6, 8)}T${run?.padStart(2, '0')}:00:00Z`)
+      const valid = new Date(init.getTime() + forecastHour * 3600_000)
+      const formatUtc = (time: Date) => Number.isFinite(time.getTime())
+        ? time.toISOString().slice(0, 16).replace('T', ' ') + 'Z'
+        : 'Unavailable'
+      const time = `Init ${formatUtc(init)}   |   F${String(forecastHour).padStart(3, '0')}   |   Valid ${formatUtc(valid)}`
+      const barHeight = Math.min(rect.height / scale * 0.55, 270)
+      if (rendering?.colors?.length && rendering.fillLevels.length > 1 && state.renderingMode !== 'contours') {
+        drawColorbar(ctx, 16, (headerHeight + rect.y) / scale + 8, 96, barHeight,
+          rendering.colors, rendering.fillLevels, varInfo?.units ?? '')
+      } else if (rendering && state.renderingMode === 'contours') {
+        ctx.fillStyle = '#171b23'
+        ctx.fillRect(8, headerHeight / scale + 8, 144, 24)
+        ctx.fillStyle = '#fff'
+        ctx.font = '11px sans-serif'
+        ctx.fillText(`Contour interval ${state.contourInterval ?? rendering.contourInterval}`,
+          14, headerHeight / scale + 24, 132)
       }
 
-      // Add timestamp/metadata at bottom
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-      ctx.fillRect(0, h - 40, w, 40)
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'bold 16px sans-serif'
-      // Compute valid time from init + fhr
-      let validTimeStr = ''
-      if (date && run != null) {
-        const initDate = new Date(`${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}T${run.padStart(2,'0')}:00:00Z`)
-        const validDate = new Date(initDate.getTime() + forecastHour * 3600 * 1000)
-        validTimeStr = validDate.toISOString().replace('T', ' ').slice(0, 16) + 'Z'
+      if (full) {
+        ctx.fillStyle = '#fff'
+        ctx.font = 'bold 17px sans-serif'
+        ctx.fillText(`ForecastView · ${product}`, 12, 23, w - 24)
+        if (logo) ctx.drawImage(logo, w - 35, 4, 27, 27)
       }
-      const meta = `${variable ?? ''}  |  Init: ${date ?? ''} ${run ?? ''}Z  |  FHR: ${String(forecastHour).padStart(3, '0')}  |  Valid: ${validTimeStr}  |  ForecastView`
-      ctx.fillText(meta, 12, h - 14)
-
-      // Draw NWS logo in bottom-right corner
-      const logoSize = 36
-      if (logo.complete && logo.naturalWidth > 0) {
-        ctx.drawImage(logo, w - logoSize - 10, h - logoSize - 2, logoSize, logoSize)
-      }
-
-      // Disclaimer text above the metadata bar
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
-      ctx.fillRect(0, h - 60, w, 20)
+      ctx.fillStyle = '#fff'
+      ctx.font = 'bold 14px sans-serif'
+      ctx.fillText(title, 12, h - 43, w - 24)
+      ctx.font = '12px sans-serif'
+      ctx.fillText(time, 12, h - 27, w - 24)
       ctx.fillStyle = '#f5a623'
       ctx.font = '10px sans-serif'
-      ctx.fillText('⚠ EXPERIMENTAL — Forecast guidance is for research use.', 12, h - 46)
-
-      // Export
-      const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
-      const dataUrl = canvas.toDataURL(mimeType, 0.92)
-      const link = document.createElement('a')
-      link.download = `${variable ?? 'map'}_${date ?? ''}_f${String(forecastHour).padStart(3, '0')}.${format}`
-      link.href = dataUrl
-      link.click()
+      ctx.fillText('EXPERIMENTAL · Forecast guidance is for research use.', 12, h - 12, w - 24)
     }
 
-    // If logo already cached, export immediately; otherwise wait for load
-    if (logo.complete) {
-      doExport()
-    } else {
-      logo.onload = doExport
-      logo.onerror = doExport  // export without logo if it fails
+    // MapLibre renders source attribution as HTML outside its WebGL canvas.
+    const attribution = map.getContainer().querySelector('.maplibregl-ctrl-attrib-inner')?.textContent?.trim()
+    if (attribution) {
+      const maxWidth = Math.max(1, w - 12)
+      const baseline = (headerHeight + mapHeight) / scale - 4
+      ctx.font = '10px sans-serif'
+      const labelWidth = Math.min(maxWidth, ctx.measureText(attribution).width)
+      ctx.fillStyle = '#171b23'
+      ctx.fillRect(w - labelWidth - 10, baseline - 10, labelWidth + 10, 14)
+      ctx.fillStyle = '#fff'
+      ctx.fillText(attribution, w - labelWidth - 5, baseline, maxWidth)
     }
-  }, [map, state, variablesList, variable, date, run, forecastHour])
+    ctx.restore()
+  }
+
+  function createCaptureCanvas(forVideo = false) {
+    if (!map || !map.loaded()) throw new Error('Wait for the map to finish loading and try again.')
+    const source = map.getCanvas()
+    const [width, height] = CAPTURE_SIZES[size] ?? [source.width, source.height]
+    const canvas = document.createElement('canvas')
+    const factor = forVideo ? Math.min(1, 1280 / width, 720 / height) : 1
+    canvas.width = forVideo ? Math.floor(width * factor / 2) * 2 : width
+    canvas.height = forVideo ? Math.floor(height * factor / 2) * 2 : height
+    drawFrame(canvas)
+    return canvas
+  }
+
+  const video = useCaptureVideo(map, canvas => {
+    if (map?.loaded()) drawFrame(canvas)
+  }, setMessage)
+
+  async function exportFrame(action: 'png' | 'jpeg' | 'copy') {
+    setMessage('')
+    try {
+      const canvas = createCaptureCanvas()
+      if (action === 'jpeg') {
+        downloadCapture(await canvasBlob(canvas, 'image/jpeg'), `${filename}.jpeg`)
+      } else {
+        const encoded = encodeStateToUrl({ ...state, fhr: forecastHour, mode: state.renderingMode })
+        const png = canvasBlob(canvas, 'image/png').then(blob => embedForecastState(blob, encoded))
+        if (action === 'copy') {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })])
+          setMessage('Image copied.')
+        } else {
+          downloadCapture(await png, `${filename}.png`)
+        }
+      }
+    } catch (error) {
+      setMessage(action === 'copy' ? 'Could not copy the image. Try downloading PNG.'
+        : error instanceof Error ? error.message : 'Image capture failed.')
+    }
+  }
+
+  function startVideo() {
+    try {
+      video.start(createCaptureCanvas(true), `${filename}_animation`)
+      setMessage('Recording the map. Use the forecast timeline, then stop to download.')
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not start recording.')
+    }
+  }
 
   const exportGif = useCallback(async () => {
     if (!map) return
@@ -330,37 +402,49 @@ function ExportButton() {
     }
   }, [map, state, forecastHour, variablesList])
 
+  const unavailable = !map || !date || !run || !variable
+  const clipboardAvailable = typeof ClipboardItem !== 'undefined' && Boolean(navigator.clipboard?.write)
+
   return (
-    <fieldset
-      style={{ border: 'none', padding: 0, display: 'flex', gap: '4px', alignItems: 'center' }}
-    >
-      <legend style={{ fontSize: '0.75rem', marginBottom: '2px' }}>Export</legend>
-      <button
-        type="button"
-        onClick={() => exportFrame('png')}
-        style={buttonStyle}
-        title="Export current view as PNG with colorbar"
-      >
-        PNG
-      </button>
-      <button
-        type="button"
-        onClick={() => exportFrame('jpeg')}
-        style={buttonStyle}
-        title="Export current view as JPEG with colorbar"
-      >
-        JPG
-      </button>
-      <button
-        type="button"
-        onClick={exportGif}
-        disabled={exporting}
-        style={exporting ? activeStyle : buttonStyle}
-        title="Export animated GIF of all forecast hours"
-      >
-        {exporting ? 'GIF...' : 'GIF'}
-      </button>
-    </fieldset>
+    <details className="forecast-capture">
+      <summary>Capture</summary>
+      <div className="forecast-capture__panel">
+        <label>
+          Layout
+          <select value={layout} disabled={video.recording} onChange={event => setLayout(event.target.value as CaptureLayout)}>
+            <option value="map">Map only</option>
+            <option value="legend">Map + legend + metadata</option>
+            <option value="full">Full forecast graphic</option>
+          </select>
+        </label>
+        <label>
+          Image size
+          <select value={size} disabled={video.recording} onChange={event => setSize(event.target.value as CaptureSize)}>
+            <option value="native">Native viewport</option>
+            {Object.entries(CAPTURE_SIZES).map(([key, dimensions]) =>
+              dimensions && <option key={key} value={key}>{dimensions.join(' × ')}</option>
+            )}
+          </select>
+        </label>
+        <div className="forecast-capture__actions">
+          <button type="button" style={buttonStyle} disabled={unavailable || video.recording || exporting}
+            onClick={() => void exportFrame('png')}>Download PNG</button>
+          <button type="button" style={buttonStyle} disabled={unavailable || video.recording || exporting || !clipboardAvailable}
+            onClick={() => void exportFrame('copy')}>Copy image</button>
+          <button type="button" style={buttonStyle} disabled={unavailable || video.recording || exporting}
+            onClick={() => void exportFrame('jpeg')}>Download JPEG</button>
+          {allowVideo && <button type="button" style={buttonStyle} disabled={!video.recording && (unavailable || !video.videoType || exporting)}
+            onClick={video.recording ? video.stop : startVideo}>
+            {video.recording ? 'Stop and download video' : `Record video${video.videoType ? ` (${video.videoType.split('/')[1].toUpperCase()})` : ''}`}
+          </button>}
+          <button type="button" onClick={exportGif} disabled={unavailable || exporting || video.recording}
+            style={exporting ? activeStyle : buttonStyle}>
+            {exporting ? 'Exporting GIF…' : 'Download GIF'}
+          </button>
+        </div>
+        <div role="status" aria-live="polite">{message}</div>
+      </div>
+    </details>
   )
 }
 
